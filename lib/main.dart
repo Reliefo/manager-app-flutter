@@ -23,7 +23,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   List<String> toPrint = [];
-  List<Order> queueOrders = [];
+  List<TableOrder> queueOrders = [];
+  List<AssistanceRequest> assistanceReq = [];
   SocketIOManager manager;
   Map<String, SocketIO> sockets = {};
   Map<String, bool> _isProbablyConnected = {};
@@ -37,12 +38,12 @@ class _MyAppState extends State<MyApp> {
 //    initSocket('default');
   }
 
-  minitSocket(URI) async {
+  minitSocket(uri) async {
     print('hey');
     var identifier = 'working';
     SocketIO socket = await manager.createInstance(SocketOptions(
         //Socket IO server URI
-        URI,
+        uri,
         nameSpace: "/adhara",
         //Query params - can be used for authentication
         query: {
@@ -67,7 +68,10 @@ class _MyAppState extends State<MyApp> {
     socket.onError(pprint);
     socket.onDisconnect(pprint);
     socket.on("fetch", (data) => pprint(data));
-    socket.on("new_orders", (data) => poyprint(data));
+    socket.on("new_orders", (data) => fetchNewOrders(data));
+    socket.on("assist", (data) => fetchAssistRequests(data));
+    socket.on("accepted_by", (data) => fetchAccepted(data));
+
     socket.connect();
     sockets[identifier] = socket;
   }
@@ -137,15 +141,42 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  poyprint(data) {
+  fetchNewOrders(data) {
     setState(() {
       if (data is Map) {
         data = json.encode(data);
       }
-      Order order = Order.fromJson(jsonDecode(jsonDecode(data)['new_order']));
-      print(data);
-      print(queueOrders.length);
+
+//      var decoded = jsonDecode(data);
+
+//      print(decoded['table'].substring(5));
+
+      TableOrder order = TableOrder.fromJson(jsonDecode(data));
+//      print(jsonDecode(jsonDecode(data)['new_order']));
+
       queueOrders.add(order);
+    });
+  }
+
+  fetchAssistRequests(data) {
+    setState(() {
+      if (data is Map) {
+        data = json.encode(data);
+      }
+
+      AssistanceRequest assist = AssistanceRequest.fromJson(jsonDecode(data));
+      assistanceReq.add(assist);
+    });
+  }
+
+  fetchAccepted(data) {
+    setState(() {
+      if (data is Map) {
+        data = json.encode(data);
+      }
+
+      AssistanceRequest assist = AssistanceRequest.fromJson(jsonDecode(data));
+      assistanceReq.add(assist);
     });
   }
 
@@ -186,6 +217,7 @@ class _MyAppState extends State<MyApp> {
 //        ),
         body: TabContainerBottom(
           list: toPrint,
+          assistanceReq: assistanceReq,
           queueOrders: queueOrders,
           getButtonSet: getButtonSet("default"),
         ),

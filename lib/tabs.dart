@@ -1,16 +1,21 @@
 import 'package:adhara_socket_io_example/person/personView.dart';
 import 'package:flutter/material.dart';
 
+import 'Home/home.dart';
 import 'data.dart';
-import 'home.dart';
 import 'table/tableView.dart';
 
 class TabContainerBottom extends StatelessWidget {
-  List<String> list;
-  List<Order> queueOrders;
-  Container getButtonSet;
+  final List<String> list;
+  final List<TableOrder> queueOrders;
+  final List<AssistanceRequest> assistanceReq;
+  final Container getButtonSet;
 
-  TabContainerBottom({this.list, this.getButtonSet, this.queueOrders});
+  TabContainerBottom(
+      {this.list,
+      this.getButtonSet,
+      @required this.queueOrders,
+      @required this.assistanceReq});
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +29,13 @@ class TabContainerBottom extends StatelessWidget {
               PersonView(),
               HomePage(
                 list: list,
+                assistanceReq: assistanceReq,
                 queueOrders: queueOrders,
               ),
-              TableView(),
+              TableView(
+                queueOrders: queueOrders,
+                assistanceReq: assistanceReq,
+              ),
             ],
           ),
           bottomNavigationBar: TabBar(
