@@ -21,11 +21,12 @@ class Assistance extends StatelessWidget {
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            padding: EdgeInsets.symmetric(vertical: 8),
             child: Row(
               children: <Widget>[
                 Expanded(
-                  child: Center(
+                  child: Container(
+                    padding: EdgeInsets.only(left: 20),
                     child: Text(
                       'Table',
                       style: homePageS1,
@@ -72,10 +73,13 @@ class Assistance extends StatelessWidget {
                         child: Row(
                           children: <Widget>[
                             Expanded(
-                              child: Center(
+                              child: Container(
+                                padding: EdgeInsets.only(left: 20),
                                 child: Text(
-                                  assistanceReq[index].table ?? " ",
+                                  'Table : ${assistanceReq[index].table}' ??
+                                      " ",
                                   style: homePageS2,
+                                  textAlign: TextAlign.left,
                                 ),
                               ),
                             ),
@@ -91,9 +95,10 @@ class Assistance extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   '${formatDate(
-                                    (assistanceReq[index].timeStamp ?? " "),
-                                    [HH, ':', nn],
-                                  )}',
+                                        (assistanceReq[index].timeStamp),
+                                        [HH, ':', nn],
+                                      )}' ??
+                                      " ",
                                   style: homePageS2,
                                 ),
                               ),
@@ -101,7 +106,7 @@ class Assistance extends StatelessWidget {
                             Expanded(
                               child: Center(
                                 child: Text(
-                                  'Pending' ?? " ",
+                                  assistanceReq[index].acceptedBy ?? "Pending",
                                   style: homePageS2,
                                 ),
                               ),

@@ -1,14 +1,15 @@
 class TableOrder {
-  String iId;
+  String oId;
   String table;
+  String status = 'pending';
 
   List<Order> orders;
   DateTime timeStamp;
 
-  TableOrder({this.iId, this.table, this.orders, this.timeStamp});
+  TableOrder({this.oId, this.table, this.orders, this.timeStamp, this.status});
 
   TableOrder.fromJson(Map<String, dynamic> json) {
-    iId = json['_id']['\$oid'];
+    oId = json['_id']['\$oid'];
 
     RegExp regExp = new RegExp("[0-9]+");
 
@@ -25,16 +26,17 @@ class TableOrder {
 
 class Order {
   String placedby;
-  Map<String, FoodItem> foodlist;
+  List<FoodItem> foodlist;
+  String status = 'pending';
 
-  Order({this.placedby, this.foodlist});
+  Order({this.placedby, this.foodlist, this.status});
 
   Order.fromJson(Map<String, dynamic> json) {
     placedby = json['placedby']['\$oid'];
 
-    foodlist = new Map<String, FoodItem>();
-    json['foodlist'].forEach((k, v) {
-      foodlist[k] = new FoodItem.fromJson(v);
+    foodlist = new List<FoodItem>();
+    json['foodlist'].forEach((v) {
+      foodlist.add(FoodItem.fromJson(v));
     });
   }
 }
@@ -43,39 +45,62 @@ class FoodItem {
   String description;
   String name;
   String price;
+  String foodId;
+  String instructions;
+  String status = 'queued';
+  int quantity;
 
-  FoodItem({this.description, this.name, this.price});
+  FoodItem(
+      {this.description,
+      this.name,
+      this.price,
+      this.foodId,
+      this.quantity,
+      this.status,
+      this.instructions});
 
   FoodItem.fromJson(Map<String, dynamic> json) {
     description = json['description'];
     name = json['name'];
     price = json['price'];
+    foodId = json['food_id'];
+    quantity = json['quantity'];
+    instructions = json['instructions'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['description'] = this.description;
-    data['name'] = this.name;
-    data['price'] = this.price;
-    return data;
-  }
+//  Map<String, dynamic> toJson() {
+//    final Map<String, dynamic> data = new Map<String, dynamic>();
+//    data['description'] = this.description;
+//    data['name'] = this.name;
+//    data['price'] = this.price;
+//    data['food_id'] = this.foodId;
+//    data['quantity'] = this.quantity;
+//    data['instructions'] = this.instructions;
+//    return data;
+//  }
 }
 
 // class for assistance requests
 
 class AssistanceRequest {
   String table;
-  String aId;
+  String oId;
   String user;
   String assistanceType;
   DateTime timeStamp;
+  String acceptedBy;
 
   AssistanceRequest(
-      {this.table, this.aId, this.user, this.assistanceType, this.timeStamp});
+      {this.table,
+      this.oId,
+      this.user,
+      this.assistanceType,
+      this.timeStamp,
+      this.acceptedBy});
 
   AssistanceRequest.fromJson(Map<String, dynamic> json) {
     RegExp regExp = new RegExp("[0-9]+");
-    aId = json['_id']['\$oid'];
+    oId = json['_id']['\$oid'];
     table = regExp.firstMatch(json['table']).group(0);
     user = json['user']['\$oid'];
     assistanceType = json['assistance_type'];

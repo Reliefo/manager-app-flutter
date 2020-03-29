@@ -31,26 +31,31 @@ class Queued extends StatelessWidget {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
-                            child: Text(
-                              queueOrders[index].table ?? " ",
-                              style: homePageS1,
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 2, horizontal: 12),
-                            child: Text(
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 12),
+                                child: Text(
+                                  'Table : ${queueOrders[index].table}' ?? " ",
+                                  style: homePageS1,
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 2, horizontal: 12),
+                                child: Text(
 //
-                              'Arrival Time : ${formatDate(
-                                    (queueOrders[index].timeStamp),
-                                    [HH, ':', nn],
-                                  )}' ??
-                                  " ",
-                              style: homePageS3,
-                            ),
+                                  'Arrival Time : ${formatDate(
+                                        (queueOrders[index].timeStamp),
+                                        [HH, ':', nn],
+                                      )}' ??
+                                      " ",
+                                  style: homePageS3,
+                                ),
+                              ),
+                            ],
                           ),
                           ListView.builder(
                             primary: false,
@@ -66,24 +71,52 @@ class Queued extends StatelessWidget {
                                       .length,
                                   itemBuilder: (context, index3) {
                                     return Container(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 8, horizontal: 12),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8, horizontal: 12),
+                                        child:
+                                            // for checking instructions
                                             queueOrders[index]
-                                                    .orders[index2]
-                                                    .foodlist['$index3']
-                                                    .name ??
-                                                " ",
+                                                        .orders[index2]
+                                                        .foodlist[index3]
+                                                        .instructions ==
+                                                    "no"
+                                                ? Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: <Widget>[
+                                                      Text(
+                                                        '${queueOrders[index].orders[index2].foodlist[index3].name} x ${queueOrders[index].orders[index2].foodlist[index3].quantity}' ??
+                                                            " ",
 //
-                                            style: homePageS3,
-                                          ),
-                                        ],
-                                      ),
-                                    );
+                                                        style: homePageS3,
+                                                      ),
+                                                    ],
+                                                  )
+                                                : Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: <Widget>[
+                                                      Text(
+                                                        '${queueOrders[index].orders[index2].foodlist[index3].name} x ${queueOrders[index].orders[index2].foodlist[index3].quantity}' ??
+                                                            " ",
+//
+                                                        style: homePageS3,
+                                                      ),
+
+                                                      // for checking instructions
+
+                                                      Text(
+                                                        queueOrders[index]
+                                                                .orders[index2]
+                                                                .foodlist[
+                                                                    index3]
+                                                                .instructions ??
+                                                            " ",
+                                                      ),
+                                                    ],
+                                                  ));
                                   });
                             },
                           ),
@@ -98,7 +131,29 @@ class Queued extends StatelessWidget {
 
               // display when there in nothing in the queue
               : Expanded(
-                  child: Text('say there is nothing'),
+                  child: Container(
+                    width: double.maxFinite,
+                    child: Column(
+                      children: <Widget>[
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Image.asset(
+                              'assets/icons/plate.png',
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              'No Orders Yet',
+                              style: homePageS4,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
         ],
       ),

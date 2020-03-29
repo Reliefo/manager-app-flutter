@@ -25,6 +25,7 @@ class _MyAppState extends State<MyApp> {
   List<String> toPrint = [];
   List<TableOrder> queueOrders = [];
   List<AssistanceRequest> assistanceReq = [];
+  List<TableOrder> cookingOrders = [];
   SocketIOManager manager;
   Map<String, SocketIO> sockets = {};
   Map<String, bool> _isProbablyConnected = {};
@@ -66,11 +67,15 @@ class _MyAppState extends State<MyApp> {
     socket.onConnectError(pprint);
     socket.onConnectTimeout(pprint);
     socket.onError(pprint);
-    socket.onDisconnect(pprint);
+    socket.onDisconnect((data) {
+      print('object disconnnecgts');
+      disconnect('working');
+    });
     socket.on("fetch", (data) => pprint(data));
     socket.on("new_orders", (data) => fetchNewOrders(data));
     socket.on("assist", (data) => fetchAssistRequests(data));
-    socket.on("accepted_by", (data) => fetchAccepted(data));
+    socket.on("assist_updates", (data) => fetchAccepted(data));
+    socket.on("order_updates", (data) => fetchOrderUpdates(data));
 
     socket.connect();
     sockets[identifier] = socket;
@@ -147,12 +152,7 @@ class _MyAppState extends State<MyApp> {
         data = json.encode(data);
       }
 
-//      var decoded = jsonDecode(data);
-
-//      print(decoded['table'].substring(5));
-
       TableOrder order = TableOrder.fromJson(jsonDecode(data));
-//      print(jsonDecode(jsonDecode(data)['new_order']));
 
       queueOrders.add(order);
     });
@@ -175,8 +175,36 @@ class _MyAppState extends State<MyApp> {
         data = json.encode(data);
       }
 
-      AssistanceRequest assist = AssistanceRequest.fromJson(jsonDecode(data));
-      assistanceReq.add(assist);
+      for (var i = 0; i < assistanceReq.length; ++i) {
+        if (assistanceReq[i].oId == jsonDecode(data)['assistance_id']) {
+          assistanceReq[i].acceptedBy = jsonDecode(data)['server_name'];
+        }
+      }
+    });
+  }
+
+  fetchOrderUpdates(data) {
+    setState(() {
+      if (data is Map) {
+        data = json.encode(data);
+      }
+      var decoded = jsonDecode(data);
+      for (var i = 0; i < queueOrders.length; ++i) {
+        if (queueOrders[i].oId == decoded['tableorder_id']['\$oid']) {
+          for (var j = 0; j < queueOrders[i].orders.length; ++j) {
+            if (queueOrders[i].orders[j] == decoded['order_id']['\$oid']) {
+              for (var k = 0;
+                  k < queueOrders[i].orders[j].foodlist.length;
+                  ++k) {
+                if (queueOrders[i].orders[j].foodlist[k] ==
+                    decoded['food_id']) {
+                  queueOrders[i].orders[j].foodlist[k] = decoded['type'];
+                }
+              }
+            }
+          }
+        }
+      }
     });
   }
 
@@ -219,6 +247,7 @@ class _MyAppState extends State<MyApp> {
           list: toPrint,
           assistanceReq: assistanceReq,
           queueOrders: queueOrders,
+//          cookingOrders: cookingOrders,
           getButtonSet: getButtonSet("default"),
         ),
       ),

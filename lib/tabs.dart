@@ -9,13 +9,16 @@ class TabContainerBottom extends StatelessWidget {
   final List<String> list;
   final List<TableOrder> queueOrders;
   final List<AssistanceRequest> assistanceReq;
+//  final List<String> cookingOrders = [];
   final Container getButtonSet;
 
-  TabContainerBottom(
-      {this.list,
-      this.getButtonSet,
-      @required this.queueOrders,
-      @required this.assistanceReq});
+  TabContainerBottom({
+    this.list,
+    this.getButtonSet,
+    @required this.queueOrders,
+    @required this.assistanceReq,
+//      @required this.cookingOrders
+  });
 
   @override
   Widget build(BuildContext context) {

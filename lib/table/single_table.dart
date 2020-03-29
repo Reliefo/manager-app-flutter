@@ -40,8 +40,6 @@ class SingleTable extends StatelessWidget {
   Widget build(BuildContext context) {
     getTableAssistanceReq();
     getTableOrders();
-    print('single table');
-    print(tableAssistanceReq);
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -179,7 +177,9 @@ class SingleTable extends StatelessWidget {
                                               Expanded(
                                                 child: Center(
                                                   child: Text(
-                                                    assistanceStatus ?? " ",
+                                                    tableAssistanceReq[index]
+                                                            .acceptedBy ??
+                                                        "Pending",
                                                     style: homePageS2,
                                                   ),
                                                 ),
@@ -293,7 +293,7 @@ class SingleTable extends StatelessWidget {
                                                                       .orders[
                                                                           index2]
                                                                       .foodlist[
-                                                                          '$index3']
+                                                                          index3]
                                                                       .name ??
                                                                   " ",
                                                               style: homePageS2,
@@ -302,7 +302,8 @@ class SingleTable extends StatelessWidget {
                                                           Expanded(
                                                             child: Center(
                                                               child: Text(
-                                                                itemQty ?? " ",
+                                                                '${tableOrders[index].orders[index2].foodlist[index3].quantity}' ??
+                                                                    " ",
                                                                 style:
                                                                     homePageS2,
                                                               ),
@@ -315,7 +316,7 @@ class SingleTable extends StatelessWidget {
                                                                         .orders[
                                                                             index2]
                                                                         .foodlist[
-                                                                            '$index3']
+                                                                            index3]
                                                                         .price ??
                                                                     " ",
                                                                 style:
@@ -362,7 +363,30 @@ class SingleTable extends StatelessWidget {
                                   )
                                 //if there is no orders for this table
                                 : Expanded(
-                                    child: Text('no orders'),
+                                    child: Container(
+                                      width: double.maxFinite,
+                                      child: Column(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(20.0),
+                                              child: Image.asset(
+                                                'assets/icons/plate.png',
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Center(
+                                              child: Text(
+                                                'No Orders Yet',
+                                                style: homePageS4,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                           ],
                         ),

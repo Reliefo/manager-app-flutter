@@ -26,18 +26,7 @@ class TableView extends StatelessWidget {
                   child: Card(
                     color: Colors.white,
                     child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.bottomLeft,
-                          end: Alignment.topRight,
-                          //todo: change color according to table filled or not
-//                          colors: [Colors.green[200], Colors.white],
-                          colors: [
-                            Colors.blueGrey[100],
-                            Colors.limeAccent[100]
-                          ],
-                        ),
-                      ),
+                      color: Color(0xffFF6347),
                       padding: EdgeInsets.symmetric(vertical: 10),
                       child: Column(
                         children: <Widget>[

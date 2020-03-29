@@ -26,8 +26,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('from home');
-
 //    Future<dynamic> myvar = get_order();
     return SafeArea(
       child: Scaffold(
