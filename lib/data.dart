@@ -1,7 +1,7 @@
 class TableOrder {
   String oId;
   String table;
-  String status = 'pending';
+  String status = 'queued';
 
   List<Order> orders;
   DateTime timeStamp;
@@ -22,22 +22,74 @@ class TableOrder {
 
     timeStamp = DateTime.parse(json['timestamp']);
   }
+  TableOrder.fromJsonNew(Map<String, dynamic> json) {
+    oId = json['oId'];
+
+    table = json['table'];
+    status = json['status'];
+    timeStamp = json['timeStamp'];
+  }
+  addFirstOrder(Order order) {
+    this.orders = new List<Order>();
+    this.orders.add(order);
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['oId'] = this.oId;
+    data['table'] = this.table;
+    data['status'] = this.status;
+    data['timeStamp'] = this.timeStamp;
+    return data;
+  }
 }
 
 class Order {
+  String oId;
   String placedby;
-  List<FoodItem> foodlist;
-  String status = 'pending';
 
-  Order({this.placedby, this.foodlist, this.status});
+  List<FoodItem> foodlist;
+  String status = 'queued';
+
+  Order({this.oId, this.placedby, this.foodlist, this.status});
 
   Order.fromJson(Map<String, dynamic> json) {
     placedby = json['placedby']['\$oid'];
+    oId = json['_id']['\$oid'];
 
     foodlist = new List<FoodItem>();
     json['foodlist'].forEach((v) {
       foodlist.add(FoodItem.fromJson(v));
     });
+  }
+
+  Order.fromJsonNew(Map<String, dynamic> json) {
+    placedby = json['placedby'];
+    oId = json['oId'];
+    status = json['status'];
+  }
+  addFirstFood(FoodItem food) {
+    this.foodlist = new List<FoodItem>();
+    this.foodlist.add(food);
+  }
+
+  addFood(FoodItem food) {
+    this.foodlist.add(food);
+    print('enec addded');
+  }
+
+  removeFoodItem(String food_id) {
+    print('object');
+    this.foodlist.removeWhere((food) => food.foodId == food_id);
+    print('object 2 was here');
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['oId'] = this.oId;
+    data['placedby'] = this.placedby;
+    data['status'] = this.status;
+    return data;
   }
 }
 
@@ -68,16 +120,16 @@ class FoodItem {
     instructions = json['instructions'];
   }
 
-//  Map<String, dynamic> toJson() {
-//    final Map<String, dynamic> data = new Map<String, dynamic>();
-//    data['description'] = this.description;
-//    data['name'] = this.name;
-//    data['price'] = this.price;
-//    data['food_id'] = this.foodId;
-//    data['quantity'] = this.quantity;
-//    data['instructions'] = this.instructions;
-//    return data;
-//  }
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['description'] = this.description;
+    data['name'] = this.name;
+    data['price'] = this.price;
+    data['food_id'] = this.foodId;
+    data['quantity'] = this.quantity;
+    data['instructions'] = this.instructions;
+    return data;
+  }
 }
 
 // class for assistance requests

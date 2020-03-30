@@ -1,10 +1,12 @@
 import 'package:adhara_socket_io_example/constants.dart';
 import 'package:adhara_socket_io_example/data.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 
 class Cooking extends StatelessWidget {
   final List<TableOrder> queueOrders;
-  Cooking({@required this.queueOrders});
+  final List<TableOrder> cookingOrders;
+  Cooking({@required this.queueOrders, @required this.cookingOrders});
 
   @override
   Widget build(BuildContext context) {
@@ -19,126 +21,105 @@ class Cooking extends StatelessWidget {
               style: homePageS4,
             ),
           ),
-          queueOrders.length > 0
-              ? Expanded(
-                  child: ListView.builder(
-                    primary: false,
-                    shrinkWrap: true,
-                    itemCount: queueOrders.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
-                            child: Text(
-                              queueOrders[index].table,
-                              style: homePageS1,
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 2, horizontal: 12),
-                            child: Text(
-//
-                              "Arrival Time : ",
-                              style: homePageS3,
-                            ),
-                          ),
-                          ListView.builder(
-                            primary: false,
-                            itemCount: 2,
-//                                            queueOrders[index].foodlist.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index2) {
-                              return Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 12),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      'ol',
-//                                                  queueOrders[index]
-//                                                      .foodlist["$index2"]
-//                                                      .name,
-                                      style: homePageS3,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                          Divider(
-                            thickness: 2,
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                )
-              : Expanded(
-                  child: Text('say there is nothing in cooking list'),
-                ),
 
-          //////////////////////////for completed ///////////////////////
-          Container(
-            child: Text(
-              'Completed',
-              style: homePageS4,
-            ),
-          ),
-          queueOrders.length > 0
+          //to check if there is orders in queue or not
+          cookingOrders.length > 0
               ? Expanded(
                   child: ListView.builder(
-                    primary: false,
                     shrinkWrap: true,
-                    itemCount: queueOrders.length,
+                    itemCount: cookingOrders.length,
                     itemBuilder: (context, index) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
-                            child: Text(
-//                                    queueOrders[index].table,
-                              "Ordered By: Table 1",
-                              style: homePageS1,
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 2, horizontal: 12),
-                            child: Text(
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 12),
+                                child: Text(
+                                  'Table : ${cookingOrders[index].table}' ??
+                                      " ",
+                                  style: homePageS1,
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 2, horizontal: 12),
+                                child: Text(
 //
-                              "Arrival Time : ",
-                              style: homePageS3,
-                            ),
+                                  'Arrival Time : ${formatDate(
+                                        (cookingOrders[index].timeStamp),
+                                        [HH, ':', nn],
+                                      )}' ??
+                                      " ",
+                                  style: homePageS3,
+                                ),
+                              ),
+                            ],
                           ),
                           ListView.builder(
                             primary: false,
-                            itemCount: 2,
-//                                            queueOrders[index].foodlist.length,
+                            itemCount: cookingOrders[index].orders.length,
                             shrinkWrap: true,
                             itemBuilder: (context, index2) {
-                              return Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 12),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      'ol',
-//                                                  queueOrders[index]
-//                                                      .foodlist["$index2"]
-//                                                      .name,
-                                      style: homePageS3,
-                                    ),
-                                  ],
-                                ),
-                              );
+                              return ListView.builder(
+                                  primary: false,
+                                  shrinkWrap: true,
+                                  itemCount: cookingOrders[index]
+                                      .orders[index2]
+                                      .foodlist
+                                      .length,
+                                  itemBuilder: (context, index3) {
+                                    return Container(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8, horizontal: 12),
+                                        child:
+                                            // for checking instructions
+                                            cookingOrders[index]
+                                                        .orders[index2]
+                                                        .foodlist[index3]
+                                                        .instructions ==
+                                                    "no"
+                                                ? Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: <Widget>[
+                                                      Text(
+                                                        '${cookingOrders[index].orders[index2].foodlist[index3].name} x ${cookingOrders[index].orders[index2].foodlist[index3].quantity}' ??
+                                                            " ",
+//
+                                                        style: homePageS3,
+                                                      ),
+                                                    ],
+                                                  )
+                                                : Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: <Widget>[
+                                                      Text(
+                                                        '${cookingOrders[index].orders[index2].foodlist[index3].name} x ${cookingOrders[index].orders[index2].foodlist[index3].quantity}' ??
+                                                            " ",
+//
+                                                        style: homePageS3,
+                                                      ),
+
+                                                      // for checking instructions
+
+                                                      Text(
+                                                        cookingOrders[index]
+                                                                .orders[index2]
+                                                                .foodlist[
+                                                                    index3]
+                                                                .instructions ??
+                                                            " ",
+                                                      ),
+                                                    ],
+                                                  ));
+                                  });
                             },
                           ),
                           Divider(
@@ -149,8 +130,32 @@ class Cooking extends StatelessWidget {
                     },
                   ),
                 )
+
+              // display when there in nothing in the queue
               : Expanded(
-                  child: Text('say there is nothing in Completed list'),
+                  child: Container(
+                    width: double.maxFinite,
+                    child: Column(
+                      children: <Widget>[
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Image.asset(
+                              'assets/icons/plate.png',
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              'No Orders Yet',
+                              style: homePageS4,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
         ],
       ),

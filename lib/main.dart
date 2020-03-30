@@ -26,6 +26,7 @@ class _MyAppState extends State<MyApp> {
   List<TableOrder> queueOrders = [];
   List<AssistanceRequest> assistanceReq = [];
   List<TableOrder> cookingOrders = [];
+//  Map<Map<>>
   SocketIOManager manager;
   Map<String, SocketIO> sockets = {};
   Map<String, bool> _isProbablyConnected = {};
@@ -77,42 +78,6 @@ class _MyAppState extends State<MyApp> {
     socket.on("assist_updates", (data) => fetchAccepted(data));
     socket.on("order_updates", (data) => fetchOrderUpdates(data));
 
-    socket.connect();
-    sockets[identifier] = socket;
-  }
-
-  initSocket(String identifier) async {
-    SocketIO socket = await manager.createInstance(SocketOptions(
-        //Socket IO server URI
-        URI,
-        nameSpace: (identifier == "namespaced") ? "/adhara" : "/",
-        //Query params - can be used for authentication
-        query: {
-          "auth": "--SOME AUTH STRING---",
-          "info": "new connection from adhara-socketio",
-          "timestamp": DateTime.now().toString()
-        },
-        //Enable or disable platform channel logging
-        enableLogging: false,
-        transports: [
-          Transports.WEB_SOCKET /*, Transports.POLLING*/
-        ] //Enable required transport
-        ));
-    socket.onConnect((data) {
-      pprint("connected...");
-      pprint(data);
-//      sendMessage(identifier);
-    });
-    socket.onConnectError(pprint);
-    socket.onConnectTimeout(pprint);
-    socket.onError(pprint);
-    socket.onDisconnect(pprint);
-    socket.on("type:string", (data) => pprint("type:string | $data"));
-    socket.on("type:bool", (data) => pprint("type:bool | $data"));
-    socket.on("type:number", (data) => pprint("type:number | $data"));
-    socket.on("type:object", (data) => pprint("type:object | $data"));
-    socket.on("type:list", (data) => pprint("type:list | $data"));
-    socket.on("response", (data) => pprint(data));
     socket.connect();
     sockets[identifier] = socket;
   }
@@ -189,47 +154,53 @@ class _MyAppState extends State<MyApp> {
         data = json.encode(data);
       }
       var decoded = jsonDecode(data);
-      for (var i = 0; i < queueOrders.length; ++i) {
-        if (queueOrders[i].oId == decoded['tableorder_id']['\$oid']) {
-          for (var j = 0; j < queueOrders[i].orders.length; ++j) {
-            if (queueOrders[i].orders[j] == decoded['order_id']['\$oid']) {
-              for (var k = 0;
-                  k < queueOrders[i].orders[j].foodlist.length;
-                  ++k) {
-                if (queueOrders[i].orders[j].foodlist[k] ==
-                    decoded['food_id']) {
-                  queueOrders[i].orders[j].foodlist[k] = decoded['type'];
+      queueOrders.forEach((tableorder) {
+        if (tableorder.oId == decoded['tableorder_id']['\$oid']) {
+          tableorder.orders.forEach((order) {
+            if (order.oId == decoded['order_id']['\$oid']) {
+              order.foodlist.forEach((fooditem) {
+                if (fooditem.foodId == decoded['food_id']) {
+                  print('all id  matched');
+                  fooditem.status = decoded['type'];
+                  pushToCooking(tableorder, order, fooditem);
+                  order.removeFoodItem(decoded['food_id']);
                 }
-              }
+              });
             }
-          }
+          });
         }
+      });
+    });
+  }
+
+  pushToCooking(table_order, order, food_item) {
+    setState(() {
+      if (cookingOrders.length == 0) {
+        TableOrder tableOrder = TableOrder.fromJsonNew(table_order.toJson());
+        Order currOrder = Order.fromJsonNew(order.toJson());
+        currOrder.addFirstFood(food_item);
+
+        tableOrder.addFirstOrder(currOrder);
+        print(tableOrder.orders[0].foodlist[0].name);
+        cookingOrders.add(tableOrder);
+      } else {
+        cookingOrders.forEach((tableOrder) {
+          if (table_order.oId == tableOrder.oId) {
+            tableOrder.orders.forEach((currOrder) {
+              if (order.oId == currOrder.oId) {
+                currOrder.addFood(food_item);
+              }
+            });
+          }
+        });
       }
     });
   }
 
-  Container getButtonSet(String identifier) {
-    bool ipc = isProbablyConnected(identifier);
-    return Container(
-      height: 60.0,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 8.0),
-            child: RaisedButton(
-              child: Text("Connect"),
-              onPressed: ipc ? null : () => sendMessage('working'),
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+//    print('cooking orders');
+//    print(cookingOrders);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -247,8 +218,8 @@ class _MyAppState extends State<MyApp> {
           list: toPrint,
           assistanceReq: assistanceReq,
           queueOrders: queueOrders,
-//          cookingOrders: cookingOrders,
-          getButtonSet: getButtonSet("default"),
+          cookingOrders: cookingOrders,
+//          getButtonSet: getButtonSet("default"),
         ),
       ),
     );

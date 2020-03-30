@@ -19,10 +19,14 @@ class HomePage extends StatelessWidget {
   final List<String> list;
   final List<AssistanceRequest> assistanceReq;
   final List<TableOrder> queueOrders;
+  final List<TableOrder> cookingOrders;
 //  Container getButtonSet;
 
   HomePage(
-      {this.list, @required this.queueOrders, @required this.assistanceReq});
+      {this.list,
+      @required this.queueOrders,
+      @required this.cookingOrders,
+      @required this.assistanceReq});
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +60,7 @@ class HomePage extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: Cooking(
+                  cookingOrders: cookingOrders,
                   queueOrders: queueOrders,
                 ),
               ),
