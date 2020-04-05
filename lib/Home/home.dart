@@ -1,3 +1,5 @@
+import 'package:adhara_socket_io_example/Home/completed.dart';
+import 'package:adhara_socket_io_example/constants.dart';
 import 'package:flutter/material.dart';
 
 import '../data.dart';
@@ -16,17 +18,17 @@ import 'queued.dart';
 //}
 
 class HomePage extends StatelessWidget {
-  final List<String> list;
-  final List<AssistanceRequest> assistanceReq;
   final List<TableOrder> queueOrders;
   final List<TableOrder> cookingOrders;
-//  Container getButtonSet;
+  final List<TableOrder> completedOrders;
+  final List<AssistanceRequest> assistanceReq;
 
-  HomePage(
-      {this.list,
-      @required this.queueOrders,
-      @required this.cookingOrders,
-      @required this.assistanceReq});
+  HomePage({
+    @required this.queueOrders,
+    @required this.cookingOrders,
+    @required this.completedOrders,
+    @required this.assistanceReq,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,15 +38,6 @@ class HomePage extends StatelessWidget {
         body: Container(
           child: Row(
             children: <Widget>[
-//              Expanded(
-//                  child: Container(
-//                color: Colors.red,
-//                child: Center(
-//                  child: ListView(
-//                    children: list.map((String _) => Text(_ ?? "")).toList(),
-//                  ),
-//                ),
-//              )),
               Expanded(
                 flex: 3,
                 child: Assistance(
@@ -59,9 +52,43 @@ class HomePage extends StatelessWidget {
               ),
               Expanded(
                 flex: 2,
-                child: Cooking(
-                  cookingOrders: cookingOrders,
-                  queueOrders: queueOrders,
+                child: Container(
+                  color: Colors.blueGrey,
+                  child: ListView(
+                    children: <Widget>[
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Container(
+                            color: Colors.black26,
+                            width: double.maxFinite,
+                            child: Center(
+                              child: Text(
+                                'Cooking',
+                                style: homePageS4,
+                              ),
+                            ),
+                          ),
+                          Cooking(
+                            cookingOrders: cookingOrders,
+                          ),
+                          Container(
+                            color: Colors.black26,
+                            width: double.maxFinite,
+                            child: Center(
+                              child: Text(
+                                'Completed',
+                                style: homePageS4,
+                              ),
+                            ),
+                          ),
+                          Completed(
+                            completedOrders: completedOrders,
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

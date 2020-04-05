@@ -5,6 +5,7 @@ import 'package:adhara_socket_io/options.dart';
 import 'package:adhara_socket_io_example/tabs.dart';
 import 'package:flutter/material.dart';
 
+import 'Drawer/drawermenu.dart';
 import 'data.dart';
 
 void main() => runApp(MyApp());
@@ -23,9 +24,16 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   List<String> toPrint = [];
+  int tableCount = 20;
+
+  List<TableDetails> tableDetailsList = [];
+  List<String> staffNameList = [];
+
   List<TableOrder> queueOrders = [];
-  List<AssistanceRequest> assistanceReq = [];
   List<TableOrder> cookingOrders = [];
+  List<TableOrder> completedOrders = [];
+  List<AssistanceRequest> assistanceReq = [];
+  Restaurant restaurant = Restaurant();
 //  Map<Map<>>
   SocketIOManager manager;
   Map<String, SocketIO> sockets = {};
@@ -36,12 +44,13 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     manager = SocketIOManager();
 //    initSocket("web_socket");
-    minitSocket(URI);
+    initSocket(URI);
 //    initSocket('default');
   }
 
-  minitSocket(uri) async {
+  initSocket(uri) async {
     print('hey');
+    print(sockets.length);
     var identifier = 'working';
     SocketIO socket = await manager.createInstance(SocketOptions(
         //Socket IO server URI
@@ -73,10 +82,12 @@ class _MyAppState extends State<MyApp> {
       disconnect('working');
     });
     socket.on("fetch", (data) => pprint(data));
+    socket.on("restaurant_object", (data) => updateRestaurant(data));
     socket.on("new_orders", (data) => fetchNewOrders(data));
     socket.on("assist", (data) => fetchAssistRequests(data));
     socket.on("assist_updates", (data) => fetchAccepted(data));
     socket.on("order_updates", (data) => fetchOrderUpdates(data));
+//    socket.on("user_scan", (data) => fetchScanUpdates(data));
 
     socket.connect();
     sockets[identifier] = socket;
@@ -101,6 +112,23 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  updateTableDetails(String tableName, String seats) {
+    setState(() {
+      if (tableName != null) {
+        TableDetails details = TableDetails.fromStrings(tableName, seats);
+        tableDetailsList.add(details);
+      }
+    });
+  }
+
+  updateStaffDetails(String name) {
+    setState(() {
+      if (name != null) {
+        staffNameList.add(name);
+      }
+    });
+  }
+
   pprint(data) {
     setState(() {
       if (data is Map) {
@@ -108,6 +136,16 @@ class _MyAppState extends State<MyApp> {
       }
       print(data);
       toPrint.add(data);
+    });
+  }
+
+  updateRestaurant(data) {
+    setState(() {
+      if (data is Map) {
+        data = json.encode(data);
+      }
+      print("from restaurant");
+      restaurant = Restaurant.fromJson(jsonDecode(data));
     });
   }
 
@@ -140,11 +178,11 @@ class _MyAppState extends State<MyApp> {
         data = json.encode(data);
       }
 
-      for (var i = 0; i < assistanceReq.length; ++i) {
-        if (assistanceReq[i].oId == jsonDecode(data)['assistance_id']) {
-          assistanceReq[i].acceptedBy = jsonDecode(data)['server_name'];
+      assistanceReq.forEach((request) {
+        if (request.oId == jsonDecode(data)['assistance_id']) {
+          request.acceptedBy = jsonDecode(data)['server_name'];
         }
-      }
+      });
     });
   }
 
@@ -154,16 +192,36 @@ class _MyAppState extends State<MyApp> {
         data = json.encode(data);
       }
       var decoded = jsonDecode(data);
-      queueOrders.forEach((tableorder) {
+
+      var selectedOrder;
+
+      if (decoded['type'] == "cooking") {
+        selectedOrder = queueOrders;
+      } else if (decoded['type'] == "completed") {
+        selectedOrder = cookingOrders;
+      }
+
+      selectedOrder.forEach((tableorder) {
         if (tableorder.oId == decoded['tableorder_id']['\$oid']) {
           tableorder.orders.forEach((order) {
             if (order.oId == decoded['order_id']['\$oid']) {
               order.foodlist.forEach((fooditem) {
                 if (fooditem.foodId == decoded['food_id']) {
-                  print('all id  matched');
+//                  print('all completed id  matched${decoded['food_id']}');
                   fooditem.status = decoded['type'];
-                  pushToCooking(tableorder, order, fooditem);
+                  // push to cooking and completed orders
+                  pushTo(tableorder, order, fooditem, decoded['type']);
+//                  print('coming here at leastsadf');
+
                   order.removeFoodItem(decoded['food_id']);
+//                  print('coming here at least');
+                  tableorder.cleanOrders(order.oId);
+                  if (tableorder.selfDestruct()) {
+//                    print('self destruct');
+
+                    selectedOrder.removeWhere(
+                        (taborder) => taborder.oId == tableorder.oId);
+                  }
                 }
               });
             }
@@ -173,34 +231,58 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  pushToCooking(table_order, order, food_item) {
+  pushTo(table_order, order, food_item, type) {
     setState(() {
-      if (cookingOrders.length == 0) {
+      var foundTable = false;
+      var foundOrder = false;
+      var pushingTo;
+      if (type == "cooking") {
+        pushingTo = cookingOrders;
+      } else if (type == "completed") {
+        pushingTo = completedOrders;
+      }
+
+      if (pushingTo.length == 0) {
         TableOrder tableOrder = TableOrder.fromJsonNew(table_order.toJson());
         Order currOrder = Order.fromJsonNew(order.toJson());
         currOrder.addFirstFood(food_item);
 
         tableOrder.addFirstOrder(currOrder);
         print(tableOrder.orders[0].foodlist[0].name);
-        cookingOrders.add(tableOrder);
+        pushingTo.add(tableOrder);
       } else {
-        cookingOrders.forEach((tableOrder) {
+        pushingTo.forEach((tableOrder) {
           if (table_order.oId == tableOrder.oId) {
+            foundTable = true;
             tableOrder.orders.forEach((currOrder) {
               if (order.oId == currOrder.oId) {
+                foundOrder = true;
                 currOrder.addFood(food_item);
               }
             });
+            if (!foundOrder) {
+              Order currOrder = Order.fromJsonNew(order.toJson());
+              currOrder.addFirstFood(food_item);
+
+              tableOrder.addOrder(currOrder);
+            }
           }
         });
+        if (!foundTable) {
+          TableOrder tableOrder = TableOrder.fromJsonNew(table_order.toJson());
+          Order currOrder = Order.fromJsonNew(order.toJson());
+          currOrder.addFirstFood(food_item);
+
+          tableOrder.addFirstOrder(currOrder);
+          print(tableOrder.orders[0].foodlist[0].name);
+          pushingTo.add(tableOrder);
+        }
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-//    print('cooking orders');
-//    print(cookingOrders);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -213,13 +295,22 @@ class _MyAppState extends State<MyApp> {
 //          list: toPrint,
 //          queueOrders: queueOrders,
 //          getButtonSet: getButtonSet("default"),
-//        ),
+        drawer: Drawer(
+          child: DrawerMenu(
+            updateTableDetails: updateTableDetails,
+            updateStaffDetails: updateStaffDetails,
+            tableDetailsList: tableDetailsList,
+            staffNameList: staffNameList,
+          ),
+        ),
+
         body: TabContainerBottom(
-          list: toPrint,
-          assistanceReq: assistanceReq,
           queueOrders: queueOrders,
           cookingOrders: cookingOrders,
-//          getButtonSet: getButtonSet("default"),
+          completedOrders: completedOrders,
+          assistanceReq: assistanceReq,
+          tableCount: tableCount,
+//
         ),
       ),
     );

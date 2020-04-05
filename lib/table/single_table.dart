@@ -6,11 +6,15 @@ import 'package:flutter/material.dart';
 class SingleTable extends StatelessWidget {
   final List<AssistanceRequest> assistanceReq;
   final List<TableOrder> queueOrders;
+  final List<TableOrder> cookingOrders;
   final List<AssistanceRequest> tableAssistanceReq = [];
   final List<TableOrder> tableOrders = [];
   final tableNo;
   SingleTable(
-      {@required this.assistanceReq, @required this.queueOrders, this.tableNo});
+      {@required this.assistanceReq,
+      @required this.queueOrders,
+      @required this.cookingOrders,
+      this.tableNo});
 
   getTableAssistanceReq() {
     for (var i = 0; i < assistanceReq.length; ++i) {
@@ -21,6 +25,11 @@ class SingleTable extends StatelessWidget {
   }
 
   getTableOrders() {
+    for (var i = 0; i < cookingOrders.length; ++i) {
+      if (tableNo.toString() == cookingOrders[i].table) {
+        tableOrders.add(cookingOrders[i]);
+      }
+    }
     for (var i = 0; i < queueOrders.length; ++i) {
       if (tableNo.toString() == queueOrders[i].table) {
         tableOrders.add(queueOrders[i]);
@@ -346,7 +355,12 @@ class SingleTable extends StatelessWidget {
                                                           Expanded(
                                                             child: Center(
                                                               child: Text(
-                                                                itemStatus ??
+                                                                tableOrders[index]
+                                                                        .orders[
+                                                                            index2]
+                                                                        .foodlist[
+                                                                            index3]
+                                                                        .status ??
                                                                     " ",
                                                                 style:
                                                                     homePageS2,

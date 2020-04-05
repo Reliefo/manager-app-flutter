@@ -10,14 +10,17 @@ class Queued extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 1),
-      padding: EdgeInsets.all(8),
       color: Colors.grey,
       child: Column(
         children: <Widget>[
           Container(
-            child: Text(
-              'Queued',
-              style: homePageS4,
+            color: Colors.black26,
+            width: double.maxFinite,
+            child: Center(
+              child: Text(
+                'Queued',
+                style: homePageS4,
+              ),
             ),
           ),
 

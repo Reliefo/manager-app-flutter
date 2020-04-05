@@ -6,18 +6,19 @@ import 'data.dart';
 import 'table/tableView.dart';
 
 class TabContainerBottom extends StatelessWidget {
-  final List<String> list;
   final List<TableOrder> queueOrders;
-  final List<AssistanceRequest> assistanceReq;
   final List<TableOrder> cookingOrders;
-  final Container getButtonSet;
+  final List<TableOrder> completedOrders;
+  final List<AssistanceRequest> assistanceReq;
+  final tableCount;
 
-  TabContainerBottom(
-      {this.list,
-      this.getButtonSet,
-      @required this.queueOrders,
-      @required this.assistanceReq,
-      @required this.cookingOrders});
+  TabContainerBottom({
+    @required this.queueOrders,
+    @required this.cookingOrders,
+    @required this.completedOrders,
+    @required this.assistanceReq,
+    @required this.tableCount,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,17 +28,21 @@ class TabContainerBottom extends StatelessWidget {
         length: 3,
         child: Scaffold(
           body: TabBarView(
+            physics: NeverScrollableScrollPhysics(),
             children: [
               PersonView(),
               HomePage(
-                list: list,
-                cookingOrders: cookingOrders,
-                assistanceReq: assistanceReq,
                 queueOrders: queueOrders,
+                cookingOrders: cookingOrders,
+                completedOrders: completedOrders,
+                assistanceReq: assistanceReq,
               ),
               TableView(
                 queueOrders: queueOrders,
+                cookingOrders: cookingOrders,
+                completedOrders: completedOrders,
                 assistanceReq: assistanceReq,
+                tableCount: tableCount,
               ),
             ],
           ),

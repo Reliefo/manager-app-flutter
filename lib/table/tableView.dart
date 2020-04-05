@@ -5,9 +5,20 @@ import 'package:flutter/material.dart';
 import 'single_table.dart';
 
 class TableView extends StatelessWidget {
-  final List<AssistanceRequest> assistanceReq;
   final List<TableOrder> queueOrders;
-  TableView({@required this.assistanceReq, @required this.queueOrders});
+  final List<TableOrder> cookingOrders;
+  final List<TableOrder> completedOrders;
+  final List<AssistanceRequest> assistanceReq;
+  final tableCount;
+
+  TableView({
+    @required this.queueOrders,
+    @required this.cookingOrders,
+    @required this.completedOrders,
+    @required this.assistanceReq,
+    @required this.tableCount,
+  });
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -17,11 +28,21 @@ class TableView extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.all(10.0),
             child: GridView.builder(
-              itemCount: 40,
+              itemCount: tableCount,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 5,
               ),
               itemBuilder: (BuildContext context, index) {
+//                queueOrders.forEach((tableorder) {
+//                  if (tableorder.table == (index + 1).toString()) {
+//                    print('here we go');
+//                    tableorder.orders.forEach((foodlist){
+//                      foodlist.foodlist.forEach(f)
+//
+//                    });
+//
+//                  }
+//                });
                 return GestureDetector(
                   child: Card(
                     color: Colors.white,
@@ -71,6 +92,7 @@ class TableView extends StatelessWidget {
                     showModalBottomSheet(
                       context: context,
                       builder: (context) => SingleTable(
+                        cookingOrders: cookingOrders,
                         assistanceReq: assistanceReq,
                         tableNo: index + 1,
                         queueOrders: queueOrders,

@@ -1,24 +1,23 @@
 import 'package:adhara_socket_io_example/constants.dart';
 import 'package:adhara_socket_io_example/data.dart';
 import 'package:date_format/date_format.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class Cooking extends StatelessWidget {
-  final List<TableOrder> cookingOrders;
-  Cooking({
-    @required this.cookingOrders,
+class Completed extends StatelessWidget {
+  final List<TableOrder> completedOrders;
+  Completed({
+    @required this.completedOrders,
   });
 
   @override
   Widget build(BuildContext context) {
-    return cookingOrders.length > 0
+    return completedOrders.length > 0
         ? Flexible(
             fit: FlexFit.loose,
             child: ListView.builder(
               primary: false,
               shrinkWrap: true,
-              itemCount: cookingOrders.length,
+              itemCount: completedOrders.length,
               itemBuilder: (context, index) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,7 +29,7 @@ class Cooking extends StatelessWidget {
                           padding:
                               EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                           child: Text(
-                            'Table : ${cookingOrders[index].table}' ?? " ",
+                            'Table : ${completedOrders[index].table}' ?? " ",
                             style: homePageS1,
                           ),
                         ),
@@ -40,7 +39,7 @@ class Cooking extends StatelessWidget {
                           child: Text(
 //
                             'Arrival Time : ${formatDate(
-                                  (cookingOrders[index].timeStamp),
+                                  (completedOrders[index].timeStamp),
                                   [HH, ':', nn],
                                 )}' ??
                                 " ",
@@ -51,13 +50,13 @@ class Cooking extends StatelessWidget {
                     ),
                     ListView.builder(
                       primary: false,
-                      itemCount: cookingOrders[index].orders.length,
+                      itemCount: completedOrders[index].orders.length,
                       shrinkWrap: true,
                       itemBuilder: (context, index2) {
                         return ListView.builder(
                             primary: false,
                             shrinkWrap: true,
-                            itemCount: cookingOrders[index]
+                            itemCount: completedOrders[index]
                                 .orders[index2]
                                 .foodlist
                                 .length,
@@ -67,7 +66,7 @@ class Cooking extends StatelessWidget {
                                       vertical: 8, horizontal: 12),
                                   child:
                                       // for checking instructions
-                                      cookingOrders[index]
+                                      completedOrders[index]
                                                   .orders[index2]
                                                   .foodlist[index3]
                                                   .instructions ==
@@ -77,7 +76,7 @@ class Cooking extends StatelessWidget {
                                                   CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 Text(
-                                                  '${cookingOrders[index].orders[index2].foodlist[index3].name} x ${cookingOrders[index].orders[index2].foodlist[index3].quantity}' ??
+                                                  '${completedOrders[index].orders[index2].foodlist[index3].name} x ${completedOrders[index].orders[index2].foodlist[index3].quantity}' ??
                                                       " ",
 //
                                                   style: homePageS3,
@@ -89,7 +88,7 @@ class Cooking extends StatelessWidget {
                                                   CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 Text(
-                                                  '${cookingOrders[index].orders[index2].foodlist[index3].name} x ${cookingOrders[index].orders[index2].foodlist[index3].quantity}' ??
+                                                  '${completedOrders[index].orders[index2].foodlist[index3].name} x ${completedOrders[index].orders[index2].foodlist[index3].quantity}' ??
                                                       " ",
 //
                                                   style: homePageS3,
@@ -98,7 +97,7 @@ class Cooking extends StatelessWidget {
                                                 // for checking instructions
 
                                                 Text(
-                                                  cookingOrders[index]
+                                                  completedOrders[index]
                                                           .orders[index2]
                                                           .foodlist[index3]
                                                           .instructions ??
@@ -124,32 +123,5 @@ class Cooking extends StatelessWidget {
               child: Text('No Orders'),
             ),
           );
-
-    // display when there in nothing in the queue
   }
 }
-//    : Flexible(
-//fit: FlexFit.loose,
-//child: Container(
-//child: Column(
-//children: <Widget>[
-//Expanded(
-//child: Padding(
-//padding: const EdgeInsets.all(20.0),
-//child: Image.asset(
-//'assets/icons/plate.png',
-//),
-//),
-//),
-//Expanded(
-//child: Center(
-//child: Text(
-//'No Orders Yet',
-//style: homePageS4,
-//),
-//),
-//),
-//],
-//),
-//),
-//);
