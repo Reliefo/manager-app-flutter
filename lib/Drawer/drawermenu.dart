@@ -1,8 +1,8 @@
 import 'package:adhara_socket_io_example/data.dart';
 import 'package:flutter/material.dart';
 
-import 'add_staff.dart';
-import 'add_tables.dart';
+import 'add_Data.dart';
+import 'assign_Staff.dart';
 
 class DrawerMenu extends StatelessWidget {
   final updateTableDetails;
@@ -25,13 +25,13 @@ class DrawerMenu extends StatelessWidget {
         GestureDetector(
           child: Container(
             padding: EdgeInsets.all(12),
-            child: Text('Add Tables'),
+            child: Text('Add Data'),
           ),
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AddTableData(
+                builder: (context) => AddData(
                   updateTableDetails: updateTableDetails,
                   updateStaffDetails: updateStaffDetails,
                   tableDetailsList: tableDetailsList,
@@ -45,14 +45,15 @@ class DrawerMenu extends StatelessWidget {
         GestureDetector(
           child: Container(
             padding: EdgeInsets.all(12),
-            child: Text('Add Servers'),
+            child: Text('Assign Server'),
           ),
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AddStaffData(
-                  updateTableCount: updateTableDetails,
+                builder: (context) => AssignStaff(
+                  tableDetailsList: tableDetailsList,
+                  staffNameList: staffNameList,
                 ),
               ),
             );

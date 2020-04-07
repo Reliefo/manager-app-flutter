@@ -1,12 +1,23 @@
 class TableDetails {
   String name;
+  String id;
   String seats;
+  List<String> allottedServers;
 
-  TableDetails({this.name, this.seats});
+  TableDetails({this.name, this.seats, this.allottedServers});
 
   TableDetails.fromStrings(String nameFrom, String seatsFrom) {
     name = nameFrom;
     seats = seatsFrom;
+//    allottedServers = allottedServersFrom.forEach((server) {
+//      allottedServers.add(server);
+//    });
+  }
+
+  addDetails(allottedServersFrom) {
+    this.allottedServers = allottedServersFrom.forEach((server) {
+      allottedServers.add(server.toString());
+    });
   }
 }
 

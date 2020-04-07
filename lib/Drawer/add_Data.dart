@@ -1,17 +1,14 @@
 import 'package:adhara_socket_io_example/data.dart';
 import 'package:flutter/material.dart';
 
-class AddTableData extends StatelessWidget {
+class AddData extends StatefulWidget {
   final updateTableDetails;
   final updateStaffDetails;
   final tableCount;
   final List<String> staffNameList;
   final List<TableDetails> tableDetailsList;
-  final tableNameController = TextEditingController();
-  final tableSeatController = TextEditingController();
-  final staffNameController = TextEditingController();
 
-  AddTableData({
+  AddData({
     @required this.updateTableDetails,
     this.updateStaffDetails,
     this.tableCount,
@@ -20,13 +17,26 @@ class AddTableData extends StatelessWidget {
   });
 
   @override
+  _AddDataState createState() => _AddDataState();
+}
+
+class _AddDataState extends State<AddData> {
+  final tableNameController = TextEditingController();
+
+  final tableSeatController = TextEditingController();
+
+  final staffNameController = TextEditingController();
+
+  @override
   Widget build(BuildContext context) {
-    print(staffNameList);
+//    print(widget.staffNameList);
+    print('object');
+    print(tableSeatController.text.isEmpty);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.grey,
-          title: Text('Table Data'),
+          title: Text('Table And Staff Data'),
         ),
         body: Row(
           children: <Widget>[
@@ -84,7 +94,6 @@ class AddTableData extends StatelessWidget {
                               ),
                             ),
                           ),
-
                           Expanded(
                               child: Container(
                             padding: EdgeInsets.all(8),
@@ -92,14 +101,15 @@ class AddTableData extends StatelessWidget {
                               color: Colors.grey,
                               child: Text('Add'),
                               onPressed: () {
-                                if (tableNameController.text != null) {
-                                  updateTableDetails(tableNameController.text,
+                                if (tableNameController.text.isNotEmpty &&
+                                    tableSeatController.text.isNotEmpty) {
+                                  widget.updateTableDetails(
+                                      tableNameController.text,
                                       tableSeatController.text);
                                 }
                               },
                             ),
                           )),
-//
                         ],
                       ),
                       Container(
@@ -108,20 +118,30 @@ class AddTableData extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text('No Of Tables : ${tableDetailsList.length}'),
+                            Text(
+                                'No Of Tables : ${widget.tableDetailsList.length}'),
                           ],
                         ),
                       ),
                       Expanded(
                           child: ListView.builder(
-                              itemCount: tableDetailsList.length,
+                              itemCount: widget.tableDetailsList.length,
                               shrinkWrap: true,
                               primary: false,
                               itemBuilder: (context, index) {
-                                return Container(
-                                  padding: EdgeInsets.symmetric(vertical: 2),
-                                  child:
-                                      Text('${tableDetailsList[index].name}'),
+                                return ListTile(
+                                  title: Text(
+                                      'Table Name : ${widget.tableDetailsList[index].name}'),
+                                  subtitle: Text(
+                                      'Capacity : ${widget.tableDetailsList[index].seats} Seats'),
+                                  trailing: IconButton(
+                                    icon: Icon(Icons.cancel),
+                                    onPressed: () {
+                                      setState(() {
+                                        widget.tableDetailsList.removeAt(index);
+                                      });
+                                    },
+                                  ),
                                 );
                               })),
                     ],
@@ -130,7 +150,7 @@ class AddTableData extends StatelessWidget {
               ),
             ),
 
-            /////// second half screen
+            /////// second half screen for adding and editing staff
             Expanded(
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 12, horizontal: 18),
@@ -175,7 +195,8 @@ class AddTableData extends StatelessWidget {
                               color: Colors.grey,
                               child: Text('Add'),
                               onPressed: () {
-                                updateStaffDetails(staffNameController.text);
+                                widget.updateStaffDetails(
+                                    staffNameController.text);
                               },
                             ),
                           )),
@@ -189,18 +210,18 @@ class AddTableData extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Text(
-                                'No Of Staffs added : ${staffNameList.length}'),
+                                'No Of Staffs added : ${widget.staffNameList.length}'),
                           ],
                         ),
                       ),
                       Expanded(
                           child: ListView.builder(
-                              itemCount: staffNameList.length,
+                              itemCount: widget.staffNameList.length,
                               shrinkWrap: true,
                               primary: false,
                               itemBuilder: (context, index) {
                                 return ListItem(
-                                  staffNameList: staffNameList,
+                                  staffNameList: widget.staffNameList,
                                   index: index,
                                 );
                               })),

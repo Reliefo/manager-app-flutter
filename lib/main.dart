@@ -4,6 +4,7 @@ import 'package:adhara_socket_io/adhara_socket_io.dart';
 import 'package:adhara_socket_io/options.dart';
 import 'package:adhara_socket_io_example/tabs.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'Drawer/drawermenu.dart';
 import 'data.dart';
@@ -114,18 +115,14 @@ class _MyAppState extends State<MyApp> {
 
   updateTableDetails(String tableName, String seats) {
     setState(() {
-      if (tableName != null) {
-        TableDetails details = TableDetails.fromStrings(tableName, seats);
-        tableDetailsList.add(details);
-      }
+      TableDetails details = TableDetails.fromStrings(tableName, seats);
+      tableDetailsList.add(details);
     });
   }
 
   updateStaffDetails(String name) {
     setState(() {
-      if (name != null) {
-        staffNameList.add(name);
-      }
+      staffNameList.add(name);
     });
   }
 
@@ -200,11 +197,16 @@ class _MyAppState extends State<MyApp> {
       } else if (decoded['type'] == "completed") {
         selectedOrder = cookingOrders;
       }
+      print(decoded);
+      print(selectedOrder.length);
 
       selectedOrder.forEach((tableorder) {
-        if (tableorder.oId == decoded['tableorder_id']['\$oid']) {
+        print(tableorder.oId);
+        if (tableorder.oId == decoded['tableorder_id']) {
+//          print('all completed id  matched${decoded['food_id']}');
           tableorder.orders.forEach((order) {
-            if (order.oId == decoded['order_id']['\$oid']) {
+            if (order.oId == decoded['order_id']) {
+//              print('all completed id  matched${decoded['food_id']}');
               order.foodlist.forEach((fooditem) {
                 if (fooditem.foodId == decoded['food_id']) {
 //                  print('all completed id  matched${decoded['food_id']}');
@@ -283,6 +285,11 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    // Set landscape orientation
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
