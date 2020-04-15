@@ -10,14 +10,14 @@ class TabContainerBottom extends StatelessWidget {
   final List<TableOrder> cookingOrders;
   final List<TableOrder> completedOrders;
   final List<AssistanceRequest> assistanceReq;
-  final tableCount;
+  final restaurant;
 
   TabContainerBottom({
     @required this.queueOrders,
     @required this.cookingOrders,
     @required this.completedOrders,
     @required this.assistanceReq,
-    @required this.tableCount,
+    @required this.restaurant,
   });
 
   @override
@@ -42,7 +42,7 @@ class TabContainerBottom extends StatelessWidget {
                 cookingOrders: cookingOrders,
                 completedOrders: completedOrders,
                 assistanceReq: assistanceReq,
-                tableCount: tableCount,
+                restaurant: restaurant,
               ),
             ],
           ),

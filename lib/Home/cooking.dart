@@ -59,7 +59,7 @@ class Cooking extends StatelessWidget {
                             shrinkWrap: true,
                             itemCount: cookingOrders[index]
                                 .orders[index2]
-                                .foodlist
+                                .foodList
                                 .length,
                             itemBuilder: (context, index3) {
                               return Container(
@@ -69,7 +69,7 @@ class Cooking extends StatelessWidget {
                                       // for checking instructions
                                       cookingOrders[index]
                                                   .orders[index2]
-                                                  .foodlist[index3]
+                                                  .foodList[index3]
                                                   .instructions ==
                                               "no"
                                           ? Column(
@@ -77,7 +77,7 @@ class Cooking extends StatelessWidget {
                                                   CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 Text(
-                                                  '${cookingOrders[index].orders[index2].foodlist[index3].name} x ${cookingOrders[index].orders[index2].foodlist[index3].quantity}' ??
+                                                  '${cookingOrders[index].orders[index2].foodList[index3].name} x ${cookingOrders[index].orders[index2].foodList[index3].quantity}' ??
                                                       " ",
 //
                                                   style: homePageS3,
@@ -89,7 +89,7 @@ class Cooking extends StatelessWidget {
                                                   CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 Text(
-                                                  '${cookingOrders[index].orders[index2].foodlist[index3].name} x ${cookingOrders[index].orders[index2].foodlist[index3].quantity}' ??
+                                                  '${cookingOrders[index].orders[index2].foodList[index3].name} x ${cookingOrders[index].orders[index2].foodList[index3].quantity}' ??
                                                       " ",
 //
                                                   style: homePageS3,
@@ -100,7 +100,7 @@ class Cooking extends StatelessWidget {
                                                 Text(
                                                   cookingOrders[index]
                                                           .orders[index2]
-                                                          .foodlist[index3]
+                                                          .foodList[index3]
                                                           .instructions ??
                                                       " ",
                                                 ),

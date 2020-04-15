@@ -70,7 +70,7 @@ class Queued extends StatelessWidget {
                                   shrinkWrap: true,
                                   itemCount: queueOrders[index]
                                       .orders[index2]
-                                      .foodlist
+                                      .foodList
                                       .length,
                                   itemBuilder: (context, index3) {
                                     return Container(
@@ -80,7 +80,7 @@ class Queued extends StatelessWidget {
                                             // for checking instructions
                                             queueOrders[index]
                                                         .orders[index2]
-                                                        .foodlist[index3]
+                                                        .foodList[index3]
                                                         .instructions ==
                                                     "no"
                                                 ? Column(
@@ -89,7 +89,7 @@ class Queued extends StatelessWidget {
                                                             .start,
                                                     children: <Widget>[
                                                       Text(
-                                                        '${queueOrders[index].orders[index2].foodlist[index3].name} x ${queueOrders[index].orders[index2].foodlist[index3].quantity}' ??
+                                                        '${queueOrders[index].orders[index2].foodList[index3].name} x ${queueOrders[index].orders[index2].foodList[index3].quantity}' ??
                                                             " ",
 //
                                                         style: homePageS3,
@@ -102,7 +102,7 @@ class Queued extends StatelessWidget {
                                                             .start,
                                                     children: <Widget>[
                                                       Text(
-                                                        '${queueOrders[index].orders[index2].foodlist[index3].name} x ${queueOrders[index].orders[index2].foodlist[index3].quantity}' ??
+                                                        '${queueOrders[index].orders[index2].foodList[index3].name} x ${queueOrders[index].orders[index2].foodList[index3].quantity}' ??
                                                             " ",
 //
                                                         style: homePageS3,
@@ -113,7 +113,7 @@ class Queued extends StatelessWidget {
                                                       Text(
                                                         queueOrders[index]
                                                                 .orders[index2]
-                                                                .foodlist[
+                                                                .foodList[
                                                                     index3]
                                                                 .instructions ??
                                                             " ",

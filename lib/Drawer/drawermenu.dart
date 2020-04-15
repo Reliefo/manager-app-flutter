@@ -1,19 +1,24 @@
 import 'package:adhara_socket_io_example/data.dart';
 import 'package:flutter/material.dart';
 
+import 'addMenu.dart';
 import 'add_Data.dart';
 import 'assign_Staff.dart';
 
 class DrawerMenu extends StatelessWidget {
-  final updateTableDetails;
-  final updateStaffDetails;
-  final List<TableDetails> tableDetailsList;
-  final List<String> staffNameList;
+  final Restaurant restaurant;
+  final updateTableDetailsToCloud;
+
+  final updateMenuToCloud;
+  final get_rest;
+  final login;
+
   DrawerMenu({
-    @required this.updateTableDetails,
-    this.updateStaffDetails,
-    @required this.tableDetailsList,
-    @required this.staffNameList,
+    @required this.restaurant,
+    this.updateTableDetailsToCloud,
+    this.updateMenuToCloud,
+    this.get_rest,
+    this.login,
   });
   @override
   Widget build(BuildContext context) {
@@ -32,10 +37,8 @@ class DrawerMenu extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => AddData(
-                  updateTableDetails: updateTableDetails,
-                  updateStaffDetails: updateStaffDetails,
-                  tableDetailsList: tableDetailsList,
-                  staffNameList: staffNameList,
+                  updateTableDetailsToCloud: updateTableDetailsToCloud,
+                  restaurant: restaurant,
                 ),
               ),
             );
@@ -52,11 +55,44 @@ class DrawerMenu extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => AssignStaff(
-                  tableDetailsList: tableDetailsList,
-                  staffNameList: staffNameList,
+                  restaurant: restaurant,
+                  updateTableDetailsToCloud: updateTableDetailsToCloud,
                 ),
               ),
             );
+          },
+        ),
+        Divider(),
+        GestureDetector(
+          child: Container(
+            padding: EdgeInsets.all(12),
+            child: Text('Add Menu'),
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddMenu(
+                  restaurant: restaurant,
+                  updateMenuToCloud: updateMenuToCloud,
+                ),
+              ),
+            );
+          },
+        ),
+        Divider(),
+        ///////////////////
+
+        FlatButton(
+          child: Text('login'),
+          onPressed: () {
+            login();
+          },
+        ),
+        FlatButton(
+          child: Text('get'),
+          onPressed: () {
+            get_rest();
           },
         ),
       ],

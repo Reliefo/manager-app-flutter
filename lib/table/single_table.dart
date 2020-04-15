@@ -4,38 +4,39 @@ import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 
 class SingleTable extends StatelessWidget {
-  final List<AssistanceRequest> assistanceReq;
-  final List<TableOrder> queueOrders;
-  final List<TableOrder> cookingOrders;
-  final List<AssistanceRequest> tableAssistanceReq = [];
-  final List<TableOrder> tableOrders = [];
-  final tableNo;
+//  final List<AssistanceRequest> assistanceReq;
+//  final List<TableOrder> queueOrders;
+//  final List<TableOrder> cookingOrders;
+//  final List<AssistanceRequest> tableAssistanceReq = [];
+//  final List<TableOrder> tableOrders = [];
+  final Tables table;
   SingleTable(
-      {@required this.assistanceReq,
-      @required this.queueOrders,
-      @required this.cookingOrders,
-      this.tableNo});
+      {
+//        @required this.assistanceReq,
+//      @required this.queueOrders,
+//      @required this.cookingOrders,
+      this.table});
 
-  getTableAssistanceReq() {
-    for (var i = 0; i < assistanceReq.length; ++i) {
-      if (tableNo.toString() == assistanceReq[i].table) {
-        tableAssistanceReq.add(assistanceReq[i]);
-      }
-    }
-  }
+//  getTableAssistanceReq() {
+//    for (var i = 0; i < assistanceReq.length; ++i) {
+//      if (table.name.toString() == assistanceReq[i].table) {
+//        tableAssistanceReq.add(assistanceReq[i]);
+//      }
+//    }
+//  }
 
-  getTableOrders() {
-    for (var i = 0; i < cookingOrders.length; ++i) {
-      if (tableNo.toString() == cookingOrders[i].table) {
-        tableOrders.add(cookingOrders[i]);
-      }
-    }
-    for (var i = 0; i < queueOrders.length; ++i) {
-      if (tableNo.toString() == queueOrders[i].table) {
-        tableOrders.add(queueOrders[i]);
-      }
-    }
-  }
+//  getTableOrders() {
+//    for (var i = 0; i < cookingOrders.length; ++i) {
+//      if (tableName.toString() == cookingOrders[i].table) {
+//        tableOrders.add(cookingOrders[i]);
+//      }
+//    }
+//    for (var i = 0; i < queueOrders.length; ++i) {
+//      if (tableName.toString() == queueOrders[i].table) {
+//        tableOrders.add(queueOrders[i]);
+//      }
+//    }
+//  }
 
   final startTime = '4:20 PM';
 
@@ -47,8 +48,8 @@ class SingleTable extends StatelessWidget {
   final itemStatus = 'Pending';
   @override
   Widget build(BuildContext context) {
-    getTableAssistanceReq();
-    getTableOrders();
+//    getTableAssistanceReq();
+//    getTableOrders();
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -82,7 +83,7 @@ class SingleTable extends StatelessWidget {
                     Expanded(
                       child: Center(
                         child: Text(
-                          'TABLE : $tableNo' ?? " ",
+                          'TABLE : ${table.name}' ?? " ",
                           style: homePageS1,
                         ),
                       ),
@@ -148,10 +149,11 @@ class SingleTable extends StatelessWidget {
                             ),
 
                             //to check if there is any assistance request for this table or not
-                            tableAssistanceReq.length > 0
+                            table.tableAssistanceRequest != null
                                 ? Expanded(
                                     child: ListView.builder(
-                                      itemCount: tableAssistanceReq.length,
+                                      itemCount:
+                                          table.tableAssistanceRequest.length,
                                       shrinkWrap: true,
                                       itemBuilder: (context, index) {
                                         return Container(
@@ -162,7 +164,9 @@ class SingleTable extends StatelessWidget {
                                               Expanded(
                                                 child: Center(
                                                   child: Text(
-                                                    tableAssistanceReq[index]
+                                                    table
+                                                            .tableAssistanceRequest[
+                                                                index]
                                                             .assistanceType ??
                                                         " ",
                                                     style: homePageS2,
@@ -173,7 +177,8 @@ class SingleTable extends StatelessWidget {
                                                 child: Center(
                                                   child: Text(
                                                     '${formatDate(
-                                                          (tableAssistanceReq[
+                                                          (table
+                                                              .tableAssistanceRequest[
                                                                   index]
                                                               .timeStamp),
                                                           [HH, ':', nn],
@@ -186,7 +191,9 @@ class SingleTable extends StatelessWidget {
                                               Expanded(
                                                 child: Center(
                                                   child: Text(
-                                                    tableAssistanceReq[index]
+                                                    table
+                                                            .tableAssistanceRequest[
+                                                                index]
                                                             .acceptedBy ??
                                                         "Pending",
                                                     style: homePageS2,
@@ -267,23 +274,25 @@ class SingleTable extends StatelessWidget {
                               ),
                             ),
                             //to check if there is any orders for this table or not
-                            tableOrders.length > 0
+                            table.tableOrders != null
                                 ? Expanded(
                                     child: ListView.builder(
                                         shrinkWrap: true,
-                                        itemCount: tableOrders.length,
+                                        itemCount: table.tableOrders.length,
                                         itemBuilder: (context, index) {
                                           return ListView.builder(
                                               primary: false,
                                               shrinkWrap: true,
-                                              itemCount: tableOrders[index]
+                                              itemCount: table
+                                                  .tableOrders[index]
                                                   .orders
                                                   .length,
                                               itemBuilder: (context, index2) {
                                                 return ListView.builder(
-                                                  itemCount: tableOrders[index]
+                                                  itemCount: table
+                                                      .tableOrders[index]
                                                       .orders[index2]
-                                                      .foodlist
+                                                      .foodList
                                                       .length,
                                                   primary: false,
                                                   shrinkWrap: true,
@@ -298,10 +307,12 @@ class SingleTable extends StatelessWidget {
                                                           Expanded(
                                                             flex: 2,
                                                             child: Text(
-                                                              tableOrders[index]
+                                                              table
+                                                                      .tableOrders[
+                                                                          index]
                                                                       .orders[
                                                                           index2]
-                                                                      .foodlist[
+                                                                      .foodList[
                                                                           index3]
                                                                       .name ??
                                                                   " ",
@@ -311,7 +322,7 @@ class SingleTable extends StatelessWidget {
                                                           Expanded(
                                                             child: Center(
                                                               child: Text(
-                                                                '${tableOrders[index].orders[index2].foodlist[index3].quantity}' ??
+                                                                '${table.tableOrders[index].orders[index2].foodList[index3].quantity}' ??
                                                                     " ",
                                                                 style:
                                                                     homePageS2,
@@ -321,10 +332,12 @@ class SingleTable extends StatelessWidget {
                                                           Expanded(
                                                             child: Center(
                                                               child: Text(
-                                                                tableOrders[index]
+                                                                table
+                                                                        .tableOrders[
+                                                                            index]
                                                                         .orders[
                                                                             index2]
-                                                                        .foodlist[
+                                                                        .foodList[
                                                                             index3]
                                                                         .price ??
                                                                     " ",
@@ -337,7 +350,8 @@ class SingleTable extends StatelessWidget {
                                                             child: Center(
                                                               child: Text(
                                                                 '${formatDate(
-                                                                      (tableOrders[
+                                                                      (table
+                                                                          .tableOrders[
                                                                               index]
                                                                           .timeStamp),
                                                                       [
@@ -355,10 +369,12 @@ class SingleTable extends StatelessWidget {
                                                           Expanded(
                                                             child: Center(
                                                               child: Text(
-                                                                tableOrders[index]
+                                                                table
+                                                                        .tableOrders[
+                                                                            index]
                                                                         .orders[
                                                                             index2]
-                                                                        .foodlist[
+                                                                        .foodList[
                                                                             index3]
                                                                         .status ??
                                                                     " ",

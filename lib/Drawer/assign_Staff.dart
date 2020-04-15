@@ -1,11 +1,15 @@
 import 'package:adhara_socket_io_example/constants.dart';
+import 'package:adhara_socket_io_example/data.dart';
 import 'package:flutter/material.dart';
 
 class AssignStaff extends StatefulWidget {
-  final tableDetailsList;
-  final staffNameList;
+  final Restaurant restaurant;
+  final updateTableDetailsToCloud;
 
-  AssignStaff({@required this.tableDetailsList, this.staffNameList});
+  AssignStaff({
+    @required this.restaurant,
+    this.updateTableDetailsToCloud,
+  });
 
   @override
   _AssignStaffState createState() => _AssignStaffState();
@@ -13,24 +17,23 @@ class AssignStaff extends StatefulWidget {
 
 class _AssignStaffState extends State<AssignStaff> {
   final myController = TextEditingController();
-  String selectedTable;
+  Tables selectedTable;
+  List<Staff> selectedStaff = [];
 
-  final List<String> tableNames = [];
-  final List<String> selectedStaff = [];
-  createTableName(tableDetails) {
-    setState(() {
-      tableDetails.forEach((detail) {
-        tableNames.add(detail.name.toString());
-      });
+  sendAssignedStaff() {
+    List selectedId = [];
+    selectedStaff.forEach((f) {
+      selectedId.add(f.oid);
     });
+
+//    widget.updateAssignedStaffToCloud(selectedTable.oid, selectedId);
+    widget.updateTableDetailsToCloud(
+        {"table_id": selectedTable.oid, "assigned_staff": selectedId},
+        "assign_staff");
   }
 
   @override
   Widget build(BuildContext context) {
-//    createTableName(widget.tableDetailsList);
-//    print(widget.tableDetailsList[0].allottedServers);
-//    print(selectedStaff[0].runtimeType);
-
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -61,17 +64,19 @@ class _AssignStaffState extends State<AssignStaff> {
                             child: Container(
                               padding: EdgeInsets.all(16),
                               child: DropdownButton(
-                                items: tableNames.map<DropdownMenuItem<String>>(
-                                    (String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
+                                items: widget.restaurant.tables != null
+                                    ? widget.restaurant.tables.map((table) {
+                                        return DropdownMenuItem(
+                                          value: table,
+                                          child: Text(table.name),
+                                        );
+                                      }).toList()
+                                    : [],
                                 hint: Text('Select the Table'),
                                 isExpanded: true,
                                 onChanged: (selected) {
                                   setState(() {
+                                    print(selected);
                                     selectedTable = selected;
                                   });
                                 },
@@ -82,14 +87,14 @@ class _AssignStaffState extends State<AssignStaff> {
                             child: Container(
                               padding: EdgeInsets.all(16),
                               child: DropdownButton(
-                                items: widget.staffNameList
-                                    .map<DropdownMenuItem<String>>(
-                                        (String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
+                                items: widget.restaurant.staff != null
+                                    ? widget.restaurant.staff.map((staff) {
+                                        return DropdownMenuItem(
+                                          value: staff,
+                                          child: Text(staff.name),
+                                        );
+                                      }).toList()
+                                    : [],
                                 hint: Text('Select the Staff'),
                                 isExpanded: true,
                                 onChanged: (selected) {
@@ -105,10 +110,15 @@ class _AssignStaffState extends State<AssignStaff> {
                       Container(
                         padding:
                             EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                        child: Text(
-                          'Selected Table : $selectedTable',
-                          style: homePageS1,
-                        ),
+                        child: selectedTable != null
+                            ? Text(
+                                'Selected Table : ${selectedTable.name}',
+                                style: homePageS1,
+                              )
+                            : Text(
+                                'Selected Table :',
+                                style: homePageS1,
+                              ),
                       ),
                       Container(
                         padding:
@@ -127,7 +137,7 @@ class _AssignStaffState extends State<AssignStaff> {
                             itemBuilder: (context, index) {
                               return ListTile(
                                 title: Text(
-                                  selectedStaff[index],
+                                  selectedStaff[index].name,
                                   style: homePageS2,
                                 ),
                                 trailing: IconButton(
@@ -147,12 +157,15 @@ class _AssignStaffState extends State<AssignStaff> {
                         ),
                         onPressed: () {
                           setState(() {
-                            widget.tableDetailsList.forEach((detail) {
-                              if (detail.name == selectedTable) {
-                                print('table matched: ${detail.name}');
-                                detail.addDetails(selectedStaff);
+                            widget.restaurant.tables.forEach((table) {
+                              if (table.oid == selectedTable.oid) {
+                                print('table matched: ${table.name}');
+                                table.addTableStaff(selectedStaff);
                               }
                             });
+                            sendAssignedStaff();
+
+                            selectedStaff.clear();
                           });
                         },
                       ),
@@ -178,52 +191,67 @@ class _AssignStaffState extends State<AssignStaff> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text('No Of Tables : 20'),
-                            Text('No Of Servers : 10'),
+                            Text(widget.restaurant.tables != null
+                                ? 'No Of Tables : ${widget.restaurant.tables.length}'
+                                : 'No Of Tables : 0 '),
+                            Text(widget.restaurant.tables != null
+                                ? 'No Of Staff : ${widget.restaurant.staff.length}'
+                                : 'No Of Staff : 0'),
                           ],
                         ),
                       ),
                       Expanded(
-                        child: GridView.builder(
-                            itemCount: widget.tableDetailsList.length,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3),
-                            itemBuilder: (BuildContext context, index) {
-                              return Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 12, horizontal: 16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Container(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 8),
-                                      child: Text(
-                                        widget.tableDetailsList[index].name,
-                                        style: homePageS1,
-                                      ),
+                        child: widget.restaurant.tables != null
+                            ? GridView.builder(
+                                itemCount: widget.restaurant.tables.length,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 3),
+                                itemBuilder: (BuildContext context, index) {
+                                  return Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 12, horizontal: 16),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Container(
+                                          padding:
+                                              EdgeInsets.symmetric(vertical: 8),
+                                          child: Text(
+                                            widget
+                                                .restaurant.tables[index].name,
+                                            style: homePageS1,
+                                          ),
+                                        ),
+                                        widget.restaurant.tables[index].staff !=
+                                                null
+                                            ? Expanded(
+                                                child: ListView.builder(
+                                                    itemCount: widget
+                                                        .restaurant
+                                                        .tables[index]
+                                                        .staff
+                                                        .length,
+                                                    shrinkWrap: true,
+                                                    primary: false,
+                                                    itemBuilder:
+                                                        (context, index2) {
+                                                      return Container(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                vertical: 2),
+                                                        child: Text(
+                                                            'staff : ${widget.restaurant.tables[index].staff[index2].name}'),
+                                                      );
+                                                    }),
+                                              )
+                                            : Text('assign staff'),
+                                      ],
                                     ),
-
-//                                    ListView.builder(
-//                                            itemCount: widget
-//                                                .tableDetailsList[index]
-//                                                .allottedServers
-//                                                .length,
-//                                            shrinkWrap: true,
-//                                            primary: false,
-//                                            itemBuilder: (context, index2) {
-//                                              return Container(
-//                                                padding: EdgeInsets.symmetric(
-//                                                    vertical: 2),
-//                                                child: Text(
-//                                                    'server : ${widget.tableDetailsList[index].allottedServers[index2]}'),
-//                                              );
-//                                            }),
-                                  ],
-                                ),
-                              );
-                            }),
+                                  );
+                                })
+                            : Text('Add tables first'),
                       )
                     ],
                   ),

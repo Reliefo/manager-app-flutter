@@ -9,14 +9,14 @@ class TableView extends StatelessWidget {
   final List<TableOrder> cookingOrders;
   final List<TableOrder> completedOrders;
   final List<AssistanceRequest> assistanceReq;
-  final tableCount;
+  final Restaurant restaurant;
 
   TableView({
     @required this.queueOrders,
     @required this.cookingOrders,
     @required this.completedOrders,
     @required this.assistanceReq,
-    @required this.tableCount,
+    @required this.restaurant,
   });
 
   @override
@@ -28,31 +28,24 @@ class TableView extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.all(10.0),
             child: GridView.builder(
-              itemCount: tableCount,
+              itemCount: restaurant.tables.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 5,
               ),
               itemBuilder: (BuildContext context, index) {
-//                queueOrders.forEach((tableorder) {
-//                  if (tableorder.table == (index + 1).toString()) {
-//                    print('here we go');
-//                    tableorder.orders.forEach((foodlist){
-//                      foodlist.foodlist.forEach(f)
-//
-//                    });
-//
-//                  }
-//                });
+                print(restaurant.tables[index].noOfUsers);
                 return GestureDetector(
                   child: Card(
                     color: Colors.white,
                     child: Container(
-                      color: Color(0xffFF6347),
+                      color: restaurant.tables[index].noOfUsers == null
+                          ? Color(0xffFF6347)
+                          : Colors.green,
                       padding: EdgeInsets.symmetric(vertical: 10),
                       child: Column(
                         children: <Widget>[
                           Text(
-                            'Table-${index + 1}',
+                            'Table-${restaurant.tables[index].name}',
                             style: homePageS1,
                           ),
                           Container(
@@ -67,10 +60,12 @@ class TableView extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: <Widget>[
                                       TextDisplay(
-                                        text: 'Servers : 04',
+                                        text:
+                                            'Servers : ${restaurant.tables[index].staff != null ? restaurant.tables[index].staff.length : '0'}',
                                       ),
                                       TextDisplay(
-                                        text: 'Scanned : 02',
+                                        text:
+                                            'Scanned : ${restaurant.tables[index].noOfUsers != null ? restaurant.tables[index].noOfUsers : '0'}',
                                       ),
                                       TextDisplay(
                                         text: 'Cooking : 01',
@@ -92,10 +87,10 @@ class TableView extends StatelessWidget {
                     showModalBottomSheet(
                       context: context,
                       builder: (context) => SingleTable(
-                        cookingOrders: cookingOrders,
-                        assistanceReq: assistanceReq,
-                        tableNo: index + 1,
-                        queueOrders: queueOrders,
+                        table: restaurant.tables[index],
+//                        assistanceReq: assistanceReq,
+//                        cookingOrders: cookingOrders,
+//                        queueOrders: queueOrders,
                       ),
                     );
                   },
