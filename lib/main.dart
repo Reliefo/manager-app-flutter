@@ -12,10 +12,10 @@ import 'session.dart';
 
 void main() => runApp(MyApp());
 
-const String URI = "http://192.168.0.9:5050/";
+//const String URI = "http://192.168.0.9:5050/";
 
-//const String URI =
-//    "http://ec2-13-233-196-75.ap-south-1.compute.amazonaws.com:5050/";
+const String URI =
+    "http://ec2-13-232-202-63.ap-south-1.compute.amazonaws.com:5050/";
 
 class MyApp extends StatefulWidget {
   @override
@@ -53,7 +53,7 @@ class _MyAppState extends State<MyApp> {
 
   login() async {
     var output = await loginSession.post("http://192.168.0.9:5050/login",
-        {"username": "akshay_23", "password": "password123"});
+        {"username": "KID001", "password": "password123"});
     print("I am loggin in ");
     initSocket(URI);
     print(output);
@@ -63,7 +63,7 @@ class _MyAppState extends State<MyApp> {
 //    print(resp);
   }
 
-  get_rest() async {
+  getRest() async {
     var output = await loginSession.get("http://192.168.0.9:5050/rest");
     print(output);
   }
@@ -76,7 +76,7 @@ class _MyAppState extends State<MyApp> {
     SocketIO socket = await manager.createInstance(SocketOptions(
         //Socket IO server URI
         uri,
-        nameSpace: "/adhara",
+        nameSpace: "/reliefo",
         //Query params - can be used for authentication
         query: {
           "jwt": loginSession.jwt,
@@ -96,8 +96,8 @@ class _MyAppState extends State<MyApp> {
       pprint({"Status": "connected..."});
 //      pprint(data);
 //      sendMessage("DEFAULT");
-      socket.emit("fetchme", ["Hello world!"]);
-      socket.emit("rest_with_id", ["BNGHSR0002"]);
+      socket.emit("fetch_handshake", ["Hello world!"]);
+      socket.emit("rest_with_id", ["BNGHSR0001"]);
       socket.emit("fetch_order_lists", ["arguments"]);
     });
     socket.onConnectError(pprint);
@@ -140,6 +140,16 @@ class _MyAppState extends State<MyApp> {
     setState(() => _isProbablyConnected[identifier] = false);
   }
 
+  pprint(data) {
+    setState(() {
+      if (data is Map) {
+        data = json.encode(data);
+      }
+      print(data);
+      toPrint.add(data);
+    });
+  }
+
   sendMessage(identifier) {
     if (sockets[identifier] != null) {
       print("sending message from '$identifier'...");
@@ -150,6 +160,18 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  updateRestaurant(data) {
+    setState(() {
+      if (data is Map) {
+        data = json.encode(data);
+      }
+
+      var decoded = jsonDecode(data);
+      print('here in side upate');
+      restaurant = Restaurant.fromJson(decoded);
+    });
+  }
+
   fetchInitialLists(data) {
     setState(() {
       if (data is Map) {
@@ -157,6 +179,7 @@ class _MyAppState extends State<MyApp> {
       }
 
       var decoded = jsonDecode(data);
+      print(decoded);
 
       queueOrders.clear();
       cookingOrders.clear();
@@ -177,160 +200,8 @@ class _MyAppState extends State<MyApp> {
 
         completedOrders.add(order);
       });
-    });
-  }
 
-  updateMenuToCloud(localData, String type) {
-    print('before sending food to cloud');
-
-    var encode;
-
-    if (type == "add_food_menu") {
-      encode = jsonEncode(
-          {"restaurant_id": "BNGHSR0002", "type": type, "category": localData});
-    }
-
-    if (type == "add_bar_menu") {
-      encode = jsonEncode(
-          {"restaurant_id": "BNGHSR0002", "type": type, "category": localData});
-    }
-
-    if (type == "add_food_item") {
-      localData.forEach((v) {
-        encode = jsonEncode({
-          "restaurant_id": "BNGHSR0002",
-          "type": type,
-          "category_id": v['category_id'],
-          "food_dict": v['food_dict'],
-        });
-      });
-    }
-
-    print(encode);
-    sockets['working'].emit('configuring_restaurant', [encode]);
-  }
-
-  updateTableDetailsToCloud(localData, String type) {
-    print(type);
-    var encode;
-
-    if (type == "add_tables") {
-      encode = jsonEncode(
-          {"restaurant_id": "BNGHSR0002", "type": type, "tables": localData});
-    }
-
-    if (type == "delete_table") {
-      encode = jsonEncode(
-          {"restaurant_id": "BNGHSR0002", "type": type, "table_id": localData});
-    }
-
-    if (type == "add_staff") {
-      encode = jsonEncode(
-          {"restaurant_id": "BNGHSR0002", "type": type, "staff": localData});
-    }
-
-    if (type == "delete_staff") {
-      encode = jsonEncode(
-          {"restaurant_id": "BNGHSR0002", "type": type, "staff_id": localData});
-    }
-
-    if (type == "assign_staff") {
-      encode = jsonEncode({
-        "restaurant_id": "BNGHSR0002",
-        "type": type,
-        "table_id": localData["table_id"],
-        "assigned_staff": localData["assigned_staff"]
-      });
-    }
-
-    print(encode);
-
-    sockets['working'].emit('configuring_restaurant', [encode]);
-    print('uploded to cloud');
-  }
-
-  configuringRestaurant(data) {
-    //todo: refactor
-    setState(() {
-      if (data is Map) {
-        data = json.encode(data);
-      }
-
-      var decode = jsonDecode(data);
-      print('configuring restaurant');
-      print(decode);
-
-      if (decode["type"] == "add_tables") {
-        restaurant.addTableDetails(decode['tables']);
-      }
-
-      if (decode["type"] == "delete_table") {
-        restaurant.tables
-            .removeWhere((table) => table.oid == decode["table_id"]);
-      }
-      if (decode["type"] == "delete_staff") {
-        restaurant.staff
-            .removeWhere((staff) => staff.oid == decode["staff_id"]);
-      }
-
-      if (decode["type"] == "add_staff") {
-        restaurant.addStaffDetails(decode['staff']);
-      }
-      if (decode["type"] == "add_food_menu") {
-        print("food menu");
-        restaurant.addFoodMenuCategory(decode["category"]);
-      }
-      if (decode["type"] == "add_bar_menu") {
-        restaurant.addBarMenuCategory(decode["category"]);
-      }
-
-      if (decode["type"] == "add_food_item") {
-        restaurant.foodMenu.forEach((category) {
-          if (category.oid == decode["category_id"]) {
-            print("${category.name} matched");
-            category.addFoodItem(decode["food_dict"]);
-          }
-        });
-      }
-
-      if (decode["type"] == "assign_staff") {
-        restaurant.tables.forEach((table) {
-          if (table.oid == decode["table_id"]) {
-            print('table matched: ${table.name}');
-
-            table.addTableStaff(decode['assigned_staff']);
-            //todo: change only id to full staff object from backend
-          }
-        });
-      }
-//      reply for assigned staff      {restaurant_id: BNGHSR0002, type: assign_staff,
-//       table_id: 5e90b5184584a1d3d9e641db, assigned_staff: [5e90bc2f4584a1d3d9e641de, 5e90b5294584a1d3d9e641dc]}
-
-//  reply for adding food    {restaurant_id: BNGHSR0002, type: add_food_item, category_id: 5e94959afe4ce65500586c26,
-//      food_dict: {name: new food, description: tyukk, price: 45p, food_options: {options: {},
-//      choices: []}, food_id: 5e949ed8fe4ce65500586c29}}
-    });
-  }
-
-  pprint(data) {
-    setState(() {
-      if (data is Map) {
-        data = json.encode(data);
-      }
-      print(data);
-      toPrint.add(data);
-    });
-  }
-
-  updateRestaurant(data) {
-    setState(() {
-      if (data is Map) {
-        data = json.encode(data);
-      }
-
-      var decoded = jsonDecode(data);
-
-      restaurant = Restaurant.fromJson(decoded);
+      addTableOrders();
     });
   }
 
@@ -343,31 +214,6 @@ class _MyAppState extends State<MyApp> {
       TableOrder order = TableOrder.fromJson(jsonDecode(data));
 
       queueOrders.add(order);
-    });
-  }
-
-  fetchAssistRequests(data) {
-    setState(() {
-      if (data is Map) {
-        data = json.encode(data);
-      }
-
-      AssistanceRequest assist = AssistanceRequest.fromJson(jsonDecode(data));
-      assistanceReq.add(assist);
-    });
-  }
-
-  fetchAccepted(data) {
-    setState(() {
-      if (data is Map) {
-        data = json.encode(data);
-      }
-
-      assistanceReq.forEach((request) {
-        if (request.oId == jsonDecode(data)['assistance_id']) {
-          request.acceptedBy = jsonDecode(data)['staff_name'];
-        }
-      });
     });
   }
 
@@ -422,7 +268,7 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  pushTo(table_order, order, food_item, type) {
+  pushTo(table_order, order, foodItem, type) {
     setState(() {
       var foundTable = false;
       var foundOrder = false;
@@ -436,7 +282,7 @@ class _MyAppState extends State<MyApp> {
       if (pushingTo.length == 0) {
         TableOrder tableOrder = TableOrder.fromJsonNew(table_order.toJson());
         Order currOrder = Order.fromJsonNew(order.toJson());
-        currOrder.addFirstFood(food_item);
+        currOrder.addFirstFood(foodItem);
 
         tableOrder.addFirstOrder(currOrder);
 //        print(tableOrder.orders[0].foodList[0].name);
@@ -448,12 +294,12 @@ class _MyAppState extends State<MyApp> {
             tableOrder.orders.forEach((currOrder) {
               if (order.oId == currOrder.oId) {
                 foundOrder = true;
-                currOrder.addFood(food_item);
+                currOrder.addFood(foodItem);
               }
             });
             if (!foundOrder) {
               Order currOrder = Order.fromJsonNew(order.toJson());
-              currOrder.addFirstFood(food_item);
+              currOrder.addFirstFood(foodItem);
 
               tableOrder.addOrder(currOrder);
             }
@@ -462,7 +308,7 @@ class _MyAppState extends State<MyApp> {
         if (!foundTable) {
           TableOrder tableOrder = TableOrder.fromJsonNew(table_order.toJson());
           Order currOrder = Order.fromJsonNew(order.toJson());
-          currOrder.addFirstFood(food_item);
+          currOrder.addFirstFood(foodItem);
 
           tableOrder.addFirstOrder(currOrder);
 //          print(tableOrder.orders[0].foodList[0].name);
@@ -472,9 +318,218 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  fetchAssistRequests(data) {
+    setState(() {
+      if (data is Map) {
+        data = json.encode(data);
+      }
+
+      AssistanceRequest assist = AssistanceRequest.fromJson(jsonDecode(data));
+      assistanceReq.add(assist);
+    });
+  }
+
+  fetchAccepted(data) {
+    setState(() {
+      if (data is Map) {
+        data = json.encode(data);
+      }
+
+      assistanceReq.forEach((request) {
+        if (request.oId == jsonDecode(data)['assistance_id']) {
+          request.acceptedBy = jsonDecode(data)['staff_name'];
+        }
+      });
+    });
+  }
+
+  updateConfigDetailsToCloud(localData, String type) {
+    print(type);
+    var encode;
+////////////////////////////////    table      ///////////////////
+    if (type == "add_tables") {
+      encode = jsonEncode(
+          {"restaurant_id": "BNGHSR0002", "type": type, "tables": localData});
+    }
+
+    if (type == "delete_table") {
+      encode = jsonEncode(
+          {"restaurant_id": "BNGHSR0002", "type": type, "table_id": localData});
+    }
+
+    if (type == "add_staff") {
+      encode = jsonEncode(
+          {"restaurant_id": "BNGHSR0002", "type": type, "staff": localData});
+    }
+
+    if (type == "delete_staff") {
+      encode = jsonEncode(
+          {"restaurant_id": "BNGHSR0002", "type": type, "staff_id": localData});
+    }
+
+    if (type == "assign_staff") {
+      encode = jsonEncode({
+        "restaurant_id": "BNGHSR0002",
+        "type": type,
+        "table_id": localData["table_id"],
+        "assigned_staff": localData["assigned_staff"]
+      });
+    }
+
+    if (type == "remove_staff") {
+      encode = jsonEncode({
+        "restaurant_id": "BNGHSR0002",
+        "type": type,
+        "table_id": localData["table_id"],
+        "assigned_staff": localData["assigned_staff"]
+      });
+
+      //todo:
+    }
+////////////////////////////////////////   menu         /////////////////////
+    if (type == "add_food_menu") {
+      encode = jsonEncode(
+          {"restaurant_id": "BNGHSR0002", "type": type, "category": localData});
+    }
+
+    if (type == "remove_food_category") {
+      encode = jsonEncode(
+          {"restaurant_id": "BNGHSR0002", "type": type, "category": localData});
+      //todo:
+    }
+
+//    if (type == "add_bar_menu") {
+//      encode = jsonEncode(
+//          {"restaurant_id": "BNGHSR0002", "type": type, "category": localData});
+//      //todo:
+//    }
+//
+//    if (type == "remove_bar_category") {
+//      encode = jsonEncode(
+//          {"restaurant_id": "BNGHSR0002", "type": type, "category": localData});
+//      //todo:
+//    }
+
+    if (type == "add_food_item") {
+      encode = jsonEncode({
+        "restaurant_id": "BNGHSR0002",
+        "type": type,
+        "category_id": localData['category_id'],
+        "food_dict": localData['food_dict'],
+      });
+    }
+
+    if (type == "remove_food_item") {
+      localData.forEach((v) {
+        encode = jsonEncode({
+          "restaurant_id": "BNGHSR0002",
+          "type": type,
+          "category_id": v['category_id'],
+          "food_dict": v['food_dict'],
+        });
+      });
+      //todo:
+    }
+
+    print("before sending to cloud");
+
+    print(encode);
+
+    sockets['working'].emit('configuring_restaurant', [encode]);
+    print('uploded to cloud');
+  }
+
+  configuringRestaurant(data) {
+    //todo: refactor
+    setState(() {
+      if (data is Map) {
+        data = json.encode(data);
+      }
+
+      var decode = jsonDecode(data);
+      print('configuring restaurant');
+      print(decode);
+
+      if (decode["type"] == "add_tables") {
+        restaurant.addTableDetails(decode['tables']);
+      }
+
+      if (decode["type"] == "delete_table") {
+        restaurant.tables
+            .removeWhere((table) => table.oid == decode["table_id"]);
+      }
+
+      if (decode["type"] == "add_staff") {
+        restaurant.addStaffDetails(decode['staff']);
+      }
+
+      if (decode["type"] == "delete_staff") {
+        restaurant.staff
+            .removeWhere((staff) => staff.oid == decode["staff_id"]);
+      }
+
+      if (decode["type"] == "add_food_menu") {
+        print("food menu");
+        restaurant.addFoodMenuCategory(decode["category"]);
+      }
+      if (decode["type"] == "add_bar_menu") {
+        restaurant.addBarMenuCategory(decode["category"]);
+      }
+
+      if (decode["type"] == "add_food_item") {
+        restaurant.foodMenu.forEach((category) {
+          if (category.oid == decode["category_id"]) {
+            print("${category.name} matched");
+            category.addFoodItem(decode["food_dict"]);
+          }
+        });
+      }
+
+      if (decode["type"] == "assign_staff") {
+        restaurant.tables.forEach((table) {
+          if (table.oid == decode["table_id"]) {
+            print('table matched: ${table.name}');
+
+            restaurant.staff.forEach((staff) {
+              decode["assigned_staff"].forEach((assigned) {
+                if (staff.oid == assigned) {
+                  print("staff matched");
+                  print(assigned);
+
+                  table.addTableStaff(staff);
+                }
+              });
+            });
+          }
+        });
+      }
+//      reply for assigned staff      {restaurant_id: BNGHSR0002, type: assign_staff,
+//       table_id: 5e90b5184584a1d3d9e641db, assigned_staff: [5e90bc2f4584a1d3d9e641de, 5e90b5294584a1d3d9e641dc]}
+
+//  reply for adding food    {restaurant_id: BNGHSR0002, type: add_food_item, category_id: 5e94959afe4ce65500586c26,
+//      food_dict: {name: new food, description: tyukk, price: 45p, food_options: {options: {},
+//      choices: []}, food_id: 5e949ed8fe4ce65500586c29}}
+    });
+  }
+
+  addTableOrders() {
+//    print("add table order");
+
+    restaurant.tables.forEach((table) {
+//      print(table.name);
+//      print(table.oid);
+      queueOrders.forEach((order) {
+//        print(order.tableId);
+        if (table.oid == order.tableId) {
+          print("matched }");
+        }
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-//    print(restaurant.foodMenu[19].foodList[0].name);
+//    print(queueOrders[10].tableId);
     // Set landscape orientation
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
@@ -494,10 +549,9 @@ class _MyAppState extends State<MyApp> {
         drawer: Drawer(
           child: DrawerMenu(
             restaurant: restaurant,
-            updateTableDetailsToCloud: updateTableDetailsToCloud,
-            updateMenuToCloud: updateMenuToCloud,
+            updateConfigDetailsToCloud: updateConfigDetailsToCloud,
             login: login,
-            get_rest: get_rest,
+            getRest: getRest,
           ),
         ),
 

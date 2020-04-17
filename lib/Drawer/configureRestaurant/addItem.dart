@@ -1,18 +1,20 @@
 import 'package:adhara_socket_io_example/data.dart';
 import 'package:flutter/material.dart';
 
-class AddFoodItem extends StatefulWidget {
+class AddItem extends StatefulWidget {
   final Category category;
-  final updateMenuToCloud;
-  AddFoodItem({
+  final updateConfigDetailsToCloud;
+  final menuType;
+  AddItem({
     this.category,
-    this.updateMenuToCloud,
+    this.updateConfigDetailsToCloud,
+    this.menuType,
   });
   @override
   _AddFoodItemState createState() => _AddFoodItemState();
 }
 
-class _AddFoodItemState extends State<AddFoodItem> {
+class _AddFoodItemState extends State<AddItem> {
   bool optionsCheckBoxValue = false;
   bool choicesCheckBoxValue = false;
   final itemNameController = TextEditingController();
@@ -21,15 +23,15 @@ class _AddFoodItemState extends State<AddFoodItem> {
   final foodOptionController = TextEditingController();
   final foodChoiceController = TextEditingController();
 
-  List<Map<String, dynamic>> foodListTemp = [];
+  Map<String, dynamic> foodTemp = {};
   List<String> choices = [];
   List<Map<String, String>> options = [];
   @override
   Widget build(BuildContext context) {
-//    print(' check here');
+    print(' check here');
 //    print(options);
 
-//    print(foodListTemp);
+    print(foodTemp);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -412,7 +414,7 @@ class _AddFoodItemState extends State<AddFoodItem> {
                   child: Text('confirm item'),
                   onPressed: () {
                     setState(() {
-                      foodListTemp.add({
+                      foodTemp = {
                         "category_id": widget.category.oid,
                         "food_dict": {
                           "name": itemNameController.text,
@@ -423,13 +425,21 @@ class _AddFoodItemState extends State<AddFoodItem> {
                             "choices": choices
                           }
                         },
-                      });
+                      };
                     });
-                    widget.updateMenuToCloud(foodListTemp, "add_food_item");
+
+                    if (widget.menuType == "food") {
+                      widget.updateConfigDetailsToCloud(
+                          foodTemp, "add_food_item");
+                    } else if (widget.menuType == "bar") {
+                      widget.updateConfigDetailsToCloud(
+                          foodTemp, "add_bar_item");
+                    }
                   },
                 ),
 
                 ////////////////////// to display food item present in the menu///////////////////
+
                 Expanded(
                   child: widget.category.foodList != null
                       ? ListView.builder(
@@ -443,16 +453,24 @@ class _AddFoodItemState extends State<AddFoodItem> {
                               trailing: IconButton(
                                 icon: Icon(Icons.cancel),
                                 onPressed: () {
-                                  setState(() {
-                                    widget.category.foodList.removeAt(index);
-                                  });
+                                  if (widget.menuType == "food") {
+                                    widget.updateConfigDetailsToCloud(
+                                        widget.category.foodList[index].oid,
+                                        "remove_food_item");
+                                  } else if (widget.menuType == "bar") {
+                                    widget.updateConfigDetailsToCloud(
+                                        widget.category.foodList[index].oid,
+                                        "remove_bar_item");
+                                  }
+
+                                  //todo:
                                 },
                               ),
                             );
                           },
                         )
-                      : Text('no food items'),
-                ),
+                      : Text('no items'),
+                )
               ],
             ),
           ),

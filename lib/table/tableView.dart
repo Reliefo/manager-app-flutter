@@ -4,100 +4,138 @@ import 'package:flutter/material.dart';
 
 import 'single_table.dart';
 
-class TableView extends StatelessWidget {
-  final List<TableOrder> queueOrders;
-  final List<TableOrder> cookingOrders;
-  final List<TableOrder> completedOrders;
-  final List<AssistanceRequest> assistanceReq;
+class TableView extends StatefulWidget {
   final Restaurant restaurant;
 
   TableView({
-    @required this.queueOrders,
-    @required this.cookingOrders,
-    @required this.completedOrders,
-    @required this.assistanceReq,
     @required this.restaurant,
   });
 
   @override
+  _TableViewState createState() => _TableViewState();
+}
+
+class _TableViewState extends State<TableView> {
+  Map<String, dynamic> counts = {};
+
+  List<Map<String, dynamic>> tableCounts = [];
+
+  getCount(index) {
+    int queued = 0;
+    int cooking = 0;
+    int completed = 0;
+
+    widget.restaurant.tables[index].tableOrders.forEach((tableOrder) {
+      tableOrder.orders.forEach((order) {
+        order.foodList.forEach((food) {
+          if (food.status == "queued") {
+            queued++;
+          } else if (food.status == "cooking") {
+            cooking++;
+          } else if (food.status == "completed") {
+            completed++;
+          }
+        });
+      });
+    });
+
+    counts = {"queued": queued, "cooking": cooking, "completed": completed};
+    tableCounts.add({"${widget.restaurant.tables[index].name}": counts});
+  }
+
+  @override
   Widget build(BuildContext context) {
+    print("table counts");
+    print(tableCounts);
     return SafeArea(
       child: Scaffold(
         body: Container(
           color: Colors.blueGrey,
-          child: Container(
-            padding: EdgeInsets.all(10.0),
-            child: GridView.builder(
-              itemCount: restaurant.tables.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 5,
-              ),
-              itemBuilder: (BuildContext context, index) {
-                print(restaurant.tables[index].noOfUsers);
-                return GestureDetector(
-                  child: Card(
-                    color: Colors.white,
-                    child: Container(
-                      color: restaurant.tables[index].noOfUsers == null
-                          ? Color(0xffFF6347)
-                          : Colors.green,
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      child: Column(
-                        children: <Widget>[
-                          Text(
-                            'Table-${restaurant.tables[index].name}',
-                            style: homePageS1,
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            child: Container(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      TextDisplay(
-                                        text:
-                                            'Servers : ${restaurant.tables[index].staff != null ? restaurant.tables[index].staff.length : '0'}',
-                                      ),
-                                      TextDisplay(
-                                        text:
-                                            'Scanned : ${restaurant.tables[index].noOfUsers != null ? restaurant.tables[index].noOfUsers : '0'}',
-                                      ),
-                                      TextDisplay(
-                                        text: 'Cooking : 01',
-                                      ),
-                                      TextDisplay(
-                                        text: 'Queued  : 02',
-                                      ),
-                                    ],
+          child: widget.restaurant.tables != null
+              ? Container(
+                  padding: EdgeInsets.all(10.0),
+                  child: GridView.builder(
+                    itemCount: widget.restaurant.tables.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 5,
+                    ),
+                    itemBuilder: (BuildContext context, index) {
+                      return GestureDetector(
+                        child: Card(
+                          color: Colors.white,
+                          child: Container(
+                            color: widget.restaurant.tables[index].noOfUsers ==
+                                    null
+                                ? Colors.grey
+                                : tableCounts[index]['cooking'] > 0
+                                    ? Colors.yellow
+                                    : tableCounts[index]['queued'] > 0
+                                        ? Color(0xffFF6347)
+                                        : Colors.blue,
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                  'Table-${widget.restaurant.tables[index].name}',
+                                  style: homePageS1,
+                                ),
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  child: Container(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            TextDisplay(
+                                              text:
+                                                  'Servers : ${widget.restaurant.tables[index].staff != null ? widget.restaurant.tables[index].staff.length : '0'}',
+                                            ),
+                                            TextDisplay(
+                                              text:
+                                                  'Scanned : ${widget.restaurant.tables[index].noOfUsers != null ? widget.restaurant.tables[index].noOfUsers : '0'}',
+                                            ),
+                                            TextDisplay(
+                                              text: tableCounts.length >= index
+                                                  ? 'Cooking : ${tableCounts[index]['cooking']}'
+                                                  : 'Cooking : 0',
+                                            ),
+                                            TextDisplay(
+                                              text: tableCounts.length >= index
+                                                  ? 'Queued : ${tableCounts[index]['queued']}'
+                                                  : 'Queued : 0',
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (context) => SingleTable(
-                        table: restaurant.tables[index],
+                        ),
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) => SingleTable(
+                              table: widget.restaurant.tables[index],
 //                        assistanceReq: assistanceReq,
 //                        cookingOrders: cookingOrders,
 //                        queueOrders: queueOrders,
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                )
+              : Container(
+                  child: Center(
+                      child: Text("go to configure rest and add restaurant"))),
         ),
       ),
     );

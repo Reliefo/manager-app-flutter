@@ -46,6 +46,7 @@ class Restaurant {
       });
     }
 
+//    print(json['bar_menu']);
     if (json['bar_menu'].isNotEmpty) {
       barMenu = new List<Category>();
       json['bar_menu'].forEach((v) {
@@ -53,6 +54,7 @@ class Restaurant {
       });
     }
 
+//    print(barMenu);
     if (json['tables'].isNotEmpty) {
       tables = new List<Tables>();
 
@@ -67,7 +69,6 @@ class Restaurant {
         staff.add(new Staff.fromJson(v));
       });
     }
-
     if (json['table_orders'].isNotEmpty) {
       tableOrders = new List<TableOrder>();
       json['table_orders'].forEach((v) {
@@ -128,9 +129,9 @@ class Tables {
   List<TableOrder> tableOrders;
   List<AssistanceRequest> tableAssistanceRequest;
 
-//  List<TableOrder> tableQueuedOrders;
-//  List<TableOrder> tableCookingOrders;
-//  List<TableOrder> tableCompletedOrders;
+  List<TableOrder> tableQueuedOrders;
+  List<TableOrder> tableCookingOrders;
+  List<TableOrder> tableCompletedOrders;
 
   Tables({
     this.oid,
@@ -141,9 +142,9 @@ class Tables {
     this.noOfUsers,
     this.tableOrders,
     this.tableAssistanceRequest,
-//    this.tableCompletedOrders,
-//    this.tableCookingOrders,
-//    this.tableQueuedOrders,
+    this.tableQueuedOrders,
+    this.tableCookingOrders,
+    this.tableCompletedOrders,
   });
 
   Tables.fromJson(Map<String, dynamic> json) {
@@ -209,13 +210,14 @@ class Tables {
   }
 
   addTableStaff(selectedStaff) {
-//    print('coming to add table staff');
+    print(selectedStaff);
     if (this.staff == null) {
       this.staff = new List<Staff>();
     }
 
     selectedStaff.forEach((v) {
-      this.staff.add(Staff.add(v));
+      print(v);
+      this.staff.add(v);
     });
   }
 
@@ -257,7 +259,7 @@ class Staff {
 //    }
   }
 
-  Staff.add(staff) {
+  addStaff(staff) {
 //    print(staff.oid);
 //    print('ading staff f');
     oid = staff.oid;
@@ -513,14 +515,14 @@ class TableOrder {
     this.orders.add(order);
   }
 
-  cleanOrders(String order_id) {
+  cleanOrders(String orderId) {
     var delete = false;
     this.orders.forEach((order) {
-      if (order.oId == order_id) {
+      if (order.oId == orderId) {
         if (order.foodList.length == 0) delete = true;
       }
     });
-    if (delete) this.orders.removeWhere((order) => order.oId == order_id);
+    if (delete) this.orders.removeWhere((order) => order.oId == orderId);
   }
 
   bool selfDestruct() {
@@ -581,8 +583,8 @@ class Order {
     this.foodList.add(food);
   }
 
-  removeFoodItem(String food_id) {
-    this.foodList.removeWhere((food) => food.foodId == food_id);
+  removeFoodItem(String foodId) {
+    this.foodList.removeWhere((food) => food.foodId == foodId);
   }
 
   Map<String, dynamic> toJson() {

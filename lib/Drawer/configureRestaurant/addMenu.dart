@@ -1,15 +1,16 @@
+import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addItem.dart';
 import 'package:adhara_socket_io_example/data.dart';
 import 'package:flutter/material.dart';
 
-import 'addFood.dart';
-
 class AddMenu extends StatefulWidget {
   final Restaurant restaurant;
-  final updateMenuToCloud;
+  final updateConfigDetailsToCloud;
+  final menuType;
 
   AddMenu({
     this.restaurant,
-    this.updateMenuToCloud,
+    this.updateConfigDetailsToCloud,
+    this.menuType,
   });
 
   @override
@@ -27,7 +28,9 @@ class _AddMenuState extends State<AddMenu> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.grey,
-          title: Text('Add Menu'),
+          title: widget.menuType == "food"
+              ? Text('Add Food Menu')
+              : Text('Add Bar Menu'),
         ),
         body: Container(
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 18),
@@ -100,8 +103,14 @@ class _AddMenuState extends State<AddMenu> {
                                 "description": descriptionController.text
                               };
                             });
-                            widget.updateMenuToCloud(
-                                categoryTemp, "add_food_menu");
+
+                            if (widget.menuType == "food") {
+                              widget.updateConfigDetailsToCloud(
+                                  categoryTemp, "add_food_menu");
+                            } else if (widget.menuType == "bar") {
+                              widget.updateConfigDetailsToCloud(
+                                  categoryTemp, "add_bar_menu");
+                            }
 
                             categoryTemp.clear();
                           }
@@ -124,22 +133,41 @@ class _AddMenuState extends State<AddMenu> {
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
-                                  FlatButton(
-                                    child: Text('Add Food'),
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => AddFoodItem(
-                                            category: widget
-                                                .restaurant.foodMenu[index],
-                                            updateMenuToCloud:
-                                                widget.updateMenuToCloud,
-                                          ),
+                                  widget.menuType == "food"
+                                      ? FlatButton(
+                                          child: Text('Add Food'),
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => AddItem(
+                                                  category: widget.restaurant
+                                                      .foodMenu[index],
+                                                  updateConfigDetailsToCloud: widget
+                                                      .updateConfigDetailsToCloud,
+                                                  menuType: widget.menuType,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        )
+                                      : FlatButton(
+                                          child: Text('Add Drinks'),
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => AddItem(
+                                                  category: widget.restaurant
+                                                      .barMenu[index],
+                                                  updateConfigDetailsToCloud: widget
+                                                      .updateConfigDetailsToCloud,
+                                                  menuType: widget.menuType,
+                                                ),
+                                              ),
+                                            );
+                                          },
                                         ),
-                                      );
-                                    },
-                                  ),
                                   IconButton(
                                     icon: Icon(Icons.cancel),
                                     onPressed: () {
@@ -148,18 +176,35 @@ class _AddMenuState extends State<AddMenu> {
                                         builder: (BuildContext context) {
                                           // return object of type Dialog
                                           return AlertDialog(
-                                            title: new Text(
-                                                "Remove ${widget.restaurant.foodMenu[index].name} Category ?"),
+                                            title: widget.menuType == "food"
+                                                ? Text(
+                                                    "Remove ${widget.restaurant.foodMenu[index].name} Category ?")
+                                                : Text(
+                                                    "Remove ${widget.restaurant.barMenu[index].name} Category ?"),
                                             content: new Text(
-                                                "this will delete all food items in this category"),
+                                                "this will delete all items in this category"),
                                             actions: <Widget>[
                                               FlatButton(
                                                 child: new Text("Delete"),
                                                 onPressed: () {
-                                                  setState(() {
-                                                    widget.restaurant.foodMenu
-                                                        .removeAt(index);
-                                                  });
+                                                  if (widget.menuType ==
+                                                      "food") {
+                                                    widget.updateConfigDetailsToCloud(
+                                                        widget
+                                                            .restaurant
+                                                            .foodMenu[index]
+                                                            .oid,
+                                                        "remove_food_category");
+                                                  } else if (widget.menuType ==
+                                                      "bar") {
+                                                    widget.updateConfigDetailsToCloud(
+                                                        widget.restaurant
+                                                            .barMenu[index].oid,
+                                                        "remove_bar_category");
+                                                  }
+
+                                                  //todo: check event name with backend
+
                                                   Navigator.of(context).pop();
                                                 },
                                               ),

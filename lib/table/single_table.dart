@@ -40,12 +40,7 @@ class SingleTable extends StatelessWidget {
 
   final startTime = '4:20 PM';
 
-  final assistanceStatus = 'Pending';
-  final orderItem = 'Tandoori chicken';
-  final itemQty = '01';
-  final itemPrice = '349';
-  final itemEta = '20';
-  final itemStatus = 'Pending';
+//
   @override
   Widget build(BuildContext context) {
 //    getTableAssistanceReq();

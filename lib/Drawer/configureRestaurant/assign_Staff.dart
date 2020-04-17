@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 
 class AssignStaff extends StatefulWidget {
   final Restaurant restaurant;
-  final updateTableDetailsToCloud;
+  final updateConfigDetailsToCloud;
 
   AssignStaff({
     @required this.restaurant,
-    this.updateTableDetailsToCloud,
+    this.updateConfigDetailsToCloud,
   });
 
   @override
@@ -26,8 +26,7 @@ class _AssignStaffState extends State<AssignStaff> {
       selectedId.add(f.oid);
     });
 
-//    widget.updateAssignedStaffToCloud(selectedTable.oid, selectedId);
-    widget.updateTableDetailsToCloud(
+    widget.updateConfigDetailsToCloud(
         {"table_id": selectedTable.oid, "assigned_staff": selectedId},
         "assign_staff");
   }
@@ -156,17 +155,15 @@ class _AssignStaffState extends State<AssignStaff> {
                           child: Text('Confirm'),
                         ),
                         onPressed: () {
-                          setState(() {
-                            widget.restaurant.tables.forEach((table) {
-                              if (table.oid == selectedTable.oid) {
-                                print('table matched: ${table.name}');
-                                table.addTableStaff(selectedStaff);
-                              }
-                            });
-                            sendAssignedStaff();
+//                            widget.restaurant.tables.forEach((table) {
+//                              if (table.oid == selectedTable.oid) {
+//                                print('table matched: ${table.name}');
+//                                table.addTableStaff(selectedStaff);
+//                              }
+//                            });
+                          sendAssignedStaff();
 
-                            selectedStaff.clear();
-                          });
+                          selectedStaff.clear();
                         },
                       ),
                     ],
@@ -206,7 +203,7 @@ class _AssignStaffState extends State<AssignStaff> {
                                 itemCount: widget.restaurant.tables.length,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 3),
+                                        crossAxisCount: 2),
                                 itemBuilder: (BuildContext context, index) {
                                   return Container(
                                     padding: EdgeInsets.symmetric(
@@ -237,12 +234,35 @@ class _AssignStaffState extends State<AssignStaff> {
                                                     primary: false,
                                                     itemBuilder:
                                                         (context, index2) {
-                                                      return Container(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                vertical: 2),
-                                                        child: Text(
-                                                            'staff : ${widget.restaurant.tables[index].staff[index2].name}'),
+                                                      return ListTile(
+                                                        title: Text(widget
+                                                            .restaurant
+                                                            .tables[index]
+                                                            .staff[index2]
+                                                            .name),
+                                                        trailing: IconButton(
+                                                          icon: Icon(
+                                                              Icons.cancel),
+                                                          onPressed: () {
+                                                            widget
+                                                                .updateConfigDetailsToCloud({
+                                                              "table_id": widget
+                                                                  .restaurant
+                                                                  .tables[index]
+                                                                  .oid,
+                                                              "remove_staff_list":
+                                                                  widget
+                                                                      .restaurant
+                                                                      .tables[
+                                                                          index]
+                                                                      .staff[
+                                                                          index2]
+                                                                      .oid
+                                                            }, "remove_staff");
+
+                                                            //todo:
+                                                          },
+                                                        ),
                                                       );
                                                     }),
                                               )
