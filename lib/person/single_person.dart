@@ -3,7 +3,11 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class SinglePerson extends StatelessWidget {
-  final personName = 'Rama Krishna';
+  final staff;
+  SinglePerson({
+    this.staff,
+  });
+
   final startTime = '4:20 PM';
   final assistanceType = 'water';
   final assistanceRequestTime = '4:40';
@@ -49,7 +53,7 @@ class SinglePerson extends StatelessWidget {
                     Expanded(
                       child: Center(
                         child: Text(
-                          personName,
+                          staff.name,
                           style: homePageS1,
                         ),
                       ),

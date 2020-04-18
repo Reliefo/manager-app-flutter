@@ -46,14 +46,15 @@ class _MyAppState extends State<MyApp> {
 //    initSocket("web_socket");
     loginSession = new Session();
 //    initSocket(URI);
-    print("session");
+
     login();
 //    initSocket('default');
   }
 
   login() async {
-    var output = await loginSession.post("http://192.168.0.9:5050/login",
-        {"username": "KID001", "password": "password123"});
+    var output = await loginSession.post(
+        "http://ec2-13-232-202-63.ap-south-1.compute.amazonaws.com:5050/login",
+        {"username": "KID002", "password": "password123"});
     print("I am loggin in ");
     initSocket(URI);
     print(output);
@@ -179,7 +180,6 @@ class _MyAppState extends State<MyApp> {
       }
 
       var decoded = jsonDecode(data);
-      print(decoded);
 
       queueOrders.clear();
       cookingOrders.clear();
@@ -189,20 +189,21 @@ class _MyAppState extends State<MyApp> {
         TableOrder order = TableOrder.fromJson(item);
 
         queueOrders.add(order);
+        addTableQueuedOrders();
       });
       decoded["cooking"].forEach((item) {
         TableOrder order = TableOrder.fromJson(item);
 
         cookingOrders.add(order);
+        addTableCookingOrders();
       });
       decoded["completed"].forEach((item) {
         TableOrder order = TableOrder.fromJson(item);
 
         completedOrders.add(order);
       });
-
-      addTableOrders();
     });
+    print("adding table after intl");
   }
 
   fetchNewOrders(data) {
@@ -215,6 +216,8 @@ class _MyAppState extends State<MyApp> {
 
       queueOrders.add(order);
     });
+    addTableQueuedOrders();
+//    print("add table called from fetch new orders");
   }
 
   fetchOrderUpdates(data) {
@@ -315,6 +318,8 @@ class _MyAppState extends State<MyApp> {
           pushingTo.add(tableOrder);
         }
       }
+      addTableCookingOrders();
+      addTableQueuedOrders();
     });
   }
 
@@ -512,25 +517,68 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  addTableOrders() {
-//    print("add table order");
+  addTableQueuedOrders() {
+    setState(() {
+      int queue = 0;
 
-    restaurant.tables.forEach((table) {
-//      print(table.name);
-//      print(table.oid);
-      queueOrders.forEach((order) {
-//        print(order.tableId);
-        if (table.oid == order.tableId) {
-          print("matched }");
-        }
+      int completed = 0;
+      restaurant.tables.forEach((table) {
+        queueOrders.forEach((tableOrder) {
+          if (table.oid == tableOrder.tableId) {
+            table.tableQueuedOrders.add(tableOrder);
+            tableOrder.orders.forEach((order) {
+              queue = queue + order.foodList.length;
+              table.queueCount = queue;
+            });
+          }
+        });
+        queue = 0;
       });
     });
   }
 
+  addTableCookingOrders() {
+    setState(() {
+      int cooking = 0;
+      restaurant.tables.forEach((table) {
+        cookingOrders.forEach((tableOrder) {
+          if (table.oid == tableOrder.tableId) {
+            table.tableCookingOrders.add(tableOrder);
+            tableOrder.orders.forEach((order) {
+              cooking = cooking + order.foodList.length;
+              table.cookingCount = cooking;
+            });
+          }
+        });
+        cooking = 0;
+      });
+    });
+  }
+
+//  cookingOrders.forEach((order) {
+//  if (table.oid == order.tableId) {
+//
+//  table.tableCookingOrders.add(order);
+//  }
+//  });
+//  completedOrders.forEach((order) {
+//  if (table.oid == order.tableId) {
+//  table.tableCompletedOrders.add(order);
+//  }
+//  });
   @override
   Widget build(BuildContext context) {
-//    print(queueOrders[10].tableId);
+    print("printing");
+//    print(restaurant.tables[1].tableQueuedOrders);
+//    var food_count = 0;
+//    restaurant.tables[1].tableQueuedOrders.forEach((tableOrder) {
+//      tableOrder.orders.forEach((order) {
+//        food_count = food_count + order.foodList.length;
+//      });
+//    });
+//    print(food_count);
     // Set landscape orientation
+
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,

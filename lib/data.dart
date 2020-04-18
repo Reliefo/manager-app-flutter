@@ -129,9 +129,12 @@ class Tables {
   List<TableOrder> tableOrders;
   List<AssistanceRequest> tableAssistanceRequest;
 
-  List<TableOrder> tableQueuedOrders;
-  List<TableOrder> tableCookingOrders;
-  List<TableOrder> tableCompletedOrders;
+  List<TableOrder> tableQueuedOrders = [];
+  List<TableOrder> tableCookingOrders = [];
+  List<TableOrder> tableCompletedOrders = [];
+  int queueCount = 0;
+  int cookingCount = 0;
+  int completedCount = 0;
 
   Tables({
     this.oid,

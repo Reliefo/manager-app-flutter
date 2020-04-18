@@ -30,7 +30,9 @@ class TabContainerBottom extends StatelessWidget {
           body: TabBarView(
             physics: NeverScrollableScrollPhysics(),
             children: [
-              PersonView(),
+              PersonView(
+                restaurant: restaurant,
+              ),
               HomePage(
                 queueOrders: queueOrders,
                 cookingOrders: cookingOrders,
