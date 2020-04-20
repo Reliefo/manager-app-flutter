@@ -4,44 +4,18 @@ import 'package:flutter/material.dart';
 
 import 'single_table.dart';
 
-class TableView extends StatefulWidget {
+class TableView extends StatelessWidget {
   final Restaurant restaurant;
+  final cookingOrders;
+  final queueOrders;
+  final assistanceReq;
 
   TableView({
     @required this.restaurant,
+    @required this.cookingOrders,
+    @required this.queueOrders,
+    @required this.assistanceReq,
   });
-
-  @override
-  _TableViewState createState() => _TableViewState();
-}
-
-class _TableViewState extends State<TableView> {
-  Map<String, dynamic> counts = {};
-
-  List<Map<String, dynamic>> tableCounts = [];
-
-  getCount(index) {
-    int queued = 0;
-    int cooking = 0;
-    int completed = 0;
-
-    widget.restaurant.tables[index].tableOrders.forEach((tableOrder) {
-      tableOrder.orders.forEach((order) {
-        order.foodList.forEach((food) {
-          if (food.status == "queued") {
-            queued++;
-          } else if (food.status == "cooking") {
-            cooking++;
-          } else if (food.status == "completed") {
-            completed++;
-          }
-        });
-      });
-    });
-
-    counts = {"queued": queued, "cooking": cooking, "completed": completed};
-    tableCounts.add({"${widget.restaurant.tables[index].name}": counts});
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +24,9 @@ class _TableViewState extends State<TableView> {
         body: Container(
           padding: EdgeInsets.all(10),
           color: Colors.blueGrey,
-          child: widget.restaurant.tables != null
+          child: restaurant.tables != null
               ? GridView.builder(
-                  itemCount: widget.restaurant.tables.length,
+                  itemCount: restaurant.tables.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 5,
                   ),
@@ -74,7 +48,7 @@ class _TableViewState extends State<TableView> {
                           child: Column(
                             children: <Widget>[
                               Text(
-                                'Table-${widget.restaurant.tables[index].name}',
+                                'Table-${restaurant.tables[index].name}',
                                 style: homePageS1,
                               ),
                               Container(
@@ -90,18 +64,18 @@ class _TableViewState extends State<TableView> {
                                         children: <Widget>[
                                           TextDisplay(
                                             text:
-                                                'Servers : ${widget.restaurant.tables[index].staff != null ? widget.restaurant.tables[index].staff.length : '0'}',
+                                                'Servers : ${restaurant.tables[index].staff != null ? restaurant.tables[index].staff.length : '0'}',
                                           ),
                                           TextDisplay(
                                             text:
-                                                'Scanned : ${widget.restaurant.tables[index].noOfUsers != null ? widget.restaurant.tables[index].noOfUsers : '0'}',
+                                                'Scanned : ${restaurant.tables[index].noOfUsers != null ? restaurant.tables[index].noOfUsers : '0'}',
                                           ),
                                           TextDisplay(
                                               text:
-                                                  'Cooking : ${widget.restaurant.tables[index].cookingCount}'),
+                                                  'Cooking : ${restaurant.tables[index].cookingCount}'),
                                           TextDisplay(
                                               text:
-                                                  'Queued : ${widget.restaurant.tables[index].queueCount}'),
+                                                  'Queued : ${restaurant.tables[index].queueCount}'),
                                         ],
                                       ),
                                     ],
@@ -116,10 +90,10 @@ class _TableViewState extends State<TableView> {
                         showModalBottomSheet(
                           context: context,
                           builder: (context) => SingleTable(
-                            table: widget.restaurant.tables[index],
-//                        assistanceReq: assistanceReq,
-//                        cookingOrders: cookingOrders,
-//                        queueOrders: queueOrders,
+                            table: restaurant.tables[index],
+                            assistanceReq: assistanceReq,
+                            cookingOrders: cookingOrders,
+                            queueOrders: queueOrders,
                           ),
                         );
                       },

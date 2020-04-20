@@ -54,21 +54,23 @@ class Restaurant {
       });
     }
 
-//    print(barMenu);
-    if (json['tables'].isNotEmpty) {
-      tables = new List<Tables>();
-
-      json['tables'].forEach((v) {
-        tables.add(new Tables.fromJson(v));
-      });
-    }
-
     if (json['staff'].isNotEmpty) {
       staff = new List<Staff>();
       json['staff'].forEach((v) {
         staff.add(new Staff.fromJson(v));
       });
     }
+
+    if (json['tables'].isNotEmpty) {
+      tables = new List<Tables>();
+
+      json['tables'].forEach((table) {
+        tables.add(
+          new Tables.fromRestJson(table, this.staff),
+        );
+      });
+    }
+
     if (json['table_orders'].isNotEmpty) {
       tableOrders = new List<TableOrder>();
       json['table_orders'].forEach((v) {
@@ -129,9 +131,9 @@ class Tables {
   List<TableOrder> tableOrders;
   List<AssistanceRequest> tableAssistanceRequest;
 
-  List<TableOrder> tableQueuedOrders = [];
-  List<TableOrder> tableCookingOrders = [];
-  List<TableOrder> tableCompletedOrders = [];
+//  List<TableOrder> tableQueuedOrders = [];
+//  List<TableOrder> tableCookingOrders = [];
+//  List<TableOrder> tableCompletedOrders = [];
   int queueCount = 0;
   int cookingCount = 0;
   int completedCount = 0;
@@ -145,9 +147,12 @@ class Tables {
     this.noOfUsers,
     this.tableOrders,
     this.tableAssistanceRequest,
-    this.tableQueuedOrders,
-    this.tableCookingOrders,
-    this.tableCompletedOrders,
+//    this.tableQueuedOrders,
+//    this.tableCookingOrders,
+//    this.tableCompletedOrders,
+    this.queueCount,
+    this.cookingCount,
+    this.completedCount,
   });
 
   Tables.fromJson(Map<String, dynamic> json) {
@@ -163,14 +168,12 @@ class Tables {
       seats = json['seats'].toString();
     }
 
-//    if (json['staff'].isNotEmpty) {
-//      print("inside staff");
-//      staff = new List<Staff>();
-//      json['staff'].forEach((v) {
-//        staff.add(new Staff.fromJson(v));
-//      });
-//      print("object");
-//    }
+    if (json['staff'].isNotEmpty) {
+      staff = new List<Staff>();
+      json['staff'].forEach((v) {
+        staff.add(v['\$oid']);
+      });
+    }
 
     if (json['users'].isNotEmpty) {
       users = new List<String>();
@@ -212,22 +215,88 @@ class Tables {
 //    });
   }
 
-  addTableStaff(selectedStaff) {
+  Tables.fromRestJson(Map<String, dynamic> json, List<Staff> listStaff) {
+    if (json['_id']['\$oid'] != null) {
+      oid = json['_id']['\$oid'];
+    }
+
+    if (json['name'] != null) {
+      name = json['name'];
+    }
+
+    if (json['seats'] != null) {
+      seats = json['seats'].toString();
+    }
+
+    if (json['staff'].isNotEmpty) {
+      staff = new List<Staff>();
+      json['staff'].forEach((tableStaffId) {
+        listStaff.forEach((restStaff) {
+          if (restStaff.oid == tableStaffId["\$oid"]) {
+            staff.add(restStaff);
+          }
+        });
+      });
+    }
+
+    if (json['users'].isNotEmpty) {
+      users = new List<String>();
+      json['users'].forEach((v) {
+        users.add(v['\$oid']);
+      });
+    }
+
+//    if (json['no_of_users'] != null) {
+//      noOfUsers = json['no_of_users'].toString();
+//    }
+
+    if (json['table_orders'].isNotEmpty) {
+      tableOrders = new List<TableOrder>();
+      json['table_orders'].forEach((v) {
+        tableOrders.add(new TableOrder.fromJson(v));
+      });
+    }
+
+    if (json['assistance_reqs'].isNotEmpty) {
+      tableAssistanceRequest = new List<AssistanceRequest>();
+      json['assistance_reqs'].forEach((v) {
+        tableAssistanceRequest.add(new AssistanceRequest.fromJson(v));
+      });
+    }
+//    tableQueuedOrders = new List<TableOrder>();
+//    json['qd_tableorders'].forEach((v) {
+//      tableQueuedOrders.add(new TableOrder.fromJson(v));
+//    });
+//
+//    tableCookingOrders = new List<TableOrder>();
+//    json['cook_tableorders'].forEach((v) {
+//      tableCookingOrders.add(new TableOrder.fromJson(v));
+//    });
+//
+//    tableCompletedOrders = new List<TableOrder>();
+//    json['com_tableorders'].forEach((v) {
+//      tableCompletedOrders.add(new TableOrder.fromJson(v));
+//    });
+  }
+
+  addTableStaff(Staff selectedStaff) {
     print(selectedStaff);
     if (this.staff == null) {
       this.staff = new List<Staff>();
     }
-
-    selectedStaff.forEach((v) {
-      print(v);
-      this.staff.add(v);
-    });
+    this.staff.add(selectedStaff);
   }
 
   Tables.add(table) {
     oid = table['table_id'];
     name = table['table_name'];
     seats = table['seats'];
+  }
+
+  updateOrderCount(queue, cooking, completed) {
+    this.queueCount += queue;
+    this.cookingCount += cooking;
+    this.completedCount += completed;
   }
 }
 
@@ -490,6 +559,7 @@ class TableOrder {
     if (json['table_id'] != null) {
       tableId = json['table_id'];
     }
+
     if (json['orders'] != null) {
       orders = new List<Order>();
       json['orders'].forEach((v) {
@@ -506,6 +576,7 @@ class TableOrder {
     oId = json['oId'];
 
     table = json['table'];
+    tableId = json['table_id'];
     status = json['status'];
     timeStamp = json['timestamp'];
   }
@@ -546,7 +617,7 @@ class Order {
   String oId;
   String placedBy;
   List<FoodItem> foodList;
-  String status = 'queued';
+  String status;
 
   Order({
     this.oId,
@@ -569,6 +640,10 @@ class Order {
       json['food_list'].forEach((v) {
         foodList.add(FoodItem.fromJson(v));
       });
+    }
+
+    if (json['status'] != null) {
+      placedBy = json['placed_by']['\$oid'];
     }
   }
 
@@ -606,7 +681,7 @@ class FoodItem {
   String price;
   String instructions;
   int quantity;
-  String status = 'queued';
+  String status;
   FoodOption foodOption;
 
   FoodItem({
@@ -642,6 +717,10 @@ class FoodItem {
 
     if (json['quantity'] != null) {
       quantity = json['quantity'];
+    }
+
+    if (json['status'] != null) {
+      status = json['status'];
     }
 
     if (json['food_options'] != null) {

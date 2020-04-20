@@ -41,6 +41,9 @@ class TabContainerBottom extends StatelessWidget {
               ),
               TableView(
                 restaurant: restaurant,
+                queueOrders: queueOrders,
+                cookingOrders: cookingOrders,
+                assistanceReq: assistanceReq,
               ),
             ],
           ),

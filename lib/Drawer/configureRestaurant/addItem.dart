@@ -416,6 +416,7 @@ class _AddFoodItemState extends State<AddItem> {
                     setState(() {
                       foodTemp = {
                         "category_id": widget.category.oid,
+                        "category_type": widget.menuType,
                         "food_dict": {
                           "name": itemNameController.text,
                           "description": descriptionController.text,
@@ -428,13 +429,8 @@ class _AddFoodItemState extends State<AddItem> {
                       };
                     });
 
-                    if (widget.menuType == "food") {
-                      widget.updateConfigDetailsToCloud(
-                          foodTemp, "add_food_item");
-                    } else if (widget.menuType == "bar") {
-                      widget.updateConfigDetailsToCloud(
-                          foodTemp, "add_bar_item");
-                    }
+                    widget.updateConfigDetailsToCloud(
+                        foodTemp, "add_food_item");
                   },
                 ),
 
@@ -453,17 +449,9 @@ class _AddFoodItemState extends State<AddItem> {
                               trailing: IconButton(
                                 icon: Icon(Icons.cancel),
                                 onPressed: () {
-                                  if (widget.menuType == "food") {
-                                    widget.updateConfigDetailsToCloud(
-                                        widget.category.foodList[index].oid,
-                                        "remove_food_item");
-                                  } else if (widget.menuType == "bar") {
-                                    widget.updateConfigDetailsToCloud(
-                                        widget.category.foodList[index].oid,
-                                        "remove_bar_item");
-                                  }
-
-                                  //todo:
+                                  widget.updateConfigDetailsToCloud(
+                                      widget.category.foodList[index].oid,
+                                      "delete_food_item");
                                 },
                               ),
                             );

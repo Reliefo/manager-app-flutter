@@ -1,3 +1,4 @@
+import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addBarMenu.dart';
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addMenu.dart';
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addStaff.dart';
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/assign_Staff.dart';
@@ -16,9 +17,6 @@ class Configure extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    print("from config");
-
-    print(restaurant.foodMenu);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -121,17 +119,18 @@ class Configure extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20.0),
                           ),
-                          child: Center(child: Text('Food Menu')),
+                          child: Center(
+                            child: Text('Food Menu'),
+                          ),
                         ),
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => AddMenu(
+                              builder: (context) => AddFoodMenu(
                                 updateConfigDetailsToCloud:
                                     updateConfigDetailsToCloud,
                                 restaurant: restaurant,
-                                menuType: "food",
                               ),
                             ),
                           );
@@ -148,17 +147,18 @@ class Configure extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20.0),
                           ),
-                          child: Center(child: Text('Bar Menu')),
+                          child: Center(
+                            child: Text('Bar Menu'),
+                          ),
                         ),
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => AddMenu(
+                              builder: (context) => AddBarMenu(
                                 updateConfigDetailsToCloud:
                                     updateConfigDetailsToCloud,
                                 restaurant: restaurant,
-                                menuType: "bar",
                               ),
                             ),
                           );

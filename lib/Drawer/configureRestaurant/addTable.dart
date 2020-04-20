@@ -171,7 +171,7 @@ class _AddDataState extends State<AddData> {
                                     onPressed: () {
                                       widget.updateConfigDetailsToCloud(
                                           widget.restaurant.tables[index].oid,
-                                          "delete_table");
+                                          "delete_tables");
 //                                        setState(() {
 //                                          widget.restaurant.tables
 //                                              .removeAt(index);

@@ -41,7 +41,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    super.initState();
     manager = SocketIOManager();
 //    initSocket("web_socket");
     loginSession = new Session();
@@ -49,12 +48,16 @@ class _MyAppState extends State<MyApp> {
 
     login();
 //    initSocket('default');
+
+    super.initState();
   }
 
+//  var connectingURI = "http://192.168.0.9:5050/login";
+  var connectingURI =
+      "http://ec2-13-232-202-63.ap-south-1.compute.amazonaws.com:5050/login";
   login() async {
-    var output = await loginSession.post(
-        "http://ec2-13-232-202-63.ap-south-1.compute.amazonaws.com:5050/login",
-        {"username": "KID002", "password": "password123"});
+    var output = await loginSession
+        .post(connectingURI, {"username": "MID001", "password": "password123"});
     print("I am loggin in ");
     initSocket(URI);
     print(output);
@@ -100,6 +103,7 @@ class _MyAppState extends State<MyApp> {
       socket.emit("fetch_handshake", ["Hello world!"]);
       socket.emit("rest_with_id", ["BNGHSR0001"]);
       socket.emit("fetch_order_lists", ["arguments"]);
+      socket.emit("fetch_me", [" sending........."]);
     });
     socket.onConnectError(pprint);
     socket.onConnectTimeout(pprint);
@@ -168,7 +172,7 @@ class _MyAppState extends State<MyApp> {
       }
 
       var decoded = jsonDecode(data);
-      print('here in side upate');
+
       restaurant = Restaurant.fromJson(decoded);
     });
   }
@@ -178,6 +182,9 @@ class _MyAppState extends State<MyApp> {
       if (data is Map) {
         data = json.encode(data);
       }
+      int queue = 0;
+      int cooking = 0;
+      int completed = 0;
 
       var decoded = jsonDecode(data);
 
@@ -189,21 +196,49 @@ class _MyAppState extends State<MyApp> {
         TableOrder order = TableOrder.fromJson(item);
 
         queueOrders.add(order);
-        addTableQueuedOrders();
+///////////for adding count to table
+        restaurant.tables.forEach((table) {
+          if (item["table_id"] == table.oid) {
+            item["orders"].forEach((order) {
+              queue = queue + order["food_list"].length;
+              print(queue);
+              table.queueCount = queue;
+            });
+          }
+          queue = 0;
+        });
       });
       decoded["cooking"].forEach((item) {
         TableOrder order = TableOrder.fromJson(item);
 
         cookingOrders.add(order);
-        addTableCookingOrders();
+///////////for adding count to table
+        restaurant.tables.forEach((table) {
+          if (item["table_id"] == table.oid) {
+            item["orders"].forEach((order) {
+              cooking = cooking + order["food_list"].length;
+              table.cookingCount = cooking;
+            });
+          }
+          cooking = 0;
+        });
       });
       decoded["completed"].forEach((item) {
         TableOrder order = TableOrder.fromJson(item);
 
         completedOrders.add(order);
+///////////for adding count to table
+        restaurant.tables.forEach((table) {
+          if (item["table_id"] == table.oid) {
+            item["orders"].forEach((order) {
+              completed = completed + order["food_list"].length;
+              table.completedCount = completed;
+            });
+          }
+          completed = 0;
+        });
       });
     });
-    print("adding table after intl");
   }
 
   fetchNewOrders(data) {
@@ -211,13 +246,23 @@ class _MyAppState extends State<MyApp> {
       if (data is Map) {
         data = json.encode(data);
       }
+      int queue = 0;
+      var decoded = jsonDecode(data);
 
-      TableOrder order = TableOrder.fromJson(jsonDecode(data));
+      TableOrder order = TableOrder.fromJson(decoded);
 
       queueOrders.add(order);
+
+      restaurant.tables.forEach((table) {
+        if (decoded["table_id"] == table.oid) {
+          decoded["orders"].forEach((order) {
+            queue = queue + order["food_list"].length;
+          });
+          table.updateOrderCount(queue, 0, 0);
+        }
+        queue = 0;
+      });
     });
-    addTableQueuedOrders();
-//    print("add table called from fetch new orders");
   }
 
   fetchOrderUpdates(data) {
@@ -231,16 +276,20 @@ class _MyAppState extends State<MyApp> {
 
       if (decoded['type'] == "cooking") {
         selectedOrder = queueOrders;
+
+//        restaurant.tables.forEach((table) {
+//          table.tableOrders.forEach((order){
+//            if(order.oId == decoded[""])
+//          });
+//        });
       } else if (decoded['type'] == "completed") {
         selectedOrder = cookingOrders;
       }
-//      print('printing from here');
-//      print(decoded);
-//      print(selectedOrder[0].table);
 
+      var currentTableId;
       selectedOrder.forEach((tableorder) {
-//        print(tableorder.oId);
         if (tableorder.oId == decoded['table_order_id']) {
+          currentTableId = tableorder.tableId;
 //          print('table id  matched${decoded['food_id']}');
           tableorder.orders.forEach((order) {
             if (order.oId == decoded['order_id']) {
@@ -318,8 +367,6 @@ class _MyAppState extends State<MyApp> {
           pushingTo.add(tableOrder);
         }
       }
-      addTableCookingOrders();
-      addTableQueuedOrders();
     });
   }
 
@@ -351,89 +398,94 @@ class _MyAppState extends State<MyApp> {
   updateConfigDetailsToCloud(localData, String type) {
     print(type);
     var encode;
+    String restaurantId = restaurant.restaurantId;
 ////////////////////////////////    table      ///////////////////
     if (type == "add_tables") {
       encode = jsonEncode(
-          {"restaurant_id": "BNGHSR0002", "type": type, "tables": localData});
+          {"restaurant_id": restaurantId, "type": type, "tables": localData});
     }
 
-    if (type == "delete_table") {
+    if (type == "delete_tables") {
       encode = jsonEncode(
-          {"restaurant_id": "BNGHSR0002", "type": type, "table_id": localData});
+          {"restaurant_id": restaurantId, "type": type, "table_id": localData});
     }
 
     if (type == "add_staff") {
       encode = jsonEncode(
-          {"restaurant_id": "BNGHSR0002", "type": type, "staff": localData});
+          {"restaurant_id": restaurantId, "type": type, "staff": localData});
     }
 
     if (type == "delete_staff") {
       encode = jsonEncode(
-          {"restaurant_id": "BNGHSR0002", "type": type, "staff_id": localData});
+          {"restaurant_id": restaurantId, "type": type, "staff_id": localData});
     }
 
     if (type == "assign_staff") {
       encode = jsonEncode({
-        "restaurant_id": "BNGHSR0002",
+        "restaurant_id": restaurantId,
         "type": type,
         "table_id": localData["table_id"],
         "assigned_staff": localData["assigned_staff"]
       });
     }
 
-    if (type == "remove_staff") {
+    if (type == "withdraw_staff") {
       encode = jsonEncode({
-        "restaurant_id": "BNGHSR0002",
+        "restaurant_id": restaurantId,
         "type": type,
         "table_id": localData["table_id"],
-        "assigned_staff": localData["assigned_staff"]
+        "withdraw_staff_id": localData["withdraw_staff_id"],
       });
 
       //todo:
     }
 ////////////////////////////////////////   menu         /////////////////////
-    if (type == "add_food_menu") {
+    if (type == "add_food_category") {
       encode = jsonEncode(
-          {"restaurant_id": "BNGHSR0002", "type": type, "category": localData});
+          {"restaurant_id": restaurantId, "type": type, "category": localData});
     }
 
-    if (type == "remove_food_category") {
-      encode = jsonEncode(
-          {"restaurant_id": "BNGHSR0002", "type": type, "category": localData});
+    if (type == "delete_food_category") {
+      encode = jsonEncode({
+        "restaurant_id": restaurantId,
+        "type": type,
+        "category_id": localData
+      });
       //todo:
     }
 
-//    if (type == "add_bar_menu") {
-//      encode = jsonEncode(
-//          {"restaurant_id": "BNGHSR0002", "type": type, "category": localData});
-//      //todo:
-//    }
-//
-//    if (type == "remove_bar_category") {
-//      encode = jsonEncode(
-//          {"restaurant_id": "BNGHSR0002", "type": type, "category": localData});
-//      //todo:
-//    }
+    if (type == "add_bar_category") {
+      encode = jsonEncode(
+          {"restaurant_id": restaurantId, "type": type, "category": localData});
+      //todo:
+    }
+
+    if (type == "delete_bar_category") {
+      encode = jsonEncode({
+        "restaurant_id": restaurantId,
+        "type": type,
+        "category_id": localData
+      });
+      //todo:
+    }
 
     if (type == "add_food_item") {
       encode = jsonEncode({
-        "restaurant_id": "BNGHSR0002",
+        "restaurant_id": restaurantId,
         "type": type,
+        "category_type": localData["category_type"],
         "category_id": localData['category_id'],
         "food_dict": localData['food_dict'],
       });
     }
 
-    if (type == "remove_food_item") {
-      localData.forEach((v) {
-        encode = jsonEncode({
-          "restaurant_id": "BNGHSR0002",
-          "type": type,
-          "category_id": v['category_id'],
-          "food_dict": v['food_dict'],
-        });
+    if (type == "delete_food_item") {
+      encode = jsonEncode({
+        "restaurant_id": restaurantId,
+        "type": type,
+        "category_type": localData["category_type"],
+        "food_id": localData,
       });
-      //todo:
     }
 
     print("before sending to cloud");
@@ -454,12 +506,13 @@ class _MyAppState extends State<MyApp> {
       var decode = jsonDecode(data);
       print('configuring restaurant');
       print(decode);
+      ////////////////////////////////    table      ///////////////////
 
       if (decode["type"] == "add_tables") {
         restaurant.addTableDetails(decode['tables']);
       }
 
-      if (decode["type"] == "delete_table") {
+      if (decode["type"] == "delete_tables") {
         restaurant.tables
             .removeWhere((table) => table.oid == decode["table_id"]);
       }
@@ -472,21 +525,49 @@ class _MyAppState extends State<MyApp> {
         restaurant.staff
             .removeWhere((staff) => staff.oid == decode["staff_id"]);
       }
-
-      if (decode["type"] == "add_food_menu") {
-        print("food menu");
+////////////////////////////////////////   menu         /////////////////////
+      if (decode["type"] == "add_food_category") {
         restaurant.addFoodMenuCategory(decode["category"]);
       }
-      if (decode["type"] == "add_bar_menu") {
+      if (decode["type"] == "delete_food_category") {
+        restaurant.foodMenu
+            .removeWhere((category) => category.oid == decode["category_id"]);
+      }
+      if (decode["type"] == "add_bar_category") {
         restaurant.addBarMenuCategory(decode["category"]);
       }
+      if (decode["type"] == "delete_bar_category") {
+        restaurant.barMenu
+            .removeWhere((category) => category.oid == decode["category_id"]);
+      }
 
+      print(decode);
       if (decode["type"] == "add_food_item") {
+        if (decode["category_type"] == "food") {
+          restaurant.foodMenu.forEach((category) {
+            if (category.oid == decode["category_id"]) {
+              print("${category.name} matched");
+              category.addFoodItem(decode["food_dict"]);
+            }
+          });
+        } else if (decode["category_type"] == "bar") {
+          restaurant.barMenu.forEach((category) {
+            if (category.oid == decode["category_id"]) {
+              print("${category.name} matched");
+              category.addFoodItem(decode["food_dict"]);
+            }
+          });
+        }
+      }
+
+      if (decode["type"] == "delete_food_item") {
         restaurant.foodMenu.forEach((category) {
-          if (category.oid == decode["category_id"]) {
-            print("${category.name} matched");
-            category.addFoodItem(decode["food_dict"]);
-          }
+          category.foodList
+              .removeWhere((food) => food.oid == decode["food_id"]);
+        });
+        restaurant.barMenu.forEach((category) {
+          category.foodList
+              .removeWhere((food) => food.oid == decode["food_id"]);
         });
       }
 
@@ -495,89 +576,91 @@ class _MyAppState extends State<MyApp> {
           if (table.oid == decode["table_id"]) {
             print('table matched: ${table.name}');
 
-            restaurant.staff.forEach((staff) {
-              decode["assigned_staff"].forEach((assigned) {
-                if (staff.oid == assigned) {
-                  print("staff matched");
-                  print(assigned);
-
-                  table.addTableStaff(staff);
+            decode["assigned_staff"].forEach((assignedStaff) {
+              print("assigning new staff ");
+              print(assignedStaff);
+              restaurant.staff.forEach((restStaff) {
+                if (assignedStaff == restStaff.oid) {
+                  table.addTableStaff(restStaff);
                 }
               });
             });
           }
         });
       }
-//      reply for assigned staff      {restaurant_id: BNGHSR0002, type: assign_staff,
-//       table_id: 5e90b5184584a1d3d9e641db, assigned_staff: [5e90bc2f4584a1d3d9e641de, 5e90b5294584a1d3d9e641dc]}
 
-//  reply for adding food    {restaurant_id: BNGHSR0002, type: add_food_item, category_id: 5e94959afe4ce65500586c26,
-//      food_dict: {name: new food, description: tyukk, price: 45p, food_options: {options: {},
-//      choices: []}, food_id: 5e949ed8fe4ce65500586c29}}
-    });
-  }
-
-  addTableQueuedOrders() {
-    setState(() {
-      int queue = 0;
-
-      int completed = 0;
-      restaurant.tables.forEach((table) {
-        queueOrders.forEach((tableOrder) {
-          if (table.oid == tableOrder.tableId) {
-            table.tableQueuedOrders.add(tableOrder);
-            tableOrder.orders.forEach((order) {
-              queue = queue + order.foodList.length;
-              table.queueCount = queue;
-            });
+      if (decode["type"] == "withdraw_staff") {
+        restaurant.tables.forEach((table) {
+          if (table.oid == decode["table_id"]) {
+            table.staff.removeWhere(
+              (staff) => staff.oid == decode["withdraw_staff_id"],
+            );
           }
         });
-        queue = 0;
-      });
+      }
     });
   }
 
-  addTableCookingOrders() {
-    setState(() {
-      int cooking = 0;
-      restaurant.tables.forEach((table) {
-        cookingOrders.forEach((tableOrder) {
-          if (table.oid == tableOrder.tableId) {
-            table.tableCookingOrders.add(tableOrder);
-            tableOrder.orders.forEach((order) {
-              cooking = cooking + order.foodList.length;
-              table.cookingCount = cooking;
-            });
-          }
-        });
-        cooking = 0;
-      });
-    });
-  }
+//
+//  addTableCookingOrders() {
+//    setState(() {
+//      int cooking = 0;
+//      restaurant.tables.forEach((table) {
+//        cookingOrders.forEach((tableOrder) {
+//          if (table.oid == tableOrder.tableId) {
+//            table.tableCookingOrders.add(tableOrder);
+//            tableOrder.orders.forEach((order) {
+//              cooking = cooking + order.foodList.length;
+//              table.cookingCount = cooking;
+//            });
+//          }
+//        });
+//        cooking = 0;
+//      });
+//    });
+//  }
 
 //  cookingOrders.forEach((order) {
 //  if (table.oid == order.tableId) {
 //
-//  table.tableCookingOrders.add(order);
-//  }
-//  });
-//  completedOrders.forEach((order) {
-//  if (table.oid == order.tableId) {
-//  table.tableCompletedOrders.add(order);
-//  }
-//  });
-  @override
-  Widget build(BuildContext context) {
-    print("printing");
-//    print(restaurant.tables[1].tableQueuedOrders);
-//    var food_count = 0;
-//    restaurant.tables[1].tableQueuedOrders.forEach((tableOrder) {
-//      tableOrder.orders.forEach((order) {
-//        food_count = food_count + order.foodList.length;
+//      int completed = 0;
+//      restaurant.tables.forEach((table) {
+//        queueOrders.forEach((tableOrder) {
+//          if (table.oid == tableOrder.tableId) {
+//            table.tableQueuedOrders.add(tableOrder);
+//            tableOrder.orders.forEach((order) {
+//              queue = queue + order.foodList.length;
+//              table.queueCount = queue;
+//            });
+//          }
+//        });
+//        queue = 0;
 //      });
 //    });
-//    print(food_count);
-    // Set landscape orientation
+//  }
+//
+//  addTableCookingOrders() {
+//    setState(() {
+//      int cooking = 0;
+//      restaurant.tables.forEach((table) {
+//        cookingOrders.forEach((tableOrder) {
+//          if (table.oid == tableOrder.tableId) {
+//            table.tableCookingOrders.add(tableOrder);
+//            tableOrder.orders.forEach((order) {
+//              cooking = cooking + order.foodList.length;
+//              table.cookingCount = cooking;
+//            });
+//          }
+//        });
+//        cooking = 0;
+//      });
+//    });
+//  }
+
+  @override
+  Widget build(BuildContext context) {
+//    print(queueOrders[0].oId);
+//    print(restaurant.tables[7].);
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,

@@ -197,6 +197,8 @@ class _AssignStaffState extends State<AssignStaff> {
                           ],
                         ),
                       ),
+
+                      /////////////for displaying assigned staff////////////////////
                       Expanded(
                         child: widget.restaurant.tables != null
                             ? GridView.builder(
@@ -250,7 +252,7 @@ class _AssignStaffState extends State<AssignStaff> {
                                                                   .restaurant
                                                                   .tables[index]
                                                                   .oid,
-                                                              "remove_staff_list":
+                                                              "withdraw_staff_id":
                                                                   widget
                                                                       .restaurant
                                                                       .tables[
@@ -258,7 +260,7 @@ class _AssignStaffState extends State<AssignStaff> {
                                                                       .staff[
                                                                           index2]
                                                                       .oid
-                                                            }, "remove_staff");
+                                                            }, "withdraw_staff");
 
                                                             //todo:
                                                           },
