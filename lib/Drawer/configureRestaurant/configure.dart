@@ -1,7 +1,9 @@
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addBarMenu.dart';
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addMenu.dart';
+import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addFoodMenu.dart';
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addStaff.dart';
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/assign_Staff.dart';
+import 'package:adhara_socket_io_example/Drawer/configureRestaurant/assignStaff.dart';
+import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/configureHome.dart';
+import 'package:adhara_socket_io_example/Drawer/configureRestaurant/test.dart';
 import 'package:adhara_socket_io_example/data.dart';
 import 'package:flutter/material.dart';
 
@@ -167,12 +169,60 @@ class Configure extends StatelessWidget {
                     ),
                   ),
                   Expanded(
-                    child: Container(),
+                    child: Container(
+                      padding: EdgeInsets.all(25),
+                      child: GestureDetector(
+                        child: Card(
+                          color: Color(0xffE5EDF1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          child: Center(
+                            child: Text('Home Screen'),
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ConfigureHomeScreen(
+                                restaurant: restaurant,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   ),
                 ]),
               ),
               Expanded(
-                child: Row(children: <Widget>[]),
+                child: Row(children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(25),
+                      child: GestureDetector(
+                        child: Card(
+                          color: Color(0xffE5EDF1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          child: Center(
+                            child: Text('testing'),
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TestScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ]),
               ),
             ],
           ),

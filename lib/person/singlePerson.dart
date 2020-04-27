@@ -1,24 +1,32 @@
 import 'package:adhara_socket_io_example/constants.dart';
+import 'package:adhara_socket_io_example/data.dart';
+import 'package:date_format/date_format.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class SinglePerson extends StatelessWidget {
-  final staff;
+  final Staff staff;
+  final List<AssistanceRequest> assistanceReq;
+  final List<AssistanceRequest> personAssistanceReq = [];
+
   SinglePerson({
     this.staff,
+    this.assistanceReq,
   });
 
   final startTime = '4:20 PM';
-  final assistanceType = 'water';
-  final assistanceRequestTime = '4:40';
-  final assistanceStatus = 'Pending';
-  final orderItem = 'Tandoori chicken';
-  final itemQty = '01';
-  final itemPrice = '349';
-  final itemEta = '20';
-  final itemStatus = 'Pending';
+
+  getPersonAssistance() {
+    assistanceReq.forEach((request) {
+      if (request.acceptedBy == staff.name) {
+        personAssistanceReq.add(request);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    getPersonAssistance();
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -152,7 +160,7 @@ class SinglePerson extends StatelessWidget {
                             ),
                             Expanded(
                               child: ListView.builder(
-                                itemCount: 10,
+                                itemCount: personAssistanceReq.length,
                                 shrinkWrap: true,
                                 itemBuilder: (context, index) {
                                   return Container(
@@ -162,7 +170,8 @@ class SinglePerson extends StatelessWidget {
                                         Expanded(
                                           child: Center(
                                             child: Text(
-                                              assistanceType,
+                                              personAssistanceReq[index]
+                                                  .assistanceType,
                                               style: homePageS2,
                                             ),
                                           ),
@@ -170,7 +179,12 @@ class SinglePerson extends StatelessWidget {
                                         Expanded(
                                           child: Center(
                                             child: Text(
-                                              assistanceRequestTime,
+                                              '${formatDate(
+                                                    (personAssistanceReq[index]
+                                                        .timeStamp),
+                                                    [HH, ':', nn],
+                                                  )}' ??
+                                                  " ",
                                               style: homePageS2,
                                             ),
                                           ),
@@ -178,7 +192,8 @@ class SinglePerson extends StatelessWidget {
                                         Expanded(
                                           child: Center(
                                             child: Text(
-                                              assistanceStatus,
+                                              personAssistanceReq[index]
+                                                  .acceptedBy,
                                               style: homePageS2,
                                             ),
                                           ),

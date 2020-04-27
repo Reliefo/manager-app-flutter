@@ -15,7 +15,7 @@
     <application
 
         android:name="io.flutter.app.FlutterApplication"
-        android:label="adhara_socket_io_example"
+        android:label="manager_app"
         android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
         <activity

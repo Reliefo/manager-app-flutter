@@ -32,6 +32,7 @@ class TabContainerBottom extends StatelessWidget {
             children: [
               PersonView(
                 restaurant: restaurant,
+                assistanceReq: assistanceReq,
               ),
               HomePage(
                 queueOrders: queueOrders,

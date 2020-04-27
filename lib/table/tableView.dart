@@ -2,7 +2,7 @@ import 'package:adhara_socket_io_example/constants.dart';
 import 'package:adhara_socket_io_example/data.dart';
 import 'package:flutter/material.dart';
 
-import 'single_table.dart';
+import 'singleTable.dart';
 
 class TableView extends StatelessWidget {
   final Restaurant restaurant;
@@ -16,6 +16,32 @@ class TableView extends StatelessWidget {
     @required this.queueOrders,
     @required this.assistanceReq,
   });
+
+  Color getColour(index) {
+    if (restaurant.tables[index].users != null) {
+      if (restaurant.tables[index].cookingCount >
+          restaurant.tables[index].queueCount) {
+        return Colors.yellow;
+      } else if (restaurant.tables[index].queueCount >
+          restaurant.tables[index].cookingCount) {
+        return Colors.red;
+      }
+      return Colors.green;
+    }
+
+    ///////////////////////////works correctly wen user is scanned////////////
+
+//    else if (restaurant.tables[index].cookingCount >
+//        restaurant.tables[index].queueCount) {
+//      return Colors.yellow;
+//    } else if (restaurant.tables[index].queueCount >
+//        restaurant.tables[index].cookingCount) {
+//      return Colors.red;
+//    }
+
+    else
+      return Colors.grey;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,15 +61,7 @@ class TableView extends StatelessWidget {
                       child: Card(
                         color: Colors.white,
                         child: Container(
-                          color:
-//                              widget.restaurant.tables[index].noOfUsers == null
-//                                  ? Colors.grey
-//                                  : tableCounts[index]['cooking'] > 0
-//                                      ? Colors.yellow
-//                                      : tableCounts[index]['queued'] > 0
-//                                          ? Color(0xffFF6347)
-//                                          :
-                              Colors.blue,
+                          color: getColour(index),
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: Column(
                             children: <Widget>[
@@ -68,7 +86,7 @@ class TableView extends StatelessWidget {
                                           ),
                                           TextDisplay(
                                             text:
-                                                'Scanned : ${restaurant.tables[index].noOfUsers != null ? restaurant.tables[index].noOfUsers : '0'}',
+                                                'Scanned : ${restaurant.tables[index].users != null ? restaurant.tables[index].users.length : '0'}',
                                           ),
                                           TextDisplay(
                                               text:

@@ -202,7 +202,7 @@ class _MyAppState extends State<MyApp> {
             item["orders"].forEach((order) {
               queue = queue + order["food_list"].length;
               print(queue);
-              table.queueCount = queue;
+              table.updateOrderCount(queue, cooking, completed);
             });
           }
           queue = 0;
@@ -217,7 +217,7 @@ class _MyAppState extends State<MyApp> {
           if (item["table_id"] == table.oid) {
             item["orders"].forEach((order) {
               cooking = cooking + order["food_list"].length;
-              table.cookingCount = cooking;
+              table.updateOrderCount(queue, cooking, completed);
             });
           }
           cooking = 0;
@@ -232,7 +232,7 @@ class _MyAppState extends State<MyApp> {
           if (item["table_id"] == table.oid) {
             item["orders"].forEach((order) {
               completed = completed + order["food_list"].length;
-              table.completedCount = completed;
+              table.updateOrderCount(queue, cooking, completed);
             });
           }
           completed = 0;
@@ -276,12 +276,6 @@ class _MyAppState extends State<MyApp> {
 
       if (decoded['type'] == "cooking") {
         selectedOrder = queueOrders;
-
-//        restaurant.tables.forEach((table) {
-//          table.tableOrders.forEach((order){
-//            if(order.oId == decoded[""])
-//          });
-//        });
       } else if (decoded['type'] == "completed") {
         selectedOrder = cookingOrders;
       }
@@ -290,6 +284,16 @@ class _MyAppState extends State<MyApp> {
       selectedOrder.forEach((tableorder) {
         if (tableorder.oId == decoded['table_order_id']) {
           currentTableId = tableorder.tableId;
+          restaurant.tables.forEach((table) {
+            if (currentTableId == table.oid) {
+              if (decoded['type'] == "cooking") {
+                table.updateOrderCount(-1, 1, 0);
+              } else if (decoded['type'] == "completed") {
+                table.updateOrderCount(0, -1, 1);
+              }
+            }
+          });
+
 //          print('table id  matched${decoded['food_id']}');
           tableorder.orders.forEach((order) {
             if (order.oId == decoded['order_id']) {
@@ -386,7 +390,7 @@ class _MyAppState extends State<MyApp> {
       if (data is Map) {
         data = json.encode(data);
       }
-
+      print(jsonDecode(data));
       assistanceReq.forEach((request) {
         if (request.oId == jsonDecode(data)['assistance_id']) {
           request.acceptedBy = jsonDecode(data)['staff_name'];
@@ -397,6 +401,7 @@ class _MyAppState extends State<MyApp> {
 
   updateConfigDetailsToCloud(localData, String type) {
     print(type);
+    print(localData);
     var encode;
     String restaurantId = restaurant.restaurantId;
 ////////////////////////////////    table      ///////////////////
@@ -484,7 +489,7 @@ class _MyAppState extends State<MyApp> {
         "restaurant_id": restaurantId,
         "type": type,
         "category_type": localData["category_type"],
-        "food_id": localData,
+        "food_id": localData["food_id"],
       });
     }
 
@@ -601,64 +606,9 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-//
-//  addTableCookingOrders() {
-//    setState(() {
-//      int cooking = 0;
-//      restaurant.tables.forEach((table) {
-//        cookingOrders.forEach((tableOrder) {
-//          if (table.oid == tableOrder.tableId) {
-//            table.tableCookingOrders.add(tableOrder);
-//            tableOrder.orders.forEach((order) {
-//              cooking = cooking + order.foodList.length;
-//              table.cookingCount = cooking;
-//            });
-//          }
-//        });
-//        cooking = 0;
-//      });
-//    });
-//  }
-
-//  cookingOrders.forEach((order) {
-//  if (table.oid == order.tableId) {
-//
-//      int completed = 0;
-//      restaurant.tables.forEach((table) {
-//        queueOrders.forEach((tableOrder) {
-//          if (table.oid == tableOrder.tableId) {
-//            table.tableQueuedOrders.add(tableOrder);
-//            tableOrder.orders.forEach((order) {
-//              queue = queue + order.foodList.length;
-//              table.queueCount = queue;
-//            });
-//          }
-//        });
-//        queue = 0;
-//      });
-//    });
-//  }
-//
-//  addTableCookingOrders() {
-//    setState(() {
-//      int cooking = 0;
-//      restaurant.tables.forEach((table) {
-//        cookingOrders.forEach((tableOrder) {
-//          if (table.oid == tableOrder.tableId) {
-//            table.tableCookingOrders.add(tableOrder);
-//            tableOrder.orders.forEach((order) {
-//              cooking = cooking + order.foodList.length;
-//              table.cookingCount = cooking;
-//            });
-//          }
-//        });
-//        cooking = 0;
-//      });
-//    });
-//  }
-
   @override
   Widget build(BuildContext context) {
+//    print(restaurant.tables[1].noOfUsers);
 //    print(queueOrders[0].oId);
 //    print(restaurant.tables[7].);
 
@@ -667,6 +617,7 @@ class _MyAppState extends State<MyApp> {
       DeviceOrientation.landscapeRight,
     ]);
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
 //        appBar: AppBar(
 //          title: Text('Squirky'),

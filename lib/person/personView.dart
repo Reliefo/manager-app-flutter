@@ -1,11 +1,15 @@
 import 'package:adhara_socket_io_example/data.dart';
 import 'package:flutter/material.dart';
 
-import 'single_person.dart';
+import 'singlePerson.dart';
 
 class PersonView extends StatelessWidget {
   final Restaurant restaurant;
-  PersonView({@required this.restaurant});
+  final assistanceReq;
+  PersonView({
+    @required this.restaurant,
+    this.assistanceReq,
+  });
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -42,6 +46,7 @@ class PersonView extends StatelessWidget {
                           context: context,
                           builder: (context) => SinglePerson(
                             staff: restaurant.staff[index],
+                            assistanceReq: assistanceReq,
                           ),
                         );
                       },

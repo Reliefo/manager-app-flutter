@@ -127,7 +127,7 @@ class Tables {
   String seats;
   List<Staff> staff;
   List<String> users; //todo: add scanned user details to table object
-  String noOfUsers;
+
   List<TableOrder> tableOrders;
   List<AssistanceRequest> tableAssistanceRequest;
 
@@ -144,7 +144,6 @@ class Tables {
     this.seats,
     this.staff,
     this.users,
-    this.noOfUsers,
     this.tableOrders,
     this.tableAssistanceRequest,
 //    this.tableQueuedOrders,
@@ -181,10 +180,6 @@ class Tables {
         users.add(v['\$oid']);
       });
     }
-
-//    if (json['no_of_users'] != null) {
-//      noOfUsers = json['no_of_users'].toString();
-//    }
 
     if (json['table_orders'].isNotEmpty) {
       tableOrders = new List<TableOrder>();
@@ -246,10 +241,6 @@ class Tables {
       });
     }
 
-//    if (json['no_of_users'] != null) {
-//      noOfUsers = json['no_of_users'].toString();
-//    }
-
     if (json['table_orders'].isNotEmpty) {
       tableOrders = new List<TableOrder>();
       json['table_orders'].forEach((v) {
@@ -289,14 +280,18 @@ class Tables {
 
   Tables.add(table) {
     oid = table['table_id'];
-    name = table['table_name'];
+    name = table['name'];
     seats = table['seats'];
   }
 
   updateOrderCount(queue, cooking, completed) {
-    this.queueCount += queue;
-    this.cookingCount += cooking;
-    this.completedCount += completed;
+//    print("from update count");
+//    print(queue);
+//    print(cooking);
+//    print(completed);
+    this.queueCount = this.queueCount + queue;
+    this.cookingCount = this.cookingCount + cooking;
+    this.completedCount = this.completedCount + completed;
   }
 }
 

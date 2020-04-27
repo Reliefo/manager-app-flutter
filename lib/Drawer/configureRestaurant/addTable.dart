@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 class AddData extends StatefulWidget {
   final updateConfigDetailsToCloud;
-
   final Restaurant restaurant;
 
   AddData({
@@ -16,18 +15,48 @@ class AddData extends StatefulWidget {
 }
 
 class _AddDataState extends State<AddData> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  List<Map<String, String>> temporaryStaffNames = [];
   List<Map<String, String>> temporaryTables = [];
-  final tableNameController = TextEditingController();
 
-  final tableSeatController = TextEditingController();
+  final _tableNameController = TextEditingController();
+  final _tableSeatController = TextEditingController();
+  final _tableNameEditController = TextEditingController();
+  final _tableSeatEditController = TextEditingController();
 
-  final staffNameController = TextEditingController();
+  final FocusNode _tableNameFocus = FocusNode();
+  final FocusNode _tableSeatFocus = FocusNode();
+  bool _tableNameValidate = false;
+  bool _tableSeatValidate = false;
+
+  _fieldFocusChange(
+      BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
+    currentFocus.unfocus();
+    FocusScope.of(context).requestFocus(nextFocus);
+  }
+
+  _addTable() {
+    setState(() {
+      _tableNameController.text.isEmpty
+          ? _tableNameValidate = true
+          : _tableNameValidate = false;
+      _tableSeatController.text.isEmpty
+          ? _tableSeatValidate = true
+          : _tableSeatValidate = false;
+      if (_tableNameController.text.isNotEmpty &&
+          _tableSeatController.text.isNotEmpty) {
+        temporaryTables.add({
+          'name': _tableNameController.text,
+          'seats': _tableSeatController.text
+        });
+
+        _tableSeatController.clear();
+        _tableNameController.clear();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    print(temporaryTables);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -43,13 +72,12 @@ class _AddDataState extends State<AddData> {
               borderRadius: BorderRadius.circular(20.0),
             ),
             child: Column(
-//                    mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Container(
-                  padding: EdgeInsets.all(16),
-                  child: Text('Table Details'),
-                ),
+//                Container(
+//                  padding: EdgeInsets.all(16),
+//                  child: Text('Table Details'),
+//                ),
                 Row(
                   children: <Widget>[
                     Expanded(
@@ -57,22 +85,24 @@ class _AddDataState extends State<AddData> {
                       child: Container(
                         padding: EdgeInsets.all(12),
                         child: TextFormField(
-                          controller: tableNameController,
+                          controller: _tableNameController,
+                          textInputAction: TextInputAction.next,
+                          focusNode: _tableNameFocus,
+                          onFieldSubmitted: (term) {
+                            _fieldFocusChange(
+                                context, _tableNameFocus, _tableSeatFocus);
+                          },
                           decoration: InputDecoration(
                             labelText: "Table Name",
                             fillColor: Colors.white,
+                            errorText: _tableNameValidate
+                                ? 'Value Can\'t Be Empty'
+                                : null,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.0),
                             ),
-                            //fillColor: Colors.green
                           ),
                           keyboardType: TextInputType.text,
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return 'Please enter table name';
-                            }
-                            return null;
-                          },
                         ),
                       ),
                     ),
@@ -81,14 +111,20 @@ class _AddDataState extends State<AddData> {
                       child: Container(
                         padding: EdgeInsets.all(12),
                         child: TextFormField(
-                          controller: tableSeatController,
+                          controller: _tableSeatController,
+                          focusNode: _tableSeatFocus,
+                          onFieldSubmitted: (value) {
+                            _addTable();
+                          },
                           decoration: InputDecoration(
                             labelText: "Seats",
                             fillColor: Colors.white,
+                            errorText: _tableSeatValidate
+                                ? 'Value Can\'t Be Empty'
+                                : null,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.0),
                             ),
-                            //fillColor: Colors.green
                           ),
                           keyboardType: TextInputType.number,
                         ),
@@ -100,19 +136,7 @@ class _AddDataState extends State<AddData> {
                       child: RaisedButton(
                         color: Colors.grey,
                         child: Text('Add'),
-                        onPressed: () {
-                          if (tableNameController.text.isNotEmpty &&
-                              tableSeatController.text.isNotEmpty) {
-                            setState(() {
-                              temporaryTables.add({
-                                'table_name': tableNameController.text,
-                                'seats': tableSeatController.text
-                              });
-                            });
-                            tableSeatController.clear();
-                            tableNameController.clear();
-                          }
-                        },
+                        onPressed: _addTable,
                       ),
                     )),
                   ],
@@ -125,7 +149,29 @@ class _AddDataState extends State<AddData> {
                       widget.restaurant.tables == null
                           ? Text('No Of Tables :')
                           : Text(
-                              'No Of Tables : ${widget.restaurant.tables.length} '),
+                              'No Of Tables : ${widget.restaurant.tables.length} ',
+                            ),
+                      temporaryTables.length == 0
+                          ? Text(
+                              'All tables updated to cloud',
+                              style: TextStyle(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          : Text(
+                              '${temporaryTables.length} tables not updated to cloud',
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                      RaisedButton(
+                        child: Text('Upload to Cloud'),
+                        onPressed: () {
+                          widget.updateConfigDetailsToCloud(
+                              temporaryTables, "add_tables");
+                          temporaryTables.clear();
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -140,7 +186,7 @@ class _AddDataState extends State<AddData> {
                           itemBuilder: (context, index) {
                             return ListTile(
                               title: Text(
-                                  'Table Name : ${temporaryTables[index]['table_name']}'),
+                                  'Table Name : ${temporaryTables[index]['name']}'),
                               subtitle: Text(
                                   'Capacity : ${temporaryTables[index]['seats']} Seats'),
                               trailing: IconButton(
@@ -166,31 +212,168 @@ class _AddDataState extends State<AddData> {
                                       'Table Name : ${widget.restaurant.tables[index].name}'),
                                   subtitle: Text(
                                       'Capacity : ${widget.restaurant.tables[index].seats} Seats'),
-                                  trailing: IconButton(
-                                    icon: Icon(Icons.cancel),
-                                    onPressed: () {
-                                      widget.updateConfigDetailsToCloud(
-                                          widget.restaurant.tables[index].oid,
-                                          "delete_tables");
-//                                        setState(() {
-//                                          widget.restaurant.tables
-//                                              .removeAt(index);
-//                                        });
-                                    },
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      IconButton(
+                                        icon: Icon(Icons.edit),
+                                        onPressed: () {
+                                          _tableNameEditController.text = widget
+                                              .restaurant.tables[index].name;
+
+                                          _tableSeatEditController.text = widget
+                                              .restaurant.tables[index].seats;
+                                          showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              // return object of type Dialog
+                                              return AlertDialog(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                ),
+                                                content: Column(
+                                                  mainAxisSize: MainAxisSize
+                                                      .min, // To make the card compact
+                                                  children: <Widget>[
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: <Widget>[
+                                                        Text(
+                                                          "Table Name :  ",
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                            fontSize: 16.0,
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 20),
+                                                        Container(
+                                                          width: 200,
+                                                          child: TextField(
+                                                            controller:
+                                                                _tableNameEditController,
+                                                            autofocus: true,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(height: 16.0),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: <Widget>[
+                                                        Text(
+                                                          "Seating Capacity :  ",
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                            fontSize: 16.0,
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 20),
+                                                        Container(
+                                                          width: 200,
+                                                          child: TextField(
+                                                            controller:
+                                                                _tableSeatEditController,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(height: 24.0),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceAround,
+                                                      children: <Widget>[
+                                                        FlatButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(); // To close the dialog
+                                                          },
+                                                          child: Text(
+                                                            "Cancel",
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.red),
+                                                          ),
+                                                        ),
+                                                        FlatButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(); // To close the dialog
+                                                          },
+                                                          child: Text(
+                                                            "Done",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .green),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.cancel),
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              // return object of type Dialog
+                                              return AlertDialog(
+                                                title: Text(
+                                                    "Remove ${widget.restaurant.tables[index].name} Table ?"),
+                                                content: new Text(
+                                                    "this will delete all the assigned Staff from this table"),
+                                                actions: <Widget>[
+                                                  FlatButton(
+                                                    child: new Text("Delete"),
+                                                    onPressed: () {
+                                                      widget
+                                                          .updateConfigDetailsToCloud(
+                                                              widget
+                                                                  .restaurant
+                                                                  .tables[index]
+                                                                  .oid,
+                                                              "delete_tables");
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                  // usually buttons at the bottom of the dialog
+                                                  FlatButton(
+                                                    child: Text("Close"),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ],
                                   ),
                                 );
                               })
                           : Text(' ')
                     ],
                   ),
-                ),
-                FlatButton(
-                  child: Text('Upload to Cloud'),
-                  onPressed: () {
-                    widget.updateConfigDetailsToCloud(
-                        temporaryTables, "add_tables");
-                    temporaryTables.clear();
-                  },
                 ),
               ],
             ),

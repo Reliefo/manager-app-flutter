@@ -16,15 +16,23 @@ class AddStaff extends StatefulWidget {
 }
 
 class _AddDataState extends State<AddStaff> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   List<Map<String, String>> temporaryStaffNames = [];
-  List<Map<String, String>> temporaryTables = [];
-  final tableNameController = TextEditingController();
-
-  final tableSeatController = TextEditingController();
 
   final staffNameController = TextEditingController();
+  final _staffNameEditController = TextEditingController();
+  bool _staffNameValidate = false;
+
+  _addStaff() {
+    setState(() {
+      if (staffNameController.text.isNotEmpty) {
+        _staffNameValidate = false;
+        temporaryStaffNames.add({'staff_name': staffNameController.text});
+
+        staffNameController.clear();
+      } else
+        _staffNameValidate = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +53,10 @@ class _AddDataState extends State<AddStaff> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Container(
-                  padding: EdgeInsets.all(16),
-                  child: Text('Staff Details'),
-                ),
+//                Container(
+//                  padding: EdgeInsets.all(16),
+//                  child: Text('Staff Details'),
+//                ),
                 Row(
                   children: <Widget>[
                     Expanded(
@@ -57,13 +65,18 @@ class _AddDataState extends State<AddStaff> {
                         padding: EdgeInsets.all(12),
                         child: TextFormField(
                           controller: staffNameController,
+                          onFieldSubmitted: (value) {
+                            _addStaff();
+                          },
                           decoration: InputDecoration(
                             labelText: "Staff Name",
                             fillColor: Colors.white,
+                            errorText: _staffNameValidate
+                                ? 'Value Can\'t Be Empty'
+                                : null,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.0),
                             ),
-                            //fillColor: Colors.green
                           ),
                           keyboardType: TextInputType.text,
                         ),
@@ -76,16 +89,7 @@ class _AddDataState extends State<AddStaff> {
                         child: RaisedButton(
                           color: Colors.grey,
                           child: Text('Add'),
-                          onPressed: () {
-                            if (staffNameController.text.isNotEmpty) {
-                              setState(() {
-                                temporaryStaffNames.add(
-                                    {'staff_name': staffNameController.text});
-                              });
-
-                              staffNameController.clear();
-                            }
-                          },
+                          onPressed: _addStaff,
                         ),
                       ),
                     ),
@@ -100,7 +104,30 @@ class _AddDataState extends State<AddStaff> {
                       widget.restaurant.staff == null
                           ? Text('No Of Staffs :')
                           : Text(
-                              'No Of Staffs : ${widget.restaurant.staff.length} '),
+                              'No Of Staffs : ${widget.restaurant.staff.length} ',
+                            ),
+                      temporaryStaffNames.length == 0
+                          ? Text(
+                              'All Staff updated to cloud',
+                              style: TextStyle(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          : Text(
+                              '${temporaryStaffNames.length} Staff not updated to cloud',
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                      RaisedButton(
+                        child: Text('Upload to Cloud'),
+                        onPressed: () {
+                          widget.updateConfigDetailsToCloud(
+                              temporaryStaffNames, "add_staff");
+
+                          temporaryStaffNames.clear();
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -116,7 +143,7 @@ class _AddDataState extends State<AddStaff> {
                           itemBuilder: (context, index) {
                             return ListTile(
                               title: Text(
-                                  'Table Name : ${temporaryStaffNames[index]['staff_name']}'),
+                                  'Name : ${temporaryStaffNames[index]['staff_name']}'),
                               trailing: IconButton(
                                 icon: Icon(Icons.cancel),
                                 onPressed: () {
@@ -135,14 +162,105 @@ class _AddDataState extends State<AddStaff> {
                               itemBuilder: (context, index) {
                                 return ListTile(
                                   title: Text(
-                                      'Table Name : ${widget.restaurant.staff[index].name}'),
-                                  trailing: IconButton(
-                                    icon: Icon(Icons.cancel),
-                                    onPressed: () {
-                                      widget.updateConfigDetailsToCloud(
-                                          widget.restaurant.staff[index].oid,
-                                          "delete_staff");
-                                    },
+                                      'Name : ${widget.restaurant.staff[index].name}'),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      IconButton(
+                                        icon: Icon(Icons.edit),
+                                        onPressed: () {
+                                          _staffNameEditController.text = widget
+                                              .restaurant.staff[index].name;
+
+                                          showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              // return object of type Dialog
+                                              return AlertDialog(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                ),
+                                                content: Column(
+                                                  mainAxisSize: MainAxisSize
+                                                      .min, // To make the card compact
+                                                  children: <Widget>[
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: <Widget>[
+                                                        Text(
+                                                          "Staff Name :  ",
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                            fontSize: 16.0,
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 20),
+                                                        Container(
+                                                          width: 200,
+                                                          child: TextField(
+                                                            controller:
+                                                                _staffNameEditController,
+                                                            autofocus: true,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(height: 24.0),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceAround,
+                                                      children: <Widget>[
+                                                        FlatButton(
+                                                          child: Text(
+                                                            "Cancel",
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.red),
+                                                          ),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(); // To close the dialog
+                                                          },
+                                                        ),
+                                                        FlatButton(
+                                                          child: Text(
+                                                            "Done",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .green),
+                                                          ),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(); // To close the dialog
+                                                          },
+                                                        ),
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.cancel),
+                                        onPressed: () {
+                                          widget.updateConfigDetailsToCloud(
+                                              widget
+                                                  .restaurant.staff[index].oid,
+                                              "delete_staff");
+                                        },
+                                      ),
+                                    ],
                                   ),
                                 );
                               })
@@ -151,15 +269,6 @@ class _AddDataState extends State<AddStaff> {
                   ),
                 ),
 
-                FlatButton(
-                  child: Text('Upload to Cloud'),
-                  onPressed: () {
-                    widget.updateConfigDetailsToCloud(
-                        temporaryStaffNames, "add_staff");
-
-                    temporaryStaffNames.clear();
-                  },
-                ),
 //                      Expanded(
 //                          child: ListView.builder(
 //                              itemCount: widget.staffNameList.length,

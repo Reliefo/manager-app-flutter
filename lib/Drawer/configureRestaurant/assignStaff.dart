@@ -191,7 +191,7 @@ class _AssignStaffState extends State<AssignStaff> {
                             Text(widget.restaurant.tables != null
                                 ? 'No Of Tables : ${widget.restaurant.tables.length}'
                                 : 'No Of Tables : 0 '),
-                            Text(widget.restaurant.tables != null
+                            Text(widget.restaurant.staff != null
                                 ? 'No Of Staff : ${widget.restaurant.staff.length}'
                                 : 'No Of Staff : 0'),
                           ],
