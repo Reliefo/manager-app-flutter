@@ -1,4 +1,4 @@
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addItem.dart';
+import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addFoodItem/addItem.dart';
 import 'package:adhara_socket_io_example/data.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +22,6 @@ class _AddMenuState extends State<AddBarMenu> {
   final _descriptionEditController = TextEditingController();
   final FocusNode _categoryFocus = FocusNode();
   final FocusNode _descriptionFocus = FocusNode();
-  Map<String, String> categoryTemp = {};
 
   bool _categoryValidate = false;
 
@@ -36,17 +35,14 @@ class _AddMenuState extends State<AddBarMenu> {
     setState(() {
       if (_categoryController.text.isNotEmpty) {
         _categoryValidate = false;
-        categoryTemp = {
+
+        widget.updateConfigDetailsToCloud({
           "name": _categoryController.text,
           "description": _descriptionController.text
-        };
-
-        widget.updateConfigDetailsToCloud(categoryTemp, "add_bar_category");
+        }, "add_bar_category");
 
         _categoryController.clear();
         _descriptionController.clear();
-
-        categoryTemp.clear();
       } else
         _categoryValidate = true;
     });
@@ -141,183 +137,218 @@ class _AddMenuState extends State<AddBarMenu> {
                           itemCount: widget.restaurant.barMenu.length,
                           shrinkWrap: true,
                           itemBuilder: (BuildContext context, index) {
-                            return ListTile(
-                              title:
-                                  Text(widget.restaurant.barMenu[index].name),
-                              subtitle: Text(
-                                  widget.restaurant.barMenu[index].description),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  FlatButton(
-                                    child: Text('Add Drinks'),
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => AddItem(
-                                            category: widget
-                                                .restaurant.barMenu[index],
-                                            updateConfigDetailsToCloud: widget
-                                                .updateConfigDetailsToCloud,
-                                            menuType: "bar",
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.edit),
-                                    onPressed: () {
-                                      _categoryEditController.text =
-                                          widget.restaurant.barMenu[index].name;
+                            return FlatButton(
+                              child: ListTile(
+                                title:
+                                    Text(widget.restaurant.barMenu[index].name),
+                                subtitle: Text(widget
+                                    .restaurant.barMenu[index].description),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+//                                    FlatButton(
+//                                      child: Text('Add Drinks'),
+//                                      onPressed: () {
+//                                        Navigator.push(
+//                                          context,
+//                                          MaterialPageRoute(
+//                                            builder: (context) => AddItem(
+//                                              category: widget
+//                                                  .restaurant.barMenu[index],
+//                                              updateConfigDetailsToCloud: widget
+//                                                  .updateConfigDetailsToCloud,
+//                                              menuType: "bar",
+//                                            ),
+//                                          ),
+//                                        );
+//                                      },
+//                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.edit),
+                                      onPressed: () {
+                                        _categoryEditController.text = widget
+                                            .restaurant.barMenu[index].name;
 
-                                      _descriptionEditController.text = widget
-                                          .restaurant
-                                          .barMenu[index]
-                                          .description;
-                                      showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          // return object of type Dialog
-                                          return AlertDialog(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            content: Column(
-                                              mainAxisSize: MainAxisSize
-                                                  .min, // To make the card compact
-                                              children: <Widget>[
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: <Widget>[
-                                                    Text(
-                                                      "Category : ",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                        fontSize: 16.0,
-                                                      ),
-                                                    ),
-                                                    SizedBox(width: 20),
-                                                    Container(
-                                                      width: 200,
-                                                      child: TextField(
-                                                        controller:
-                                                            _categoryEditController,
-                                                        autofocus: true,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(height: 16.0),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: <Widget>[
-                                                    Text(
-                                                      "Description : ",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                        fontSize: 16.0,
-                                                      ),
-                                                    ),
-                                                    SizedBox(width: 20),
-                                                    Container(
-                                                      width: 200,
-                                                      child: TextField(
-                                                        controller:
-                                                            _descriptionEditController,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(height: 24.0),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceAround,
-                                                  children: <Widget>[
-                                                    FlatButton(
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop(); // To close the dialog
-                                                      },
-                                                      child: Text(
-                                                        "Cancel",
+                                        _descriptionEditController.text = widget
+                                            .restaurant
+                                            .barMenu[index]
+                                            .description;
+                                        showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            // return object of type Dialog
+                                            return AlertDialog(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              content: Column(
+                                                mainAxisSize: MainAxisSize
+                                                    .min, // To make the card compact
+                                                children: <Widget>[
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: <Widget>[
+                                                      Text(
+                                                        "Category : ",
+                                                        textAlign:
+                                                            TextAlign.center,
                                                         style: TextStyle(
-                                                            color: Colors.red),
+                                                          fontSize: 16.0,
+                                                        ),
                                                       ),
-                                                    ),
-                                                    FlatButton(
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop(); // To close the dialog
-                                                      },
-                                                      child: Text(
-                                                        "Done",
+                                                      SizedBox(width: 20),
+                                                      Container(
+                                                        width: 200,
+                                                        child: TextField(
+                                                          controller:
+                                                              _categoryEditController,
+                                                          autofocus: true,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: 16.0),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: <Widget>[
+                                                      Text(
+                                                        "Description : ",
+                                                        textAlign:
+                                                            TextAlign.center,
                                                         style: TextStyle(
-                                                            color:
-                                                                Colors.green),
+                                                          fontSize: 16.0,
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                )
+                                                      SizedBox(width: 20),
+                                                      Container(
+                                                        width: 200,
+                                                        child: TextField(
+                                                          controller:
+                                                              _descriptionEditController,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: 24.0),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceAround,
+                                                    children: <Widget>[
+                                                      FlatButton(
+                                                        child: Text(
+                                                          "Cancel",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.red),
+                                                        ),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop(); // To close the dialog
+                                                        },
+                                                      ),
+                                                      FlatButton(
+                                                        child: Text(
+                                                          "Done",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.green),
+                                                        ),
+                                                        onPressed: () {
+                                                          if (_categoryEditController
+                                                              .text
+                                                              .isNotEmpty) {
+                                                            widget
+                                                                .updateConfigDetailsToCloud(
+                                                              {
+                                                                "category_id":
+                                                                    "${widget.restaurant.barMenu[index].oid}",
+                                                                "editing_fields":
+                                                                    {
+                                                                  "name":
+                                                                      _categoryEditController
+                                                                          .text,
+                                                                  "description":
+                                                                      _descriptionEditController
+                                                                          .text
+                                                                }
+                                                              },
+                                                              "edit_bar_category",
+                                                            );
+                                                          }
+                                                          Navigator.of(context)
+                                                              .pop(); // To close the dialog
+                                                        },
+                                                      ),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.cancel),
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            // return object of type Dialog
+                                            return AlertDialog(
+                                              title: Text(
+                                                  "Remove ${widget.restaurant.barMenu[index].name} Category ?"),
+                                              content: new Text(
+                                                  "this will delete all items in this category"),
+                                              actions: <Widget>[
+                                                FlatButton(
+                                                  child: new Text("Delete"),
+                                                  onPressed: () {
+                                                    widget.updateConfigDetailsToCloud(
+                                                        widget.restaurant
+                                                            .barMenu[index].oid,
+                                                        "delete_bar_category");
+
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                                // usually buttons at the bottom of the dialog
+                                                FlatButton(
+                                                  child: Text("Close"),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
                                               ],
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.cancel),
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          // return object of type Dialog
-                                          return AlertDialog(
-                                            title: Text(
-                                                "Remove ${widget.restaurant.barMenu[index].name} Category ?"),
-                                            content: new Text(
-                                                "this will delete all items in this category"),
-                                            actions: <Widget>[
-                                              FlatButton(
-                                                child: new Text("Delete"),
-                                                onPressed: () {
-                                                  widget
-                                                      .updateConfigDetailsToCloud(
-                                                          widget
-                                                              .restaurant
-                                                              .barMenu[index]
-                                                              .oid,
-                                                          "delete_bar_category");
-
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                              // usually buttons at the bottom of the dialog
-                                              FlatButton(
-                                                child: Text("Close"),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddItem(
+                                      category:
+                                          widget.restaurant.barMenu[index],
+                                      updateConfigDetailsToCloud:
+                                          widget.updateConfigDetailsToCloud,
+                                      menuType: "bar",
+                                    ),
+                                  ),
+                                );
+                              },
                             );
                           })
                       : Center(

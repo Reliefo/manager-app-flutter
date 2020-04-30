@@ -1,3 +1,4 @@
+import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addFoodItem/viewItem.dart';
 import 'package:adhara_socket_io_example/data.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +16,11 @@ class AddItem extends StatefulWidget {
 }
 
 class _AddFoodItemState extends State<AddItem> {
+  Map<String, dynamic> foodTemp = {};
+  List<String> choices = [];
+  List<Map<String, dynamic>> options = [];
+  List<String> editChoices = [];
+  Map<String, String> editOptions;
   bool optionsCheckBoxValue = false;
   bool choicesCheckBoxValue = false;
   final itemNameController = TextEditingController();
@@ -29,11 +35,12 @@ class _AddFoodItemState extends State<AddItem> {
   final FocusNode foodOptionFocus = FocusNode();
   final FocusNode foodChoiceFocus = FocusNode();
 
-  final _itemNameEditController = TextEditingController();
-  final _descriptionEditController = TextEditingController();
-  final _priceEditController = TextEditingController();
-  final _foodOptionEditController = TextEditingController();
-  final _foodChoiceEditController = TextEditingController();
+//  final _itemNameEditController = TextEditingController();
+//  final _descriptionEditController = TextEditingController();
+//  final _priceEditController = TextEditingController();
+//  final _foodOptionEditController = TextEditingController();
+//  final _foodOptionPriceEditController = TextEditingController();
+//  final _foodChoiceEditController = TextEditingController();
 
   _fieldFocusChange(
       BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
@@ -41,13 +48,79 @@ class _AddFoodItemState extends State<AddItem> {
     FocusScope.of(context).requestFocus(nextFocus);
   }
 
-  Map<String, dynamic> foodTemp = {};
-  List<String> choices = [];
-  Map<String, String> options = {};
+  confirmItem() {
+    setState(() {
+      foodTemp = {
+        "category_id": widget.category.oid,
+        "category_type": widget.menuType,
+        "food_dict": {
+          "name": itemNameController.text,
+          "description": descriptionController.text,
+          "price": priceController.text,
+          "food_options": {"options": options, "choices": choices}
+        },
+      };
+    });
+
+    widget.updateConfigDetailsToCloud(foodTemp, "add_food_item");
+
+    itemNameController.clear();
+    descriptionController.clear();
+    priceController.clear();
+    foodOptionController.clear();
+    foodChoiceController.clear();
+    foodTemp.clear();
+    options.clear();
+    choices.clear();
+  }
+
+//  sendEditFields(index) {
+//    if (true) {
+//      widget.updateConfigDetailsToCloud({
+//        "food_id": widget.category.foodList[index].oid,
+//        "category_type": widget.menuType,
+//        "food_dict": {
+//          "name": _itemNameEditController.text,
+//          "description": _descriptionEditController.text,
+//          "food_options": {"options": editOptions, "choices": editChoices}
+//        },
+//      }, "edit_food_item");
+//    } else if (editOptions.isNotEmpty && editChoices.isEmpty) {
+//      widget.updateConfigDetailsToCloud({
+//        "food_id": widget.category.foodList[index].oid,
+//        "category_type": widget.menuType,
+//        "food_dict": {
+//          "name": _itemNameEditController.text,
+//          "description": _descriptionEditController.text,
+//          "food_options": {"options": editOptions}
+//        },
+//      }, "edit_food_item");
+//    } else if (editChoices.isNotEmpty && editOptions.isEmpty) {
+//      widget.updateConfigDetailsToCloud({
+//        "food_id": widget.category.foodList[index].oid,
+//        "category_type": widget.menuType,
+//        "food_dict": {
+//          "name": _itemNameEditController.text,
+//          "description": _descriptionEditController.text,
+//          "price": _priceEditController.text,
+//          "food_options": {"choices": editChoices}
+//        },
+//      }, "edit_food_item");
+//    } else {
+//      widget.updateConfigDetailsToCloud({
+//        "food_id": widget.category.foodList[index].oid,
+//        "category_type": widget.menuType,
+//        "food_dict": {
+//          "name": _itemNameEditController.text,
+//          "description": _descriptionEditController.text,
+//          "price": _priceEditController.text,
+//        },
+//      }, "edit_food_item");
+//    }
+//  }
+
   @override
   Widget build(BuildContext context) {
-    print("add item");
-    print(options);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -271,32 +344,7 @@ class _AddFoodItemState extends State<AddItem> {
                           ),
                 FlatButton(
                   child: Text('confirm item'),
-                  onPressed: () {
-                    setState(() {
-                      foodTemp = {
-                        "category_id": widget.category.oid,
-                        "category_type": widget.menuType,
-                        "food_dict": {
-                          "name": itemNameController.text,
-                          "description": descriptionController.text,
-                          "price": priceController.text,
-                          "food_options": {
-                            "options": options,
-                            "choices": choices
-                          }
-                        },
-                      };
-                    });
-
-                    widget.updateConfigDetailsToCloud(
-                        foodTemp, "add_food_item");
-
-                    itemNameController.clear();
-                    descriptionController.clear();
-                    priceController.clear();
-                    foodOptionController.clear();
-                    foodChoiceController.clear();
-                  },
+                  onPressed: confirmItem,
                 ),
 
                 ////////////////////// to display food item present in the menu///////////////////
@@ -307,196 +355,59 @@ class _AddFoodItemState extends State<AddItem> {
                           shrinkWrap: true,
                           itemCount: widget.category.foodList.length,
                           itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Text(widget.category.foodList[index].name),
-                              subtitle: Text(
-                                  widget.category.foodList[index].description),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-//                                  IconButton(
-//                                    icon: Icon(Icons.edit),
-//                                    onPressed: () {
-//                                      _itemNameEditController.text =
-//                                          widget.category.foodList[index].name;
+                            return FlatButton(
+                              child: ListTile(
+                                title:
+                                    Text(widget.category.foodList[index].name),
+                                subtitle: Text(widget
+                                    .category.foodList[index].description),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+//                                    IconButton(
+//                                      icon: Icon(Icons.edit),
+//                                      onPressed: () {
+//                                        //todo: navigate to edit page
 //
-//                                      _descriptionEditController.text = widget
-//                                          .category.foodList[index].description;
-//                                      showBottomSheet(
-//                                          context: context,
-////                                          shape: RoundedRectangleBorder(
-////                                            borderRadius: BorderRadius.vertical(
-////                                                top: Radius.circular(25.0)),
-////                                          ),
-//                                          builder: (BuildContext context) {
-//                                            return Container(
-//                                              child: Column(
-////                                                mainAxisSize: MainAxisSize
-////                                                    .min, // To make the card compact
-//
-//                                                children: <Widget>[
-//                                                  Row(
-//                                                    children: <Widget>[
-//                                                      Text(
-//                                                        "Item Name : ",
-//                                                        textAlign:
-//                                                            TextAlign.center,
-//                                                        style: TextStyle(
-//                                                          fontSize: 16.0,
-//                                                        ),
-//                                                      ),
-//                                                      SizedBox(width: 20),
-//                                                      Container(
-//                                                        width: 200,
-//                                                        child: TextField(
-//                                                          controller:
-//                                                              _itemNameEditController,
-//                                                          autofocus: true,
-//                                                        ),
-//                                                      ),
-//                                                    ],
-//                                                  ),
-//                                                  SizedBox(height: 16.0),
-//                                                  Row(
-//                                                    mainAxisAlignment:
-//                                                        MainAxisAlignment
-//                                                            .spaceBetween,
-//                                                    children: <Widget>[
-//                                                      Text(
-//                                                        "Description : ",
-//                                                        textAlign:
-//                                                            TextAlign.center,
-//                                                        style: TextStyle(
-//                                                          fontSize: 16.0,
-//                                                        ),
-//                                                      ),
-//                                                      SizedBox(width: 20),
-//                                                      Expanded(
-//                                                        child: TextField(
-//                                                          controller:
-//                                                              _descriptionEditController,
-//                                                        ),
-//                                                      ),
-//                                                    ],
-//                                                  ),
-//                                                  SizedBox(height: 16.0),
-//                                                  Row(
-//                                                    mainAxisAlignment:
-//                                                        MainAxisAlignment
-//                                                            .spaceBetween,
-//                                                    children: <Widget>[
-//                                                      Text(
-//                                                        "option : ",
-//                                                        textAlign:
-//                                                            TextAlign.center,
-//                                                        style: TextStyle(
-//                                                          fontSize: 16.0,
-//                                                        ),
-//                                                      ),
-//                                                      SizedBox(width: 20),
-//                                                      Expanded(
-//                                                        child: TextField(
-//                                                          controller:
-//                                                              _descriptionEditController,
-//                                                        ),
-//                                                      ),
-//                                                    ],
-//                                                  ),
-//                                                  SizedBox(height: 16.0),
-//                                                  Row(
-//                                                    mainAxisAlignment:
-//                                                        MainAxisAlignment
-//                                                            .spaceBetween,
-//                                                    children: <Widget>[
-//                                                      Text(
-//                                                        "Description : ",
-//                                                        textAlign:
-//                                                            TextAlign.center,
-//                                                        style: TextStyle(
-//                                                          fontSize: 16.0,
-//                                                        ),
-//                                                      ),
-//                                                      SizedBox(width: 20),
-//                                                      Expanded(
-//                                                        child: TextField(
-//                                                          controller:
-//                                                              _descriptionEditController,
-//                                                        ),
-//                                                      ),
-//                                                    ],
-//                                                  ),
-//                                                  SizedBox(height: 16.0),
-//                                                  Row(
-//                                                    children: <Widget>[
-//                                                      Text(
-//                                                        "Item Name : ",
-//                                                        textAlign:
-//                                                            TextAlign.center,
-//                                                        style: TextStyle(
-//                                                          fontSize: 16.0,
-//                                                        ),
-//                                                      ),
-//                                                      SizedBox(width: 20),
-//                                                      Container(
-//                                                        width: 200,
-//                                                        child: TextField(
-//                                                          controller:
-//                                                              _itemNameEditController,
-//                                                          autofocus: true,
-//                                                        ),
-//                                                      ),
-//                                                    ],
-//                                                  ),
-//                                                  SizedBox(height: 24.0),
-//                                                  Row(
-//                                                    mainAxisAlignment:
-//                                                        MainAxisAlignment
-//                                                            .spaceAround,
-//                                                    children: <Widget>[
-//                                                      FlatButton(
-//                                                        onPressed: () {
-//                                                          Navigator.of(context)
-//                                                              .pop(); // To close the dialog
-//                                                        },
-//                                                        child: Text(
-//                                                          "Cancel",
-//                                                          style: TextStyle(
-//                                                              color:
-//                                                                  Colors.red),
-//                                                        ),
-//                                                      ),
-//                                                      FlatButton(
-//                                                        onPressed: () {
-//                                                          Navigator.of(context)
-//                                                              .pop(); // To close the dialog
-//                                                        },
-//                                                        child: Text(
-//                                                          "Done",
-//                                                          style: TextStyle(
-//                                                              color:
-//                                                                  Colors.green),
-//                                                        ),
-//                                                      ),
-//                                                    ],
-//                                                  )
-//                                                ],
-//                                              ),
-//                                            );
-//                                          });
-//                                    },
-//                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.cancel),
-                                    onPressed: () {
-                                      widget.updateConfigDetailsToCloud({
-                                        "category_type": widget.menuType,
-                                        "food_id":
-                                            widget.category.foodList[index].oid
-                                      }, "delete_food_item");
-                                    },
-                                  ),
-                                ],
+//                                        Navigator.push(
+//                                          context,
+//                                          MaterialPageRoute(
+//                                            builder: (context) => EditItem(
+//                                              foodItem: widget
+//                                                  .category.foodList[index],
+//                                            ),
+//                                          ),
+//                                        );
+//                                      },
+//                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.cancel),
+                                      onPressed: () {
+                                        widget.updateConfigDetailsToCloud({
+                                          "category_type": widget.menuType,
+                                          "food_id": widget
+                                              .category.foodList[index].oid
+                                        }, "delete_food_item");
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
+                              onPressed: () {
+                                //////////////////////////////// view item ///////////////
+                                showDialog(
+//                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return ViewItem(
+                                        updateConfigDetailsToCloud:
+                                            widget.updateConfigDetailsToCloud,
+                                        menuType: widget.menuType,
+                                        foodItem:
+                                            widget.category.foodList[index],
+                                      );
+                                    });
+                              },
                             );
                           },
                         )
@@ -515,7 +426,7 @@ class Options extends StatelessWidget {
   final foodOptionController;
   final priceController;
   final FocusNode foodOptionFocus;
-  final Map<String, String> options;
+  final List<Map<String, dynamic>> options;
   Options({
     @required this.foodOptionController,
     @required this.priceController,
@@ -577,9 +488,11 @@ class Options extends StatelessWidget {
         child: FlatButton(
             child: Text('add option'),
             onPressed: () {
-              options["${foodOptionController.text}"] =
-                  "${priceController.text}";
-//                  .add({"${foodOptionController.text}": priceController.text});
+              options.add({
+                "option_name": foodOptionController.text,
+                "option_price": priceController.text
+              });
+
               foodOptionController.clear();
               priceController.clear();
             }),

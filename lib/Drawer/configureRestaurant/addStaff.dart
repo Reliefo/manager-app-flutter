@@ -26,7 +26,7 @@ class _AddDataState extends State<AddStaff> {
     setState(() {
       if (staffNameController.text.isNotEmpty) {
         _staffNameValidate = false;
-        temporaryStaffNames.add({'staff_name': staffNameController.text});
+        temporaryStaffNames.add({'name': staffNameController.text});
 
         staffNameController.clear();
       } else
@@ -237,6 +237,22 @@ class _AddDataState extends State<AddStaff> {
                                                                     .green),
                                                           ),
                                                           onPressed: () {
+                                                            if (_staffNameEditController
+                                                                .text
+                                                                .isNotEmpty) {
+                                                              widget
+                                                                  .updateConfigDetailsToCloud({
+                                                                "editing_fields":
+                                                                    {
+                                                                  "name":
+                                                                      _staffNameEditController
+                                                                          .text
+                                                                },
+                                                                "staff_id":
+                                                                    "${widget.restaurant.staff[index].oid}"
+                                                              }, "edit_staff");
+                                                            }
+
                                                             Navigator.of(
                                                                     context)
                                                                 .pop(); // To close the dialog

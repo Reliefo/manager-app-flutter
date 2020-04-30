@@ -292,30 +292,52 @@ class _AddDataState extends State<AddData> {
                                                               .spaceAround,
                                                       children: <Widget>[
                                                         FlatButton(
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop(); // To close the dialog
-                                                          },
                                                           child: Text(
                                                             "Cancel",
                                                             style: TextStyle(
                                                                 color:
                                                                     Colors.red),
                                                           ),
-                                                        ),
-                                                        FlatButton(
                                                           onPressed: () {
                                                             Navigator.of(
                                                                     context)
                                                                 .pop(); // To close the dialog
                                                           },
+                                                        ),
+                                                        FlatButton(
                                                           child: Text(
                                                             "Done",
                                                             style: TextStyle(
                                                                 color: Colors
                                                                     .green),
                                                           ),
+                                                          onPressed: () {
+                                                            if (_tableNameEditController
+                                                                    .text
+                                                                    .isNotEmpty &&
+                                                                _tableSeatEditController
+                                                                    .text
+                                                                    .isNotEmpty) {
+                                                              widget
+                                                                  .updateConfigDetailsToCloud({
+                                                                "editing_fields":
+                                                                    {
+                                                                  "name":
+                                                                      _tableNameEditController
+                                                                          .text,
+                                                                  "seats":
+                                                                      _tableSeatEditController
+                                                                          .text
+                                                                },
+                                                                "table_id":
+                                                                    "${widget.restaurant.tables[index].oid}"
+                                                              }, "edit_tables");
+                                                            }
+
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(); // To close the dialog
+                                                          },
                                                         ),
                                                       ],
                                                     )

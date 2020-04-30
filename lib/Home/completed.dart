@@ -25,25 +25,30 @@ class Completed extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Container(
-                          padding:
-                              EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                          child: Text(
-                            'Table : ${completedOrders[index].table}' ?? " ",
-                            style: homePageS1,
+                        Flexible(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 12),
+                            child: Text(
+                              'Table : ${completedOrders[index].table}' ?? " ",
+                              style: homePageS1,
+                              textAlign: TextAlign.start,
+                            ),
                           ),
                         ),
-                        Container(
-                          padding:
-                              EdgeInsets.symmetric(vertical: 2, horizontal: 12),
-                          child: Text(
+                        Flexible(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 2, horizontal: 12),
+                            child: Text(
 //
-                            'Arrival Time : ${formatDate(
-                                  (completedOrders[index].timeStamp),
-                                  [HH, ':', nn],
-                                )}' ??
-                                " ",
-                            style: homePageS3,
+                              'Arrival Time : ${formatDate(
+                                    (completedOrders[index].timeStamp),
+                                    [HH, ':', nn],
+                                  )}' ??
+                                  " ",
+                              style: homePageS3, textAlign: TextAlign.end,
+                            ),
                           ),
                         ),
                       ],

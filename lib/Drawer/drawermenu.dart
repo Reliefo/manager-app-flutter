@@ -23,12 +23,9 @@ class DrawerMenu extends StatelessWidget {
           child: Container(),
         ),
 
-        GestureDetector(
-          child: Container(
-            padding: EdgeInsets.all(12),
-            child: Text('configure restaurant'),
-          ),
-          onTap: () {
+        FlatButton(
+          child: Text('configure restaurant'),
+          onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(

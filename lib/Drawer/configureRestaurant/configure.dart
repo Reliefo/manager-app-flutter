@@ -33,7 +33,7 @@ class Configure extends StatelessWidget {
                   Expanded(
                     child: Container(
                       padding: EdgeInsets.all(25),
-                      child: GestureDetector(
+                      child: FlatButton(
                         child: Card(
                           color: Color(0xffE5EDF1),
                           shape: RoundedRectangleBorder(
@@ -41,7 +41,7 @@ class Configure extends StatelessWidget {
                           ),
                           child: Center(child: Text('Tables')),
                         ),
-                        onTap: () {
+                        onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -59,7 +59,7 @@ class Configure extends StatelessWidget {
                   Expanded(
                     child: Container(
                       padding: EdgeInsets.all(25),
-                      child: GestureDetector(
+                      child: FlatButton(
                         child: Card(
                           color: Color(0xffE5EDF1),
                           shape: RoundedRectangleBorder(
@@ -67,7 +67,7 @@ class Configure extends StatelessWidget {
                           ),
                           child: Center(child: Text('Staff')),
                         ),
-                        onTap: () {
+                        onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -85,7 +85,7 @@ class Configure extends StatelessWidget {
                   Expanded(
                     child: Container(
                       padding: EdgeInsets.all(25),
-                      child: GestureDetector(
+                      child: FlatButton(
                         child: Card(
                           color: Color(0xffE5EDF1),
                           shape: RoundedRectangleBorder(
@@ -93,7 +93,7 @@ class Configure extends StatelessWidget {
                           ),
                           child: Center(child: Text('Assign Staff')),
                         ),
-                        onTap: () {
+                        onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -115,7 +115,7 @@ class Configure extends StatelessWidget {
                   Expanded(
                     child: Container(
                       padding: EdgeInsets.all(25),
-                      child: GestureDetector(
+                      child: FlatButton(
                         child: Card(
                           color: Color(0xffE5EDF1),
                           shape: RoundedRectangleBorder(
@@ -125,7 +125,7 @@ class Configure extends StatelessWidget {
                             child: Text('Food Menu'),
                           ),
                         ),
-                        onTap: () {
+                        onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -143,7 +143,7 @@ class Configure extends StatelessWidget {
                   Expanded(
                     child: Container(
                       padding: EdgeInsets.all(25),
-                      child: GestureDetector(
+                      child: FlatButton(
                         child: Card(
                           color: Color(0xffE5EDF1),
                           shape: RoundedRectangleBorder(
@@ -153,7 +153,7 @@ class Configure extends StatelessWidget {
                             child: Text('Bar Menu'),
                           ),
                         ),
-                        onTap: () {
+                        onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -171,7 +171,7 @@ class Configure extends StatelessWidget {
                   Expanded(
                     child: Container(
                       padding: EdgeInsets.all(25),
-                      child: GestureDetector(
+                      child: FlatButton(
                         child: Card(
                           color: Color(0xffE5EDF1),
                           shape: RoundedRectangleBorder(
@@ -181,7 +181,7 @@ class Configure extends StatelessWidget {
                             child: Text('Home Screen'),
                           ),
                         ),
-                        onTap: () {
+                        onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -201,24 +201,24 @@ class Configure extends StatelessWidget {
                   Expanded(
                     child: Container(
                       padding: EdgeInsets.all(25),
-                      child: GestureDetector(
-                        child: Card(
-                          color: Color(0xffE5EDF1),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
+                      child: Card(
+                        color: Color(0xffE5EDF1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: FlatButton(
                           child: Center(
                             child: Text('testing'),
                           ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TestScreen(),
+                              ),
+                            );
+                          },
                         ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => TestScreen(),
-                            ),
-                          );
-                        },
                       ),
                     ),
                   ),

@@ -13,7 +13,10 @@ import 'session.dart';
 void main() => runApp(MyApp());
 
 //const String URI = "http://192.168.0.9:5050/";
+//var connectingURI = "http://192.168.0.9:5050/login";
 
+var connectingURI =
+    "http://ec2-13-232-202-63.ap-south-1.compute.amazonaws.com:5050/login";
 const String URI =
     "http://ec2-13-232-202-63.ap-south-1.compute.amazonaws.com:5050/";
 
@@ -52,9 +55,6 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
-//  var connectingURI = "http://192.168.0.9:5050/login";
-  var connectingURI =
-      "http://ec2-13-232-202-63.ap-south-1.compute.amazonaws.com:5050/login";
   login() async {
     var output = await loginSession
         .post(connectingURI, {"username": "MID001", "password": "password123"});
@@ -172,7 +172,7 @@ class _MyAppState extends State<MyApp> {
       }
 
       var decoded = jsonDecode(data);
-
+      print(decoded);
       restaurant = Restaurant.fromJson(decoded);
     });
   }
@@ -400,14 +400,23 @@ class _MyAppState extends State<MyApp> {
   }
 
   updateConfigDetailsToCloud(localData, String type) {
-    print(type);
-    print(localData);
+//    print(type);
+//    print(localData);
     var encode;
     String restaurantId = restaurant.restaurantId;
 ////////////////////////////////    table      ///////////////////
     if (type == "add_tables") {
       encode = jsonEncode(
           {"restaurant_id": restaurantId, "type": type, "tables": localData});
+    }
+
+    if (type == "edit_tables") {
+      encode = jsonEncode({
+        "restaurant_id": restaurantId,
+        "type": type,
+        "table_id": localData["table_id"],
+        "editing_fields": localData["editing_fields"]
+      });
     }
 
     if (type == "delete_tables") {
@@ -418,6 +427,15 @@ class _MyAppState extends State<MyApp> {
     if (type == "add_staff") {
       encode = jsonEncode(
           {"restaurant_id": restaurantId, "type": type, "staff": localData});
+    }
+
+    if (type == "edit_staff") {
+      encode = jsonEncode({
+        "restaurant_id": restaurantId,
+        "type": type,
+        "staff_id": localData["staff_id"],
+        "editing_fields": localData["editing_fields"]
+      });
     }
 
     if (type == "delete_staff") {
@@ -441,13 +459,20 @@ class _MyAppState extends State<MyApp> {
         "table_id": localData["table_id"],
         "withdraw_staff_id": localData["withdraw_staff_id"],
       });
-
-      //todo:
     }
 ////////////////////////////////////////   menu         /////////////////////
     if (type == "add_food_category") {
       encode = jsonEncode(
           {"restaurant_id": restaurantId, "type": type, "category": localData});
+    }
+
+    if (type == "edit_food_category") {
+      encode = jsonEncode({
+        "restaurant_id": restaurantId,
+        "type": type,
+        "category_id": localData["category_id"],
+        "editing_fields": localData["editing_fields"]
+      });
     }
 
     if (type == "delete_food_category") {
@@ -456,13 +481,20 @@ class _MyAppState extends State<MyApp> {
         "type": type,
         "category_id": localData
       });
-      //todo:
     }
 
     if (type == "add_bar_category") {
       encode = jsonEncode(
           {"restaurant_id": restaurantId, "type": type, "category": localData});
-      //todo:
+    }
+
+    if (type == "edit_bar_category") {
+      encode = jsonEncode({
+        "restaurant_id": restaurantId,
+        "type": type,
+        "category_id": localData["category_id"],
+        "editing_fields": localData["editing_fields"]
+      });
     }
 
     if (type == "delete_bar_category") {
@@ -471,16 +503,50 @@ class _MyAppState extends State<MyApp> {
         "type": type,
         "category_id": localData
       });
-      //todo:
     }
 
     if (type == "add_food_item") {
+      if (localData['food_dict']["food_options"]['options'].length == 0)
+        localData['food_dict']["food_options"].remove('options');
+      else {
+        List pricesList = [];
+
+        localData['food_dict']["food_options"]['options'].forEach((option) {
+          pricesList.add(option["option_price"]);
+        });
+        localData['food_dict']['price'] = pricesList.join('/');
+      }
+      if (localData['food_dict']["food_options"]['choices'].length == 0)
+        localData['food_dict']["food_options"].remove('choices');
+      if (localData['food_dict']["food_options"].length == 0)
+        localData['food_dict'].remove('food_options');
+
+      localData['restaurant_id'] = restaurantId;
+      localData['type'] = type;
+      encode = jsonEncode(localData);
+    }
+
+    if (type == "edit_food_item") {
+      if (localData['food_dict']["food_options"]['options'].length == 0)
+        localData['food_dict']["food_options"].remove('options');
+      else {
+        List pricesList = [];
+
+        localData['food_dict']["food_options"]['options'].forEach((option) {
+          pricesList.add(option["option_price"]);
+        });
+        localData['food_dict']['price'] = pricesList.join('/');
+      }
+      if (localData['food_dict']["food_options"]['choices'].length == 0)
+        localData['food_dict']["food_options"].remove('choices');
+      if (localData['food_dict']["food_options"].length == 0)
+        localData['food_dict'].remove('food_options');
       encode = jsonEncode({
         "restaurant_id": restaurantId,
         "type": type,
         "category_type": localData["category_type"],
-        "category_id": localData['category_id'],
-        "food_dict": localData['food_dict'],
+        "food_id": localData['food_id'],
+        "editing_fields": localData['food_dict'],
       });
     }
 
@@ -517,65 +583,37 @@ class _MyAppState extends State<MyApp> {
         restaurant.addTableDetails(decode['tables']);
       }
 
+      if (decode["type"] == "edit_tables") {
+        restaurant.tables.forEach((table) {
+          if (table.oid == decode["table_id"]) {
+            table.name = decode["editing_fields"]["name"];
+            table.seats = decode["editing_fields"]["seats"];
+          }
+        });
+      }
+
       if (decode["type"] == "delete_tables") {
         restaurant.tables
             .removeWhere((table) => table.oid == decode["table_id"]);
       }
-
+      ////////////////////////////////    staff     ///////////////////
       if (decode["type"] == "add_staff") {
         restaurant.addStaffDetails(decode['staff']);
+      }
+
+      if (decode["type"] == "edit_staff") {
+        restaurant.staff.forEach((staff) {
+          if (staff.oid == decode["staff_id"]) {
+            staff.name = decode["editing_fields"]["name"];
+          }
+        });
       }
 
       if (decode["type"] == "delete_staff") {
         restaurant.staff
             .removeWhere((staff) => staff.oid == decode["staff_id"]);
       }
-////////////////////////////////////////   menu         /////////////////////
-      if (decode["type"] == "add_food_category") {
-        restaurant.addFoodMenuCategory(decode["category"]);
-      }
-      if (decode["type"] == "delete_food_category") {
-        restaurant.foodMenu
-            .removeWhere((category) => category.oid == decode["category_id"]);
-      }
-      if (decode["type"] == "add_bar_category") {
-        restaurant.addBarMenuCategory(decode["category"]);
-      }
-      if (decode["type"] == "delete_bar_category") {
-        restaurant.barMenu
-            .removeWhere((category) => category.oid == decode["category_id"]);
-      }
-
-      print(decode);
-      if (decode["type"] == "add_food_item") {
-        if (decode["category_type"] == "food") {
-          restaurant.foodMenu.forEach((category) {
-            if (category.oid == decode["category_id"]) {
-              print("${category.name} matched");
-              category.addFoodItem(decode["food_dict"]);
-            }
-          });
-        } else if (decode["category_type"] == "bar") {
-          restaurant.barMenu.forEach((category) {
-            if (category.oid == decode["category_id"]) {
-              print("${category.name} matched");
-              category.addFoodItem(decode["food_dict"]);
-            }
-          });
-        }
-      }
-
-      if (decode["type"] == "delete_food_item") {
-        restaurant.foodMenu.forEach((category) {
-          category.foodList
-              .removeWhere((food) => food.oid == decode["food_id"]);
-        });
-        restaurant.barMenu.forEach((category) {
-          category.foodList
-              .removeWhere((food) => food.oid == decode["food_id"]);
-        });
-      }
-
+      ////////////////////////////////    assign staff     ///////////////////
       if (decode["type"] == "assign_staff") {
         restaurant.tables.forEach((table) {
           if (table.oid == decode["table_id"]) {
@@ -603,6 +641,94 @@ class _MyAppState extends State<MyApp> {
           }
         });
       }
+////////////////////////////////////////   menu         /////////////////////
+      if (decode["type"] == "add_food_category") {
+        restaurant.addFoodMenuCategory(decode["category"]);
+      }
+
+      if (decode["type"] == "edit_food_category") {
+        restaurant.foodMenu.forEach((category) {
+          if (category.oid == decode["category_id"]) {
+            category.name = decode["editing_fields"]["name"];
+
+            category.description = decode["editing_fields"]["description"];
+          }
+        });
+      }
+
+      if (decode["type"] == "delete_food_category") {
+        restaurant.foodMenu
+            .removeWhere((category) => category.oid == decode["category_id"]);
+      }
+      if (decode["type"] == "add_bar_category") {
+        restaurant.addBarMenuCategory(decode["category"]);
+      }
+
+      if (decode["type"] == "edit_bar_category") {
+        restaurant.barMenu.forEach((category) {
+          if (category.oid == decode["category_id"]) {
+            category.name = decode["editing_fields"]["name"];
+
+            category.description = decode["editing_fields"]["description"];
+          }
+        });
+      }
+
+      if (decode["type"] == "delete_bar_category") {
+        restaurant.barMenu
+            .removeWhere((category) => category.oid == decode["category_id"]);
+      }
+
+      if (decode["type"] == "add_food_item") {
+        if (decode["category_type"] == "food") {
+          restaurant.foodMenu.forEach((category) {
+            if (category.oid == decode["category_id"]) {
+              print("${category.name} matched");
+              category.addFoodItem(decode["food_dict"]);
+            }
+          });
+        } else if (decode["category_type"] == "bar") {
+          restaurant.barMenu.forEach((category) {
+            if (category.oid == decode["category_id"]) {
+              print("${category.name} matched");
+              category.addFoodItem(decode["food_dict"]);
+            }
+          });
+        }
+      }
+
+      if (decode["type"] == "edit_food_item") {
+        if (decode["category_type"] == "food") {
+          restaurant.foodMenu.forEach((category) {
+            category.foodList.forEach((foodItem) {
+              if (foodItem.oid == decode["food_id"]) {
+                print("hjsdhsjhsjdh");
+                foodItem.addEdited(decode["editing_fields"]);
+              }
+            });
+          });
+        } else if (decode["category_type"] == "bar") {
+          restaurant.barMenu.forEach((category) {
+            category.foodList.forEach((foodItem) {
+              if (foodItem.oid == decode["food_id"]) {
+                print("hjsdhsjhsjdh");
+                foodItem.addEdited(decode["editing_fields"]);
+              }
+            });
+          });
+        }
+      }
+
+      if (decode["type"] == "delete_food_item") {
+        restaurant.foodMenu.forEach((category) {
+          category.foodList
+              .removeWhere((food) => food.oid == decode["food_id"]);
+        });
+        restaurant.barMenu.forEach((category) {
+          category.foodList
+              .removeWhere((food) => food.oid == decode["food_id"]);
+        });
+      }
     });
   }
 
@@ -611,6 +737,11 @@ class _MyAppState extends State<MyApp> {
 //    print(restaurant.tables[1].noOfUsers);
 //    print(queueOrders[0].oId);
 //    print(restaurant.tables[7].);
+//    print('i ma herhefs');
+//    print(restaurant.barMenu[5].foodList[0].foodOption.options.values
+//        .toList()[0]);
+//    print(restaurant.foodMenu[0].foodList[0].foodOption.options[0]
+//        ["option_price"]);
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,

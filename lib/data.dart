@@ -1,5 +1,3 @@
-final logger = false;
-
 class Restaurant {
   String oid;
   String name;
@@ -335,7 +333,7 @@ class Staff {
 
   Staff.addConfig(staff) {
     oid = staff['staff_id'];
-    name = staff['staff_name'];
+    name = staff['name'];
   }
 }
 
@@ -454,13 +452,39 @@ class MenuFoodItem {
     this.name = food['name'];
     this.description = food['description'];
     this.price = food['price'];
-    this.foodOption = new FoodOption.fromJson(food['food_options']);
-    print('food item added');
+    if (food['food_options'] != null) {
+      this.foodOption = new FoodOption.fromJson(food['food_options']);
+      print('food item added');
+    }
+  }
+
+  addEdited(edited) {
+    this.oid = edited['food_id'];
+    this.name = edited['name'];
+    this.description = edited['description'];
+    this.price = edited['price'];
+    print('added edited here');
+    if (edited["food_options"] != null) {
+      print('added edited here3');
+      if (edited["food_options"]["options"] != null) {
+        this.foodOption.options.clear();
+        edited["food_options"]["options"].forEach((option) {
+          this.foodOption.options.add(option);
+        });
+      }
+      if (edited["food_options"]["choices"] != null) {
+        this.foodOption.choices.clear();
+        edited["food_options"]["choices"].forEach((choice) {
+          this.foodOption.choices.add(choice);
+        });
+      }
+    }
+    print('added edited here45');
   }
 }
 
 class FoodOption {
-  Map<String, dynamic> options;
+  List<Map<String, dynamic>> options;
   List<String> choices;
 
   FoodOption({
@@ -469,8 +493,18 @@ class FoodOption {
   });
 
   FoodOption.fromJson(Map<String, dynamic> json) {
+//    print("while adding food iption");
+//    print(json['options']);
     if (json['options'] != null) {
-      options = json['options'];
+      options = new List<Map<String, dynamic>>();
+      json['options'].forEach((option) {
+//        print("here");
+//        print(option["option_name"]);
+//        print(option["option_price"]);
+        options.add(option);
+
+//        print("added");
+      });
       //Todo: check
     }
 
@@ -546,9 +580,7 @@ class TableOrder {
     }
 
     if (json['table'] != null) {
-      RegExp regExp = new RegExp("[0-9]+");
-
-      table = regExp.firstMatch(json['table']).group(0);
+      table = json['table'];
     }
 
     if (json['table_id'] != null) {
@@ -772,8 +804,7 @@ class AssistanceRequest {
     }
 
     if (json['table'] != null) {
-      RegExp regExp = new RegExp("[0-9]+");
-      table = regExp.firstMatch(json['table']).group(0);
+      table = json['table'];
     }
   }
 }
