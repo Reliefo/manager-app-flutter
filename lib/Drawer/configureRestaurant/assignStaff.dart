@@ -19,6 +19,18 @@ class _AssignStaffState extends State<AssignStaff> {
   final myController = TextEditingController();
   Tables selectedTable;
   List<Staff> selectedStaff = [];
+  var _selectedTableLabel;
+  var _selectedStaffLabel;
+
+  setDropDownVal() {
+    if (widget.restaurant.tables != null) {
+      _selectedTableLabel = widget.restaurant.tables[0];
+    }
+
+    if (widget.restaurant.staff != null) {
+      _selectedStaffLabel = widget.restaurant.staff[0];
+    }
+  }
 
   sendAssignedStaff() {
     List selectedId = [];
@@ -29,6 +41,12 @@ class _AssignStaffState extends State<AssignStaff> {
     widget.updateConfigDetailsToCloud(
         {"table_id": selectedTable.oid, "assigned_staff": selectedId},
         "assign_staff");
+  }
+
+  @override
+  void initState() {
+    setDropDownVal();
+    super.initState();
   }
 
   @override
@@ -63,6 +81,7 @@ class _AssignStaffState extends State<AssignStaff> {
                             child: Container(
                               padding: EdgeInsets.all(16),
                               child: DropdownButton(
+                                value: _selectedTableLabel,
                                 items: widget.restaurant.tables != null
                                     ? widget.restaurant.tables.map((table) {
                                         return DropdownMenuItem(
@@ -76,6 +95,7 @@ class _AssignStaffState extends State<AssignStaff> {
                                 onChanged: (selected) {
                                   setState(() {
                                     print(selected);
+                                    _selectedTableLabel = selected;
                                     selectedTable = selected;
                                   });
                                 },
@@ -86,6 +106,7 @@ class _AssignStaffState extends State<AssignStaff> {
                             child: Container(
                               padding: EdgeInsets.all(16),
                               child: DropdownButton(
+                                value: _selectedStaffLabel,
                                 items: widget.restaurant.staff != null
                                     ? widget.restaurant.staff.map((staff) {
                                         return DropdownMenuItem(
@@ -98,6 +119,7 @@ class _AssignStaffState extends State<AssignStaff> {
                                 isExpanded: true,
                                 onChanged: (selected) {
                                   setState(() {
+                                    _selectedStaffLabel = selected;
                                     selectedStaff.add(selected);
                                   });
                                 },

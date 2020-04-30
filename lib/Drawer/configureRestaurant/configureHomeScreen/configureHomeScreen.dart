@@ -1,21 +1,17 @@
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addBarMenu.dart';
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addFoodMenu.dart';
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addStaff.dart';
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/assignStaff.dart';
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/configureHomeScreen.dart';
+import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/configureTags/HomeScreenTags/configureHomeScreenTags.dart';
+import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/configureTags/navigateBetter/ConfigureNavigateBetterTags.dart';
+import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/mostPopular.dart';
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/test.dart';
 import 'package:adhara_socket_io_example/data.dart';
 import 'package:flutter/material.dart';
 
-import 'addTable.dart';
-
-class Configure extends StatelessWidget {
+class ConfigureHomeScreen extends StatelessWidget {
   final Restaurant restaurant;
   final updateConfigDetailsToCloud;
 
-  Configure({
+  ConfigureHomeScreen({
     @required this.restaurant,
-    @required this.updateConfigDetailsToCloud,
+    this.updateConfigDetailsToCloud,
   });
   @override
   Widget build(BuildContext context) {
@@ -23,7 +19,7 @@ class Configure extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.grey,
-          title: Text('Configure Restaurant'),
+          title: Text('Configure Home Screen'),
         ),
         body: Container(
           child: Column(
@@ -40,13 +36,40 @@ class Configure extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('Tables'),
+                            child: Text('Most Popular'),
                           ),
                           onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => AddData(
+                                builder: (context) => MostPopular(
+                                  restaurant: restaurant,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(25),
+                      child: Card(
+                        color: Color(0xffE5EDF1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: FlatButton(
+                          child: Center(
+                            child: Text('Navigate Better Tags'),
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ConfigureNavigateBetterTags(
                                   updateConfigDetailsToCloud:
                                       updateConfigDetailsToCloud,
                                   restaurant: restaurant,
@@ -68,41 +91,13 @@ class Configure extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('Staff'),
+                            child: Text('Home Screen Tags'),
                           ),
                           onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => AddStaff(
-                                  updateConfigDetailsToCloud:
-                                      updateConfigDetailsToCloud,
-                                  restaurant: restaurant,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.all(25),
-                      child: Card(
-                        color: Color(0xffE5EDF1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        child: FlatButton(
-                          child: Center(
-                            child: Text('Assign Staff'),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AssignStaff(
+                                builder: (context) => ConfigureHomeScreenTags(
                                   updateConfigDetailsToCloud:
                                       updateConfigDetailsToCloud,
                                   restaurant: restaurant,
@@ -128,19 +123,19 @@ class Configure extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('Food Menu'),
+                            child: Text('On Offer'),
                           ),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddFoodMenu(
-                                  updateConfigDetailsToCloud:
-                                      updateConfigDetailsToCloud,
-                                  restaurant: restaurant,
-                                ),
-                              ),
-                            );
+//                            Navigator.push(
+//                              context,
+//                              MaterialPageRoute(
+//                                builder: (context) => AddFoodMenu(
+//                                  updateConfigDetailsToCloud:
+//                                      updateConfigDetailsToCloud,
+//                                  restaurant: restaurant,
+//                                ),
+//                              ),
+//                            );
                           },
                         ),
                       ),
@@ -159,16 +154,16 @@ class Configure extends StatelessWidget {
                             child: Text('Bar Menu'),
                           ),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddBarMenu(
-                                  updateConfigDetailsToCloud:
-                                      updateConfigDetailsToCloud,
-                                  restaurant: restaurant,
-                                ),
-                              ),
-                            );
+//                            Navigator.push(
+//                              context,
+//                              MaterialPageRoute(
+//                                builder: (context) => AddBarMenu(
+//                                  updateConfigDetailsToCloud:
+//                                      updateConfigDetailsToCloud,
+//                                  restaurant: restaurant,
+//                                ),
+//                              ),
+//                            );
                           },
                         ),
                       ),
@@ -184,17 +179,17 @@ class Configure extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('Home Screen'),
+                            child: Text('op'),
                           ),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ConfigureHomeScreen(
-                                  restaurant: restaurant,
-                                ),
-                              ),
-                            );
+//                            Navigator.push(
+//                              context,
+//                              MaterialPageRoute(
+//                                builder: (context) => ConfigureHomeScreen(
+//                                  restaurant: restaurant,
+//                                ),
+//                              ),
+//                            );
                           },
                         ),
                       ),

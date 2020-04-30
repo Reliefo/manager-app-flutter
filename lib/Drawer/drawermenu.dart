@@ -24,7 +24,9 @@ class DrawerMenu extends StatelessWidget {
         ),
 
         FlatButton(
-          child: Text('configure restaurant'),
+          child: Center(
+            child: Text('configure restaurant'),
+          ),
           onPressed: () {
             Navigator.push(
               context,

@@ -740,8 +740,7 @@ class _MyAppState extends State<MyApp> {
 //    print('i ma herhefs');
 //    print(restaurant.barMenu[5].foodList[0].foodOption.options.values
 //        .toList()[0]);
-//    print(restaurant.foodMenu[0].foodList[0].foodOption.options[0]
-//        ["option_price"]);
+//    print(restaurant.foodMenu[0].foodList[0].tags);
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,

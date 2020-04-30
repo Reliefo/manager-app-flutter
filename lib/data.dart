@@ -9,6 +9,8 @@ class Restaurant {
   List<Staff> staff;
   List<TableOrder> tableOrders;
   List<AssistanceRequest> assistanceRequests;
+  List<String> homeScreenTags;
+  List<String> navigateBetterTags;
 
   Restaurant({
     this.oid,
@@ -80,6 +82,20 @@ class Restaurant {
       assistanceRequests = new List<AssistanceRequest>();
       json['assistance_reqs'].forEach((v) {
         assistanceRequests.add(new AssistanceRequest.fromJson(v));
+      });
+    }
+
+    if (json['home_screen_tags'].isNotEmpty) {
+      homeScreenTags = new List<String>();
+      json['home_screen_tags'].forEach((v) {
+        homeScreenTags.add(v);
+      });
+    }
+
+    if (json['navigate_better_tags'].isNotEmpty) {
+      navigateBetterTags = new List<String>();
+      json['navigate_better_tags'].forEach((v) {
+        navigateBetterTags.add(v);
       });
     }
   }
@@ -436,6 +452,7 @@ class MenuFoodItem {
     }
 
     if (json['tags'] != null) {
+      print("inside add tags");
       tags = new List<String>();
       json['tags'].forEach((v) {
         tags.add(v);
