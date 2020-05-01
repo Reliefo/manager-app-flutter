@@ -1,5 +1,7 @@
+import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
 import 'package:adhara_socket_io_example/person/personView.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'Home/home.dart';
 import 'data.dart';
@@ -13,15 +15,17 @@ class TabContainerBottom extends StatelessWidget {
   final restaurant;
 
   TabContainerBottom({
-    @required this.queueOrders,
-    @required this.cookingOrders,
-    @required this.completedOrders,
-    @required this.assistanceReq,
-    @required this.restaurant,
+    this.queueOrders,
+    this.cookingOrders,
+    this.completedOrders,
+    this.assistanceReq,
+    this.restaurant,
   });
 
   @override
   Widget build(BuildContext context) {
+    final ConfigureRestaurantData rest =
+        Provider.of<ConfigureRestaurantData>(context);
     return MaterialApp(
       home: DefaultTabController(
         initialIndex: 1,
@@ -31,15 +35,15 @@ class TabContainerBottom extends StatelessWidget {
             physics: NeverScrollableScrollPhysics(),
             children: [
               PersonView(
-                restaurant: restaurant,
+                restaurant: rest.restaurant,
                 assistanceReq: assistanceReq,
               ),
               HomePage(
-                queueOrders: queueOrders,
-                cookingOrders: cookingOrders,
-                completedOrders: completedOrders,
-                assistanceReq: assistanceReq,
-              ),
+//                queueOrders: queueOrders,
+//                cookingOrders: cookingOrders,
+//                completedOrders: completedOrders,
+//                assistanceReq: assistanceReq,
+                  ),
               TableView(
                 restaurant: restaurant,
                 queueOrders: queueOrders,

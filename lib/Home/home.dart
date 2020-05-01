@@ -1,38 +1,32 @@
 import 'package:adhara_socket_io_example/Home/completed.dart';
 import 'package:adhara_socket_io_example/constants.dart';
+import 'package:adhara_socket_io_example/fetchData/fetchAssistanceData.dart';
+import 'package:adhara_socket_io_example/fetchData/fetchOrderData.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../data.dart';
 import 'assistance.dart';
 import 'cooking.dart';
 import 'queued.dart';
-//import 'dart:convert';
-//import 'package:http/http.dart' as http;
-//Future<dynamic> get_order() async {
-//  http.Response response =
-//      await http.post('http://192.168.0.9:5050/send_orders');
-//  var myjson = jsonDecode(response.body);
-//  TableOrder order = TableOrder.fromJson(jsonDecode(myjson['new_order']));
-//  print(order.timestamp);
-//  return order;
-//}
 
 class HomePage extends StatelessWidget {
-  final List<TableOrder> queueOrders;
-  final List<TableOrder> cookingOrders;
-  final List<TableOrder> completedOrders;
-  final List<AssistanceRequest> assistanceReq;
+//  final List<TableOrder> queueOrders;
+//  final List<TableOrder> cookingOrders;
+//  final List<TableOrder> completedOrders;
+//  final List<AssistanceRequest> assistanceReq;
 
-  HomePage({
-    @required this.queueOrders,
-    @required this.cookingOrders,
-    @required this.completedOrders,
-    @required this.assistanceReq,
-  });
+//  HomePage({
+////    this.queueOrders,
+////    this.cookingOrders,
+////    this.completedOrders,
+////    this.assistanceReq,
+//  });
 
   @override
   Widget build(BuildContext context) {
-//    Future<dynamic> myvar = get_order();
+    final FetchOrderData orders = Provider.of<FetchOrderData>(context);
+    final FetchAssistanceData assistance =
+        Provider.of<FetchAssistanceData>(context);
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -41,13 +35,13 @@ class HomePage extends StatelessWidget {
               Expanded(
                 flex: 3,
                 child: Assistance(
-                  assistanceReq: assistanceReq,
+                  assistanceReq: assistance.assistanceReq,
                 ),
               ),
               Expanded(
                 flex: 2,
                 child: Queued(
-                  queueOrders: queueOrders,
+                  queueOrders: orders.queueOrders,
                 ),
               ),
               Expanded(
@@ -70,7 +64,7 @@ class HomePage extends StatelessWidget {
                             ),
                           ),
                           Cooking(
-                            cookingOrders: cookingOrders,
+                            cookingOrders: orders.cookingOrders,
                           ),
                           Container(
                             color: Colors.black26,
@@ -83,7 +77,7 @@ class HomePage extends StatelessWidget {
                             ),
                           ),
                           Completed(
-                            completedOrders: completedOrders,
+                            completedOrders: orders.completedOrders,
                           )
                         ],
                       ),

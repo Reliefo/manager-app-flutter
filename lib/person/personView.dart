@@ -7,7 +7,7 @@ class PersonView extends StatelessWidget {
   final Restaurant restaurant;
   final assistanceReq;
   PersonView({
-    @required this.restaurant,
+    this.restaurant,
     this.assistanceReq,
   });
   @override
