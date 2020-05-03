@@ -1,37 +1,41 @@
 import 'package:adhara_socket_io_example/constants.dart';
 import 'package:adhara_socket_io_example/data.dart';
+import 'package:adhara_socket_io_example/fetchData/fetchAssistanceData.dart';
+import 'package:adhara_socket_io_example/fetchData/fetchOrderData.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SingleTable extends StatelessWidget {
-  final List<AssistanceRequest> assistanceReq;
-  final List<TableOrder> queueOrders;
-  final List<TableOrder> cookingOrders;
+//  final List<AssistanceRequest> assistanceReq;
+//  final List<TableOrder> queueOrders;
+//  final List<TableOrder> cookingOrders;
   final List<AssistanceRequest> tableAssistanceReq = [];
   final List<TableOrder> tableOrders = [];
   final Tables table;
   SingleTable(
-      {@required this.assistanceReq,
-      @required this.queueOrders,
-      @required this.cookingOrders,
+      {
+//        @required this.assistanceReq,
+//      @required this.queueOrders,
+//      @required this.cookingOrders,
       this.table});
 
-  getTableAssistanceReq() {
-    assistanceReq.forEach((request) {
+  getTableAssistanceReq(assistanceData) {
+    assistanceData.assistanceReq.forEach((request) {
       if (request.table == table.name) {
         tableAssistanceReq.add(request);
       }
     });
   }
 
-  getTableOrders() {
-    cookingOrders.forEach((orders) {
+  getTableOrders(orderData) {
+    orderData.cookingOrders.forEach((orders) {
       if (orders.tableId == table.oid) {
         tableOrders.add(orders);
       }
     });
 
-    queueOrders.forEach((orders) {
+    orderData.queueOrders.forEach((orders) {
       if (orders.tableId == table.oid) {
         tableOrders.add(orders);
       }
@@ -43,8 +47,10 @@ class SingleTable extends StatelessWidget {
 //
   @override
   Widget build(BuildContext context) {
-    getTableAssistanceReq();
-    getTableOrders();
+    final OrderData orderData = Provider.of<OrderData>(context);
+    final AssistanceData assistanceData = Provider.of<AssistanceData>(context);
+    getTableAssistanceReq(assistanceData);
+    getTableOrders(orderData);
     return SafeArea(
       child: Scaffold(
         body: Container(

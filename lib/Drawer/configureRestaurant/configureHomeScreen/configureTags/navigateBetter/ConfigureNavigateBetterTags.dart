@@ -1,16 +1,18 @@
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/configureTags/navigateBetter/addBarItemToTags.dart';
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/configureTags/navigateBetter/addFoodItemToTags.dart';
 import 'package:adhara_socket_io_example/data.dart';
+import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ConfigureNavigateBetterTags extends StatefulWidget {
-  final Restaurant restaurant;
-  final updateConfigDetailsToCloud;
-
-  ConfigureNavigateBetterTags({
-    @required this.restaurant,
-    this.updateConfigDetailsToCloud,
-  });
+//  final Restaurant restaurant;
+//  final updateConfigDetailsToCloud;
+//
+//  ConfigureNavigateBetterTags({
+//    @required this.restaurant,
+//    this.updateConfigDetailsToCloud,
+//  });
 
   @override
   _ConfigureNavigateBetterTagsState createState() =>
@@ -23,27 +25,27 @@ class _ConfigureNavigateBetterTagsState
 //  List<MenuFoodItem> barItems = [];
 //
 //  List<MenuFoodItem> foodItems = [];
-  String radioItem;
+  String radioItem = 'foodMenu';
 
   List<MenuFoodItem> selectedTagItems = [];
   int _selectedIndex;
 
   String selectedTag;
 
-  _onSelected(int index) {
+  _onSelected(int index, restaurantData) {
     setState(() {
       _selectedIndex = index;
 
-      selectedTag = widget.restaurant.navigateBetterTags[index];
+      selectedTag = restaurantData.restaurant.navigateBetterTags[index];
     });
   }
 
-  getTagItems(selectedTag) {
+  getTagItems(selectedTag, restaurantData) {
     setState(() {
 //      barItems.clear();
 //      foodItems.clear();
       selectedTagItems.clear();
-      widget.restaurant.barMenu.forEach((category) {
+      restaurantData.restaurant.barMenu.forEach((category) {
         category.foodList.forEach((food) {
           if (food.tags.isNotEmpty) {
             food.tags.forEach((tag) {
@@ -54,7 +56,7 @@ class _ConfigureNavigateBetterTagsState
           }
         });
       });
-      widget.restaurant.foodMenu.forEach((category) {
+      restaurantData.restaurant.foodMenu.forEach((category) {
         category.foodList.forEach((food) {
           if (food.tags.isNotEmpty) {
             food.tags.forEach((tag) {
@@ -70,6 +72,8 @@ class _ConfigureNavigateBetterTagsState
 
   @override
   Widget build(BuildContext context) {
+    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
+    getTagItems(selectedTag, restaurantData);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -105,8 +109,10 @@ class _ConfigureNavigateBetterTagsState
                         child: ListView.builder(
                           shrinkWrap: true,
                           itemCount:
-                              widget.restaurant.navigateBetterTags != null
-                                  ? widget.restaurant.navigateBetterTags.length
+                              restaurantData.restaurant.navigateBetterTags !=
+                                      null
+                                  ? restaurantData
+                                      .restaurant.navigateBetterTags.length
                                   : 0,
                           itemBuilder: (context, index) {
                             return Container(
@@ -115,13 +121,87 @@ class _ConfigureNavigateBetterTagsState
                                   ? Colors.tealAccent
                                   : Colors.transparent,
                               child: ListTile(
-                                title: Text(widget
+                                title: Text(restaurantData
                                     .restaurant.navigateBetterTags[index]),
-                                trailing: Icon(Icons.navigate_next),
+                                trailing: IconButton(
+                                    icon: Icon(Icons.close),
+                                    onPressed: () {
+                                      showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          // return object of type Dialog
+                                          return AlertDialog(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                            title: Text(
+                                                "Delete ${restaurantData.restaurant.navigateBetterTags[index]} tag ?"),
+                                            content: Column(
+                                              mainAxisSize: MainAxisSize
+                                                  .min, // To make the card compact
+                                              children: <Widget>[
+                                                Text(
+                                                  "This will delete all the food items under this tag",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    fontSize: 16.0,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 24.0),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  children: <Widget>[
+                                                    FlatButton(
+                                                      child: Text(
+                                                        "Back",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.green),
+                                                      ),
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop(); // To close the dialog
+                                                      },
+                                                    ),
+                                                    FlatButton(
+                                                      child: Text(
+                                                        "Delete",
+                                                        style: TextStyle(
+                                                            color: Colors.red),
+                                                      ),
+                                                      onPressed: () {
+                                                        restaurantData
+                                                            .sendConfiguredDataToBackend({
+                                                          "remove_from":
+                                                              "navigate_better",
+                                                          "tag_name": restaurantData
+                                                                  .restaurant
+                                                                  .navigateBetterTags[
+                                                              index]
+                                                        }, "delete_home_screen_tags");
+
+                                                        Navigator.of(context)
+                                                            .pop(); // To close the dialog
+                                                      },
+                                                    ),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    }),
                                 onTap: () {
-                                  _onSelected(index);
-                                  getTagItems(widget
-                                      .restaurant.navigateBetterTags[index]);
+                                  _onSelected(index, restaurantData);
+                                  getTagItems(
+                                      restaurantData
+                                          .restaurant.navigateBetterTags[index],
+                                      restaurantData);
                                 },
                               ),
                             );
@@ -152,7 +232,15 @@ class _ConfigureNavigateBetterTagsState
                           itemBuilder: (context, index) {
                             return ListTile(
                               title: Text(selectedTagItems[index].name),
-                              trailing: Icon(Icons.close),
+                              trailing: IconButton(
+                                icon: Icon(Icons.cancel),
+                                onPressed: () {
+                                  restaurantData.sendConfiguredDataToBackend({
+                                    "food_id": selectedTagItems[index].oid,
+                                    "tag_name": selectedTag,
+                                  }, "remove_home_screen_tags");
+                                },
+                              ),
                             );
                           },
                         ),
@@ -181,7 +269,7 @@ class _ConfigureNavigateBetterTagsState
                                 // return object of type Dialog
                                 return AddFoodItemToTags(
                                   selectedTag: selectedTag,
-                                  restaurant: widget.restaurant,
+//                                  restaurant: widget.restaurant,
                                 );
                               },
                             );
@@ -229,16 +317,14 @@ class _ConfigureNavigateBetterTagsState
                                         context: context,
                                         builder: (BuildContext context) {
                                           // return object of type Dialog
-                                          return radioItem == "foodMenu"
-                                              ? AddFoodItemToTags(
-                                                  restaurant: widget.restaurant,
+                                          return radioItem == "barMenu"
+                                              ? AddBarItemToTags(
+//                                                      restaurant:
+//                                                          widget.restaurant,
                                                   selectedTag: selectedTag)
-                                              : radioItem == "barMenu"
-                                                  ? AddBarItemToTags(
-                                                      restaurant:
-                                                          widget.restaurant,
-                                                      selectedTag: selectedTag)
-                                                  : Container();
+                                              : AddFoodItemToTags(
+//                                                  restaurant: widget.restaurant,
+                                                  selectedTag: selectedTag);
                                         },
                                       );
                                     })
@@ -268,6 +354,7 @@ class AddNewTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
     return AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -314,6 +401,13 @@ class AddNewTag extends StatelessWidget {
                   style: TextStyle(color: Colors.green),
                 ),
                 onPressed: () {
+                  restaurantData.sendConfiguredDataToBackend({
+                    "add_to": "navigate_better",
+                    "tag_name": tagController.text
+                  }, "add_home_screen_tags");
+
+                  tagController.clear();
+
                   Navigator.of(context).pop(); // To close the dialog
                 },
               ),

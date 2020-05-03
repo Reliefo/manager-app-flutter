@@ -1,14 +1,14 @@
 import 'package:adhara_socket_io_example/data.dart';
+import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AddBarItemToTags extends StatefulWidget {
   const AddBarItemToTags({
     Key key,
-    @required this.restaurant,
     @required this.selectedTag,
   }) : super(key: key);
 
-  final Restaurant restaurant;
   final String selectedTag;
 
   @override
@@ -20,19 +20,9 @@ class _AddBarItemToTagsState extends State<AddBarItemToTags> {
 
   MenuFoodItem _selectedBarItem;
 
-  setDropDownInitVal() {
-    _selectedBarCategory = widget.restaurant.barMenu[0];
-    _selectedBarItem = _selectedBarCategory.foodList[0];
-  }
-
-  @override
-  void initState() {
-    setDropDownInitVal();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
+    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
     return AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -49,8 +39,8 @@ class _AddBarItemToTagsState extends State<AddBarItemToTags> {
           ),
           DropdownButton(
             value: _selectedBarCategory,
-            items: widget.restaurant.barMenu != null
-                ? widget.restaurant.barMenu.map((category) {
+            items: restaurantData.restaurant.barMenu != null
+                ? restaurantData.restaurant.barMenu.map((category) {
                     return DropdownMenuItem(
                       value: category,
                       child: Text(category.name),
@@ -107,6 +97,11 @@ class _AddBarItemToTagsState extends State<AddBarItemToTags> {
                   style: TextStyle(color: Colors.green),
                 ),
                 onPressed: () {
+                  restaurantData.sendConfiguredDataToBackend({
+                    "food_id": _selectedBarItem.oid,
+                    "tag_to_attach": widget.selectedTag,
+                  }, "attach_home_screen_tags");
+
                   Navigator.of(context).pop(); // To close the dialog
                 },
               ),

@@ -1,29 +1,30 @@
 import 'package:adhara_socket_io_example/constants.dart';
-import 'package:adhara_socket_io_example/data.dart';
+import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'singleTable.dart';
 
 class TableView extends StatelessWidget {
-  final Restaurant restaurant;
-  final cookingOrders;
-  final queueOrders;
-  final assistanceReq;
+//  final Restaurant restaurantData.restaurant;
+//  final cookingOrders;
+//  final queueOrders;
+//  final assistanceReq;
+//
+//  TableView({
+////    @required this.restaurantData.restaurant,
+////    @required this.cookingOrders,
+////    @required this.queueOrders,
+//    @required this.assistanceReq,
+//  });
 
-  TableView({
-    @required this.restaurant,
-    @required this.cookingOrders,
-    @required this.queueOrders,
-    @required this.assistanceReq,
-  });
-
-  Color getColour(index) {
-    if (restaurant.tables[index].users != null) {
-      if (restaurant.tables[index].cookingCount >
-          restaurant.tables[index].queueCount) {
+  Color getColour(index, restaurantData) {
+    if (restaurantData.restaurant.tables[index].users != null) {
+      if (restaurantData.restaurant.tables[index].cookingCount >
+          restaurantData.restaurant.tables[index].queueCount) {
         return Colors.yellow;
-      } else if (restaurant.tables[index].queueCount >
-          restaurant.tables[index].cookingCount) {
+      } else if (restaurantData.restaurant.tables[index].queueCount >
+          restaurantData.restaurant.tables[index].cookingCount) {
         return Colors.red;
       }
       return Colors.green;
@@ -31,11 +32,11 @@ class TableView extends StatelessWidget {
 
     ///////////////////////////works correctly wen user is scanned////////////
 
-//    else if (restaurant.tables[index].cookingCount >
-//        restaurant.tables[index].queueCount) {
+//    else if (restaurantData.restaurant.tables[index].cookingCount >
+//        restaurantData.restaurant.tables[index].queueCount) {
 //      return Colors.yellow;
-//    } else if (restaurant.tables[index].queueCount >
-//        restaurant.tables[index].cookingCount) {
+//    } else if (restaurantData.restaurant.tables[index].queueCount >
+//        restaurantData.restaurant.tables[index].cookingCount) {
 //      return Colors.red;
 //    }
 
@@ -45,14 +46,16 @@ class TableView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
+
     return SafeArea(
       child: Scaffold(
         body: Container(
           padding: EdgeInsets.all(10),
           color: Colors.blueGrey,
-          child: restaurant.tables != null
+          child: restaurantData.restaurant.tables != null
               ? GridView.builder(
-                  itemCount: restaurant.tables.length,
+                  itemCount: restaurantData.restaurant.tables.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 5,
                   ),
@@ -61,12 +64,12 @@ class TableView extends StatelessWidget {
                       child: Card(
                         color: Colors.white,
                         child: Container(
-                          color: getColour(index),
+                          color: getColour(index, restaurantData),
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: Column(
                             children: <Widget>[
                               Text(
-                                'Table-${restaurant.tables[index].name}',
+                                'Table-${restaurantData.restaurant.tables[index].name}',
                                 style: homePageS1,
                               ),
                               Container(
@@ -82,18 +85,18 @@ class TableView extends StatelessWidget {
                                         children: <Widget>[
                                           TextDisplay(
                                             text:
-                                                'Servers : ${restaurant.tables[index].staff != null ? restaurant.tables[index].staff.length : '0'}',
+                                                'Servers : ${restaurantData.restaurant.tables[index].staff != null ? restaurantData.restaurant.tables[index].staff.length : '0'}',
                                           ),
                                           TextDisplay(
                                             text:
-                                                'Scanned : ${restaurant.tables[index].users != null ? restaurant.tables[index].users.length : '0'}',
+                                                'Scanned : ${restaurantData.restaurant.tables[index].users != null ? restaurantData.restaurant.tables[index].users.length : '0'}',
                                           ),
                                           TextDisplay(
                                               text:
-                                                  'Cooking : ${restaurant.tables[index].cookingCount}'),
+                                                  'Cooking : ${restaurantData.restaurant.tables[index].cookingCount}'),
                                           TextDisplay(
                                               text:
-                                                  'Queued : ${restaurant.tables[index].queueCount}'),
+                                                  'Queued : ${restaurantData.restaurant.tables[index].queueCount}'),
                                         ],
                                       ),
                                     ],
@@ -108,10 +111,10 @@ class TableView extends StatelessWidget {
                         showModalBottomSheet(
                           context: context,
                           builder: (context) => SingleTable(
-                            table: restaurant.tables[index],
-                            assistanceReq: assistanceReq,
-                            cookingOrders: cookingOrders,
-                            queueOrders: queueOrders,
+                            table: restaurantData.restaurant.tables[index],
+//                            assistanceReq: assistanceReq,
+//                            cookingOrders: cookingOrders,
+//                            queueOrders: queueOrders,
                           ),
                         );
                       },

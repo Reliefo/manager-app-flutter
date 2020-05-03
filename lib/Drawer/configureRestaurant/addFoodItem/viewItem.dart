@@ -5,10 +5,9 @@ import 'package:flutter/material.dart';
 class ViewItem extends StatelessWidget {
   final MenuFoodItem foodItem;
   final menuType;
-  final updateConfigDetailsToCloud;
+
   ViewItem({
     this.foodItem,
-    this.updateConfigDetailsToCloud,
     this.menuType,
   });
   @override
@@ -158,7 +157,6 @@ class ViewItem extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) => EditItem(
                         foodItem: foodItem,
-                        updateConfigDetailsToCloud: updateConfigDetailsToCloud,
                         menuType: menuType,
                       ),
                     ),

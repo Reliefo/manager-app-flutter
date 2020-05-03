@@ -1,25 +1,28 @@
-import 'package:adhara_socket_io_example/data.dart';
+import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'singlePerson.dart';
 
 class PersonView extends StatelessWidget {
-  final Restaurant restaurant;
-  final assistanceReq;
-  PersonView({
-    this.restaurant,
-    this.assistanceReq,
-  });
+//  final Restaurant restaurant;
+//  final assistanceReq;
+//  PersonView({
+////    this.restaurant,
+//    this.assistanceReq,
+//  });
   @override
   Widget build(BuildContext context) {
+    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
+
     return SafeArea(
       child: Scaffold(
         body: Container(
           padding: EdgeInsets.all(10),
           color: Colors.blueGrey,
-          child: restaurant.staff != null
+          child: restaurantData.restaurant.staff != null
               ? GridView.builder(
-                  itemCount: restaurant.staff.length,
+                  itemCount: restaurantData.restaurant.staff.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 6,
                   ),
@@ -36,7 +39,7 @@ class PersonView extends StatelessWidget {
                                 height: 34,
                                 width: 34,
                               ),
-                              Text(restaurant.staff[index].name),
+                              Text(restaurantData.restaurant.staff[index].name),
                             ],
                           ),
                         ),
@@ -45,8 +48,8 @@ class PersonView extends StatelessWidget {
                         showModalBottomSheet(
                           context: context,
                           builder: (context) => SinglePerson(
-                            staff: restaurant.staff[index],
-                            assistanceReq: assistanceReq,
+                            staff: restaurantData.restaurant.staff[index],
+//                            assistanceReq: assistanceReq,
                           ),
                         );
                       },

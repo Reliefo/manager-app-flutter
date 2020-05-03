@@ -1,14 +1,14 @@
-import 'package:adhara_socket_io_example/data.dart';
+import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AddData extends StatefulWidget {
-  final updateConfigDetailsToCloud;
-  final Restaurant restaurant;
-
-  AddData({
-    this.updateConfigDetailsToCloud,
-    this.restaurant,
-  });
+////  final updateConfigDetailsToCloud;
+//
+//  AddData({
+//    this.updateConfigDetailsToCloud,
+////    this.restaurant,
+//  });
 
   @override
   _AddDataState createState() => _AddDataState();
@@ -56,6 +56,7 @@ class _AddDataState extends State<AddData> {
 
   @override
   Widget build(BuildContext context) {
+    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
     print(temporaryTables);
     return SafeArea(
       child: Scaffold(
@@ -146,10 +147,10 @@ class _AddDataState extends State<AddData> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      widget.restaurant.tables == null
+                      restaurantData.restaurant.tables == null
                           ? Text('No Of Tables :')
                           : Text(
-                              'No Of Tables : ${widget.restaurant.tables.length} ',
+                              'No Of Tables : ${restaurantData.restaurant.tables.length} ',
                             ),
                       temporaryTables.length == 0
                           ? Text(
@@ -167,9 +168,13 @@ class _AddDataState extends State<AddData> {
                       RaisedButton(
                         child: Text('Upload to Cloud'),
                         onPressed: () {
-                          widget.updateConfigDetailsToCloud(
-                              temporaryTables, "add_tables");
-                          temporaryTables.clear();
+                          setState(() {
+                            restaurantData.sendConfiguredDataToBackend(
+                                temporaryTables, "add_tables");
+//                          widget.updateConfigDetailsToCloud(
+//                              temporaryTables, "add_tables");
+                            temporaryTables.clear();
+                          });
                         },
                       ),
                     ],
@@ -201,28 +206,31 @@ class _AddDataState extends State<AddData> {
                           }),
 
                       ////displaying from cloud/ real updated data
-                      widget.restaurant.tables != null
+                      restaurantData.restaurant.tables != null
                           ? ListView.builder(
-                              itemCount: widget.restaurant.tables.length,
+                              itemCount:
+                                  restaurantData.restaurant.tables.length,
                               shrinkWrap: true,
                               primary: false,
                               itemBuilder: (context, index) {
                                 return ListTile(
                                   title: Text(
-                                      'Table Name : ${widget.restaurant.tables[index].name}'),
+                                      'Table Name : ${restaurantData.restaurant.tables[index].name}'),
                                   subtitle: Text(
-                                      'Capacity : ${widget.restaurant.tables[index].seats} Seats'),
+                                      'Capacity : ${restaurantData.restaurant.tables[index].seats} Seats'),
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
                                       IconButton(
                                         icon: Icon(Icons.edit),
                                         onPressed: () {
-                                          _tableNameEditController.text = widget
-                                              .restaurant.tables[index].name;
+                                          _tableNameEditController.text =
+                                              restaurantData.restaurant
+                                                  .tables[index].name;
 
-                                          _tableSeatEditController.text = widget
-                                              .restaurant.tables[index].seats;
+                                          _tableSeatEditController.text =
+                                              restaurantData.restaurant
+                                                  .tables[index].seats;
                                           showDialog(
                                             barrierDismissible: false,
                                             context: context,
@@ -318,8 +326,8 @@ class _AddDataState extends State<AddData> {
                                                                 _tableSeatEditController
                                                                     .text
                                                                     .isNotEmpty) {
-                                                              widget
-                                                                  .updateConfigDetailsToCloud({
+                                                              restaurantData
+                                                                  .sendConfiguredDataToBackend({
                                                                 "editing_fields":
                                                                     {
                                                                   "name":
@@ -330,7 +338,7 @@ class _AddDataState extends State<AddData> {
                                                                           .text
                                                                 },
                                                                 "table_id":
-                                                                    "${widget.restaurant.tables[index].oid}"
+                                                                    "${restaurantData.restaurant.tables[index].oid}"
                                                               }, "edit_tables");
                                                             }
 
@@ -357,16 +365,16 @@ class _AddDataState extends State<AddData> {
                                               // return object of type Dialog
                                               return AlertDialog(
                                                 title: Text(
-                                                    "Remove ${widget.restaurant.tables[index].name} Table ?"),
+                                                    "Remove ${restaurantData.restaurant.tables[index].name} Table ?"),
                                                 content: new Text(
                                                     "this will delete all the assigned Staff from this table"),
                                                 actions: <Widget>[
                                                   FlatButton(
                                                     child: new Text("Delete"),
                                                     onPressed: () {
-                                                      widget
-                                                          .updateConfigDetailsToCloud(
-                                                              widget
+                                                      restaurantData
+                                                          .sendConfiguredDataToBackend(
+                                                              restaurantData
                                                                   .restaurant
                                                                   .tables[index]
                                                                   .oid,

@@ -1,14 +1,15 @@
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addFoodItem/viewItem.dart';
 import 'package:adhara_socket_io_example/data.dart';
+import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AddItem extends StatefulWidget {
   final Category category;
-  final updateConfigDetailsToCloud;
+
   final menuType;
   AddItem({
     this.category,
-    this.updateConfigDetailsToCloud,
     this.menuType,
   });
   @override
@@ -48,7 +49,7 @@ class _AddFoodItemState extends State<AddItem> {
     FocusScope.of(context).requestFocus(nextFocus);
   }
 
-  confirmItem() {
+  confirmItem(restaurantData) {
     setState(() {
       foodTemp = {
         "category_id": widget.category.oid,
@@ -62,7 +63,7 @@ class _AddFoodItemState extends State<AddItem> {
       };
     });
 
-    widget.updateConfigDetailsToCloud(foodTemp, "add_food_item");
+    restaurantData.sendConfiguredDataToBackend(foodTemp, "add_food_item");
 
     itemNameController.clear();
     descriptionController.clear();
@@ -74,53 +75,9 @@ class _AddFoodItemState extends State<AddItem> {
     choices.clear();
   }
 
-//  sendEditFields(index) {
-//    if (true) {
-//      widget.updateConfigDetailsToCloud({
-//        "food_id": widget.category.foodList[index].oid,
-//        "category_type": widget.menuType,
-//        "food_dict": {
-//          "name": _itemNameEditController.text,
-//          "description": _descriptionEditController.text,
-//          "food_options": {"options": editOptions, "choices": editChoices}
-//        },
-//      }, "edit_food_item");
-//    } else if (editOptions.isNotEmpty && editChoices.isEmpty) {
-//      widget.updateConfigDetailsToCloud({
-//        "food_id": widget.category.foodList[index].oid,
-//        "category_type": widget.menuType,
-//        "food_dict": {
-//          "name": _itemNameEditController.text,
-//          "description": _descriptionEditController.text,
-//          "food_options": {"options": editOptions}
-//        },
-//      }, "edit_food_item");
-//    } else if (editChoices.isNotEmpty && editOptions.isEmpty) {
-//      widget.updateConfigDetailsToCloud({
-//        "food_id": widget.category.foodList[index].oid,
-//        "category_type": widget.menuType,
-//        "food_dict": {
-//          "name": _itemNameEditController.text,
-//          "description": _descriptionEditController.text,
-//          "price": _priceEditController.text,
-//          "food_options": {"choices": editChoices}
-//        },
-//      }, "edit_food_item");
-//    } else {
-//      widget.updateConfigDetailsToCloud({
-//        "food_id": widget.category.foodList[index].oid,
-//        "category_type": widget.menuType,
-//        "food_dict": {
-//          "name": _itemNameEditController.text,
-//          "description": _descriptionEditController.text,
-//          "price": _priceEditController.text,
-//        },
-//      }, "edit_food_item");
-//    }
-//  }
-
   @override
   Widget build(BuildContext context) {
+    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -344,7 +301,7 @@ class _AddFoodItemState extends State<AddItem> {
                           ),
                 FlatButton(
                   child: Text('confirm item'),
-                  onPressed: confirmItem,
+                  onPressed: confirmItem(restaurantData),
                 ),
 
                 ////////////////////// to display food item present in the menu///////////////////
@@ -383,7 +340,8 @@ class _AddFoodItemState extends State<AddItem> {
                                     IconButton(
                                       icon: Icon(Icons.cancel),
                                       onPressed: () {
-                                        widget.updateConfigDetailsToCloud({
+                                        restaurantData
+                                            .sendConfiguredDataToBackend({
                                           "category_type": widget.menuType,
                                           "food_id": widget
                                               .category.foodList[index].oid
@@ -400,8 +358,6 @@ class _AddFoodItemState extends State<AddItem> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return ViewItem(
-                                        updateConfigDetailsToCloud:
-                                            widget.updateConfigDetailsToCloud,
                                         menuType: widget.menuType,
                                         foodItem:
                                             widget.category.foodList[index],

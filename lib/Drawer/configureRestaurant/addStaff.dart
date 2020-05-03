@@ -1,15 +1,16 @@
-import 'package:adhara_socket_io_example/data.dart';
+import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AddStaff extends StatefulWidget {
-  final updateConfigDetailsToCloud;
-
-  final Restaurant restaurant;
-
-  AddStaff({
-    this.updateConfigDetailsToCloud,
-    this.restaurant,
-  });
+//  final updateConfigDetailsToCloud;
+//
+//  final Restaurant restaurant;
+//
+//  AddStaff({
+//    this.updateConfigDetailsToCloud,
+//    this.restaurant,
+//  });
 
   @override
   _AddDataState createState() => _AddDataState();
@@ -26,7 +27,8 @@ class _AddDataState extends State<AddStaff> {
     setState(() {
       if (staffNameController.text.isNotEmpty) {
         _staffNameValidate = false;
-        temporaryStaffNames.add({'name': staffNameController.text});
+        print(staffNameController.text);
+        temporaryStaffNames.add({'name': staffNameController.text.toString()});
 
         staffNameController.clear();
       } else
@@ -36,6 +38,7 @@ class _AddDataState extends State<AddStaff> {
 
   @override
   Widget build(BuildContext context) {
+    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -101,10 +104,10 @@ class _AddDataState extends State<AddStaff> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      widget.restaurant.staff == null
+                      restaurantData.restaurant.staff == null
                           ? Text('No Of Staffs :')
                           : Text(
-                              'No Of Staffs : ${widget.restaurant.staff.length} ',
+                              'No Of Staffs : ${restaurantData.restaurant.staff.length} ',
                             ),
                       temporaryStaffNames.length == 0
                           ? Text(
@@ -122,10 +125,12 @@ class _AddDataState extends State<AddStaff> {
                       RaisedButton(
                         child: Text('Upload to Cloud'),
                         onPressed: () {
-                          widget.updateConfigDetailsToCloud(
-                              temporaryStaffNames, "add_staff");
+                          setState(() {
+                            restaurantData.sendConfiguredDataToBackend(
+                                temporaryStaffNames, "add_staff");
 
-                          temporaryStaffNames.clear();
+                            temporaryStaffNames.clear();
+                          });
                         },
                       ),
                     ],
@@ -143,7 +148,7 @@ class _AddDataState extends State<AddStaff> {
                           itemBuilder: (context, index) {
                             return ListTile(
                               title: Text(
-                                  'Name : ${temporaryStaffNames[index]['staff_name']}'),
+                                  'Name : ${temporaryStaffNames[index]['name']}'),
                               trailing: IconButton(
                                 icon: Icon(Icons.cancel),
                                 onPressed: () {
@@ -154,23 +159,24 @@ class _AddDataState extends State<AddStaff> {
                               ),
                             );
                           }),
-                      widget.restaurant.staff != null
+                      restaurantData.restaurant.staff != null
                           ? ListView.builder(
-                              itemCount: widget.restaurant.staff.length,
+                              itemCount: restaurantData.restaurant.staff.length,
                               shrinkWrap: true,
                               primary: false,
                               itemBuilder: (context, index) {
                                 return ListTile(
                                   title: Text(
-                                      'Name : ${widget.restaurant.staff[index].name}'),
+                                      'Name : ${restaurantData.restaurant.staff[index].name}'),
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
                                       IconButton(
                                         icon: Icon(Icons.edit),
                                         onPressed: () {
-                                          _staffNameEditController.text = widget
-                                              .restaurant.staff[index].name;
+                                          _staffNameEditController.text =
+                                              restaurantData
+                                                  .restaurant.staff[index].name;
 
                                           showDialog(
                                             barrierDismissible: false,
@@ -240,8 +246,8 @@ class _AddDataState extends State<AddStaff> {
                                                             if (_staffNameEditController
                                                                 .text
                                                                 .isNotEmpty) {
-                                                              widget
-                                                                  .updateConfigDetailsToCloud({
+                                                              restaurantData
+                                                                  .sendConfiguredDataToBackend({
                                                                 "editing_fields":
                                                                     {
                                                                   "name":
@@ -249,7 +255,7 @@ class _AddDataState extends State<AddStaff> {
                                                                           .text
                                                                 },
                                                                 "staff_id":
-                                                                    "${widget.restaurant.staff[index].oid}"
+                                                                    "${restaurantData.restaurant.staff[index].oid}"
                                                               }, "edit_staff");
                                                             }
 
@@ -270,10 +276,11 @@ class _AddDataState extends State<AddStaff> {
                                       IconButton(
                                         icon: Icon(Icons.cancel),
                                         onPressed: () {
-                                          widget.updateConfigDetailsToCloud(
-                                              widget
-                                                  .restaurant.staff[index].oid,
-                                              "delete_staff");
+                                          restaurantData
+                                              .sendConfiguredDataToBackend(
+                                                  restaurantData.restaurant
+                                                      .staff[index].oid,
+                                                  "delete_staff");
                                         },
                                       ),
                                     ],

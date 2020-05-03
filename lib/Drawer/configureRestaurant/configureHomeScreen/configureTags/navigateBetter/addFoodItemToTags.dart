@@ -1,14 +1,16 @@
 import 'package:adhara_socket_io_example/data.dart';
+import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AddFoodItemToTags extends StatefulWidget {
   const AddFoodItemToTags({
     Key key,
-    @required this.restaurant,
+//    @required this.restaurant,
     @required this.selectedTag,
   }) : super(key: key);
 
-  final Restaurant restaurant;
+//  final Restaurant restaurant;
   final String selectedTag;
 
   @override
@@ -20,19 +22,9 @@ class _AddFoodItemToTagsState extends State<AddFoodItemToTags> {
 
   MenuFoodItem _selectedFoodItem;
 
-  setDropDownInitVal() {
-    _selectedFoodCategory = widget.restaurant.foodMenu[0];
-    _selectedFoodItem = _selectedFoodCategory.foodList[0];
-  }
-
-  @override
-  void initState() {
-    setDropDownInitVal();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
+    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
     return AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -49,8 +41,8 @@ class _AddFoodItemToTagsState extends State<AddFoodItemToTags> {
           ),
           DropdownButton(
             value: _selectedFoodCategory,
-            items: widget.restaurant.foodMenu != null
-                ? widget.restaurant.foodMenu.map((category) {
+            items: restaurantData.restaurant.foodMenu != null
+                ? restaurantData.restaurant.foodMenu.map((category) {
                     return DropdownMenuItem(
                       value: category,
                       child: Text(category.name),
@@ -107,6 +99,11 @@ class _AddFoodItemToTagsState extends State<AddFoodItemToTags> {
                   style: TextStyle(color: Colors.green),
                 ),
                 onPressed: () {
+                  restaurantData.sendConfiguredDataToBackend({
+                    "food_id": _selectedFoodItem.oid,
+                    "tag_to_attach": widget.selectedTag,
+                  }, "attach_home_screen_tags");
+
                   Navigator.of(context).pop(); // To close the dialog
                 },
               ),

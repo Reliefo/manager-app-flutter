@@ -1,20 +1,19 @@
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configure.dart';
-import 'package:adhara_socket_io_example/data.dart';
 import 'package:flutter/material.dart';
 
 class DrawerMenu extends StatelessWidget {
-  final Restaurant restaurant;
-  final updateConfigDetailsToCloud;
-
-  final getRest;
-  final login;
-
-  DrawerMenu({
-    @required this.restaurant,
-    this.updateConfigDetailsToCloud,
-    this.getRest,
-    this.login,
-  });
+//  final Restaurant restaurant;
+//  final updateConfigDetailsToCloud;
+//
+//  final getRest;
+//  final login;
+//
+//  DrawerMenu({
+//    @required this.restaurant,
+//    this.updateConfigDetailsToCloud,
+//    this.getRest,
+//    this.login,
+//  });
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -32,9 +31,9 @@ class DrawerMenu extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => Configure(
-                  updateConfigDetailsToCloud: updateConfigDetailsToCloud,
-                  restaurant: restaurant,
-                ),
+//                  updateConfigDetailsToCloud: updateConfigDetailsToCloud,
+//                  restaurant: rest.restaurant,
+                    ),
               ),
             );
           },
@@ -46,13 +45,13 @@ class DrawerMenu extends StatelessWidget {
         FlatButton(
           child: Text('login'),
           onPressed: () {
-            login();
+//            login();
           },
         ),
         FlatButton(
           child: Text('get'),
           onPressed: () {
-            getRest();
+//            getRest();
           },
         ),
       ],

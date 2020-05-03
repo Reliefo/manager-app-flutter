@@ -1,23 +1,25 @@
 import 'package:adhara_socket_io_example/constants.dart';
-import 'package:adhara_socket_io_example/data.dart';
+import 'package:adhara_socket_io_example/fetchData/fetchOrderData.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Completed extends StatelessWidget {
-  final List<TableOrder> completedOrders;
-  Completed({
-    @required this.completedOrders,
-  });
+//  final List<TableOrder> completedOrders;
+//  Completed({
+//    @required this.completedOrders,
+//  });
 
   @override
   Widget build(BuildContext context) {
-    return completedOrders.length > 0
+    final OrderData orderData = Provider.of<OrderData>(context);
+    return orderData.completedOrders.length > 0
         ? Flexible(
             fit: FlexFit.loose,
             child: ListView.builder(
               primary: false,
               shrinkWrap: true,
-              itemCount: completedOrders.length,
+              itemCount: orderData.completedOrders.length,
               itemBuilder: (context, index) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,7 +32,8 @@ class Completed extends StatelessWidget {
                             padding: EdgeInsets.symmetric(
                                 vertical: 8, horizontal: 12),
                             child: Text(
-                              'Table : ${completedOrders[index].table}' ?? " ",
+                              'Table : ${orderData.completedOrders[index].table}' ??
+                                  " ",
                               style: homePageS1,
                               textAlign: TextAlign.start,
                             ),
@@ -43,7 +46,8 @@ class Completed extends StatelessWidget {
                             child: Text(
 //
                               'Arrival Time : ${formatDate(
-                                    (completedOrders[index].timeStamp),
+                                    (orderData
+                                        .completedOrders[index].timeStamp),
                                     [HH, ':', nn],
                                   )}' ??
                                   " ",
@@ -55,23 +59,22 @@ class Completed extends StatelessWidget {
                     ),
                     ListView.builder(
                       primary: false,
-                      itemCount: completedOrders[index].orders.length,
+                      itemCount: orderData.completedOrders[index].orders.length,
                       shrinkWrap: true,
                       itemBuilder: (context, index2) {
                         return ListView.builder(
                             primary: false,
                             shrinkWrap: true,
-                            itemCount: completedOrders[index]
-                                .orders[index2]
-                                .foodList
-                                .length,
+                            itemCount: orderData.completedOrders[index]
+                                .orders[index2].foodList.length,
                             itemBuilder: (context, index3) {
                               return Container(
                                   padding: EdgeInsets.symmetric(
                                       vertical: 8, horizontal: 12),
                                   child:
                                       // for checking instructions
-                                      completedOrders[index]
+                                      orderData
+                                                  .completedOrders[index]
                                                   .orders[index2]
                                                   .foodList[index3]
                                                   .instructions ==
@@ -81,7 +84,7 @@ class Completed extends StatelessWidget {
                                                   CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 Text(
-                                                  '${completedOrders[index].orders[index2].foodList[index3].name} x ${completedOrders[index].orders[index2].foodList[index3].quantity}' ??
+                                                  '${orderData.completedOrders[index].orders[index2].foodList[index3].name} x ${orderData.completedOrders[index].orders[index2].foodList[index3].quantity}' ??
                                                       " ",
 //
                                                   style: homePageS3,
@@ -93,7 +96,7 @@ class Completed extends StatelessWidget {
                                                   CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 Text(
-                                                  '${completedOrders[index].orders[index2].foodList[index3].name} x ${completedOrders[index].orders[index2].foodList[index3].quantity}' ??
+                                                  '${orderData.completedOrders[index].orders[index2].foodList[index3].name} x ${orderData.completedOrders[index].orders[index2].foodList[index3].quantity}' ??
                                                       " ",
 //
                                                   style: homePageS3,
@@ -102,7 +105,9 @@ class Completed extends StatelessWidget {
                                                 // for checking instructions
 
                                                 Text(
-                                                  completedOrders[index]
+                                                  orderData
+                                                          .completedOrders[
+                                                              index]
                                                           .orders[index2]
                                                           .foodList[index3]
                                                           .instructions ??

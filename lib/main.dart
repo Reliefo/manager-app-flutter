@@ -1,5 +1,4 @@
-import 'package:adhara_socket_io_example/authentication/login.dart';
-import 'package:adhara_socket_io_example/startingPage.dart';
+import 'package:adhara_socket_io_example/fetchData/socketConnection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -14,12 +13,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  @override
-  void initState() {
-    Login login = Login();
-    login.login();
-    super.initState();
-  }
+//  @override
+//  void initState() {
+//    Login login = Login();
+//    login.login();
+//    super.initState();
+//  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +26,6 @@ class _MyAppState extends State<MyApp> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-    return StartingPage();
+    return SocketConnection();
   }
 }

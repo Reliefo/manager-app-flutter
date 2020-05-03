@@ -1,15 +1,16 @@
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addFoodItem/addItem.dart';
-import 'package:adhara_socket_io_example/data.dart';
+import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AddFoodMenu extends StatefulWidget {
-  final Restaurant restaurant;
-  final updateConfigDetailsToCloud;
-
-  AddFoodMenu({
-    this.restaurant,
-    this.updateConfigDetailsToCloud,
-  });
+//  final Restaurant restaurant;
+//  final updateConfigDetailsToCloud;
+//
+//  AddFoodMenu({
+//    this.restaurant,
+//    this.updateConfigDetailsToCloud,
+//  });
 
   @override
   _AddFoodMenuState createState() => _AddFoodMenuState();
@@ -32,12 +33,12 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
     FocusScope.of(context).requestFocus(nextFocus);
   }
 
-  _addCategory() {
+  _addCategory(restaurantData) {
     setState(() {
       if (_categoryController.text.isNotEmpty) {
         _categoryValidate = false;
 
-        widget.updateConfigDetailsToCloud(
+        restaurantData.sendConfiguredDataToBackend(
           {
             "name": _categoryController.text,
             "description": _descriptionController.text
@@ -54,6 +55,7 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
 
   @override
   Widget build(BuildContext context) {
+    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
 //    print(widget.restaurant.foodMenu);
     return SafeArea(
       child: Scaffold(
@@ -106,7 +108,7 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
                           controller: _descriptionController,
                           focusNode: _descriptionFocus,
                           onFieldSubmitted: (value) {
-                            _addCategory();
+                            _addCategory(restaurantData);
                           },
                           decoration: InputDecoration(
                             labelText: "Description",
@@ -131,22 +133,22 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
                       child: RaisedButton(
                         color: Colors.grey,
                         child: Text('Add'),
-                        onPressed: _addCategory,
+                        onPressed: _addCategory(restaurantData),
                       ),
                     ),
                   ],
                 ),
                 Expanded(
-                  child: widget.restaurant.foodMenu != null
+                  child: restaurantData.restaurant.foodMenu != null
                       ? ListView.builder(
-                          itemCount: widget.restaurant.foodMenu.length,
+                          itemCount: restaurantData.restaurant.foodMenu.length,
                           shrinkWrap: true,
                           itemBuilder: (BuildContext context, index) {
                             return FlatButton(
                               child: ListTile(
-                                title: Text(
-                                    widget.restaurant.foodMenu[index].name),
-                                subtitle: Text(widget
+                                title: Text(restaurantData
+                                    .restaurant.foodMenu[index].name),
+                                subtitle: Text(restaurantData
                                     .restaurant.foodMenu[index].description),
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -171,13 +173,13 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
                                     IconButton(
                                       icon: Icon(Icons.edit),
                                       onPressed: () {
-                                        _categoryEditController.text = widget
-                                            .restaurant.foodMenu[index].name;
+                                        _categoryEditController.text =
+                                            restaurantData.restaurant
+                                                .foodMenu[index].name;
 
-                                        _descriptionEditController.text = widget
-                                            .restaurant
-                                            .foodMenu[index]
-                                            .description;
+                                        _descriptionEditController.text =
+                                            restaurantData.restaurant
+                                                .foodMenu[index].description;
                                         showDialog(
                                           barrierDismissible: false,
                                           context: context,
@@ -269,11 +271,11 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
                                                           if (_categoryEditController
                                                               .text
                                                               .isNotEmpty) {
-                                                            widget
-                                                                .updateConfigDetailsToCloud(
+                                                            restaurantData
+                                                                .sendConfiguredDataToBackend(
                                                               {
                                                                 "category_id":
-                                                                    "${widget.restaurant.foodMenu[index].oid}",
+                                                                    "${restaurantData.restaurant.foodMenu[index].oid}",
                                                                 "editing_fields":
                                                                     {
                                                                   "name":
@@ -310,19 +312,20 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
                                             // return object of type Dialog
                                             return AlertDialog(
                                               title: Text(
-                                                  "Remove ${widget.restaurant.foodMenu[index].name} Category ?"),
+                                                  "Remove ${restaurantData.restaurant.foodMenu[index].name} Category ?"),
                                               content: new Text(
                                                   "this will delete all items in this category"),
                                               actions: <Widget>[
                                                 FlatButton(
                                                   child: new Text("Delete"),
                                                   onPressed: () {
-                                                    widget.updateConfigDetailsToCloud(
-                                                        widget
-                                                            .restaurant
-                                                            .foodMenu[index]
-                                                            .oid,
-                                                        "delete_food_category");
+                                                    restaurantData
+                                                        .sendConfiguredDataToBackend(
+                                                            restaurantData
+                                                                .restaurant
+                                                                .foodMenu[index]
+                                                                .oid,
+                                                            "delete_food_category");
 
                                                     Navigator.of(context).pop();
                                                   },
@@ -348,10 +351,8 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => AddItem(
-                                      category:
-                                          widget.restaurant.foodMenu[index],
-                                      updateConfigDetailsToCloud:
-                                          widget.updateConfigDetailsToCloud,
+                                      category: restaurantData
+                                          .restaurant.foodMenu[index],
                                       menuType: "food",
                                     ),
                                   ),

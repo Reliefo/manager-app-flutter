@@ -452,7 +452,7 @@ class MenuFoodItem {
     }
 
     if (json['tags'] != null) {
-      print("inside add tags");
+//      print("inside add tags");
       tags = new List<String>();
       json['tags'].forEach((v) {
         tags.add(v);

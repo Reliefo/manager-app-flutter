@@ -1,23 +1,25 @@
 import 'package:adhara_socket_io_example/constants.dart';
 import 'package:adhara_socket_io_example/data.dart';
+import 'package:adhara_socket_io_example/fetchData/fetchAssistanceData.dart';
 import 'package:date_format/date_format.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SinglePerson extends StatelessWidget {
   final Staff staff;
-  final List<AssistanceRequest> assistanceReq;
+//  final List<AssistanceRequest> assistanceReq;
   final List<AssistanceRequest> personAssistanceReq = [];
 
   SinglePerson({
     this.staff,
-    this.assistanceReq,
+//    this.assistanceReq,
   });
 
   final startTime = '4:20 PM';
 
-  getPersonAssistance() {
-    assistanceReq.forEach((request) {
+  getPersonAssistance(assistanceData) {
+    assistanceData.assistanceReq.forEach((request) {
       if (request.acceptedBy == staff.name) {
         personAssistanceReq.add(request);
       }
@@ -26,7 +28,9 @@ class SinglePerson extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    getPersonAssistance();
+    final AssistanceData assistanceData = Provider.of<AssistanceData>(context);
+
+    getPersonAssistance(assistanceData);
     return SafeArea(
       child: Scaffold(
         body: Container(

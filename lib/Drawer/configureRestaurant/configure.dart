@@ -14,8 +14,8 @@ class Configure extends StatelessWidget {
   final updateConfigDetailsToCloud;
 
   Configure({
-    @required this.restaurant,
-    @required this.updateConfigDetailsToCloud,
+    this.restaurant,
+    this.updateConfigDetailsToCloud,
   });
   @override
   Widget build(BuildContext context) {
@@ -46,11 +46,7 @@ class Configure extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => AddData(
-                                  updateConfigDetailsToCloud:
-                                      updateConfigDetailsToCloud,
-                                  restaurant: restaurant,
-                                ),
+                                builder: (context) => AddData(),
                               ),
                             );
                           },
@@ -75,10 +71,10 @@ class Configure extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => AddStaff(
-                                  updateConfigDetailsToCloud:
-                                      updateConfigDetailsToCloud,
-                                  restaurant: restaurant,
-                                ),
+//                                  updateConfigDetailsToCloud:
+//                                      updateConfigDetailsToCloud,
+//                                  restaurant: restaurant,
+                                    ),
                               ),
                             );
                           },
@@ -103,10 +99,10 @@ class Configure extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => AssignStaff(
-                                  updateConfigDetailsToCloud:
-                                      updateConfigDetailsToCloud,
-                                  restaurant: restaurant,
-                                ),
+//                                  updateConfigDetailsToCloud:
+//                                      updateConfigDetailsToCloud,
+//                                  restaurant: restaurant,
+                                    ),
                               ),
                             );
                           },
@@ -135,10 +131,10 @@ class Configure extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => AddFoodMenu(
-                                  updateConfigDetailsToCloud:
-                                      updateConfigDetailsToCloud,
-                                  restaurant: restaurant,
-                                ),
+//                                  updateConfigDetailsToCloud:
+//                                      updateConfigDetailsToCloud,
+//                                  restaurant: restaurant,
+                                    ),
                               ),
                             );
                           },
@@ -163,10 +159,10 @@ class Configure extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => AddBarMenu(
-                                  updateConfigDetailsToCloud:
-                                      updateConfigDetailsToCloud,
-                                  restaurant: restaurant,
-                                ),
+//                                  updateConfigDetailsToCloud:
+//                                      updateConfigDetailsToCloud,
+//                                  restaurant: restaurant,
+                                    ),
                               ),
                             );
                           },
@@ -191,8 +187,8 @@ class Configure extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ConfigureHomeScreen(
-                                  restaurant: restaurant,
-                                ),
+//                                  restaurant: restaurant,
+                                    ),
                               ),
                             );
                           },

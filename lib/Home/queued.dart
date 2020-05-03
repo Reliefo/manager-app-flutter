@@ -1,13 +1,15 @@
 import 'package:adhara_socket_io_example/constants.dart';
-import 'package:adhara_socket_io_example/data.dart';
+import 'package:adhara_socket_io_example/fetchData/fetchOrderData.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Queued extends StatelessWidget {
-  final List<TableOrder> queueOrders;
-  Queued({@required this.queueOrders});
+//  final List<TableOrder> queueOrders;
+//  Queued({@required this.queueOrders});
   @override
   Widget build(BuildContext context) {
+    final OrderData orderData = Provider.of<OrderData>(context);
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 1),
       color: Colors.grey,
@@ -25,11 +27,11 @@ class Queued extends StatelessWidget {
           ),
 
           //to check if there is orders in queue or not
-          queueOrders.length > 0
+          orderData.queueOrders.length > 0
               ? Expanded(
                   child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: queueOrders.length,
+                    itemCount: orderData.queueOrders.length,
                     itemBuilder: (context, index) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,7 +44,7 @@ class Queued extends StatelessWidget {
                                   padding: EdgeInsets.symmetric(
                                       vertical: 8, horizontal: 12),
                                   child: Text(
-                                    'Table : ${queueOrders[index].table}' ??
+                                    'Table : ${orderData.queueOrders[index].table}' ??
                                         " ",
                                     style: homePageS1,
                                     textAlign: TextAlign.start,
@@ -56,7 +58,8 @@ class Queued extends StatelessWidget {
                                   child: Text(
 //
                                     'Arrival Time : ${formatDate(
-                                          (queueOrders[index].timeStamp),
+                                          (orderData
+                                              .queueOrders[index].timeStamp),
                                           [HH, ':', nn],
                                         )}' ??
                                         " ",
@@ -68,23 +71,23 @@ class Queued extends StatelessWidget {
                           ),
                           ListView.builder(
                             primary: false,
-                            itemCount: queueOrders[index].orders.length,
+                            itemCount:
+                                orderData.queueOrders[index].orders.length,
                             shrinkWrap: true,
                             itemBuilder: (context, index2) {
                               return ListView.builder(
                                   primary: false,
                                   shrinkWrap: true,
-                                  itemCount: queueOrders[index]
-                                      .orders[index2]
-                                      .foodList
-                                      .length,
+                                  itemCount: orderData.queueOrders[index]
+                                      .orders[index2].foodList.length,
                                   itemBuilder: (context, index3) {
                                     return Container(
                                         padding: EdgeInsets.symmetric(
                                             vertical: 8, horizontal: 12),
                                         child:
                                             // for checking instructions
-                                            queueOrders[index]
+                                            orderData
+                                                        .queueOrders[index]
                                                         .orders[index2]
                                                         .foodList[index3]
                                                         .instructions ==
@@ -95,7 +98,7 @@ class Queued extends StatelessWidget {
                                                             .start,
                                                     children: <Widget>[
                                                       Text(
-                                                        '${queueOrders[index].orders[index2].foodList[index3].name} x ${queueOrders[index].orders[index2].foodList[index3].quantity}' ??
+                                                        '${orderData.queueOrders[index].orders[index2].foodList[index3].name} x ${orderData.queueOrders[index].orders[index2].foodList[index3].quantity}' ??
                                                             " ",
 //
                                                         style: homePageS3,
@@ -108,7 +111,7 @@ class Queued extends StatelessWidget {
                                                             .start,
                                                     children: <Widget>[
                                                       Text(
-                                                        '${queueOrders[index].orders[index2].foodList[index3].name} x ${queueOrders[index].orders[index2].foodList[index3].quantity}' ??
+                                                        '${orderData.queueOrders[index].orders[index2].foodList[index3].name} x ${orderData.queueOrders[index].orders[index2].foodList[index3].quantity}' ??
                                                             " ",
 //
                                                         style: homePageS3,
@@ -117,7 +120,9 @@ class Queued extends StatelessWidget {
                                                       // for checking instructions
 
                                                       Text(
-                                                        queueOrders[index]
+                                                        orderData
+                                                                .queueOrders[
+                                                                    index]
                                                                 .orders[index2]
                                                                 .foodList[
                                                                     index3]

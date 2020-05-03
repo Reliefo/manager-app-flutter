@@ -4,23 +4,24 @@ import 'package:adhara_socket_io/adhara_socket_io.dart';
 import 'package:adhara_socket_io_example/data.dart';
 import 'package:flutter/material.dart';
 
-class ConfigureRestaurantData extends ChangeNotifier {
-  Restaurant restaurant = Restaurant();
+class RestaurantData extends ChangeNotifier {
+  final Restaurant restaurant;
 
   final Map<String, SocketIO> sockets;
-  ConfigureRestaurantData({
+  RestaurantData({
+    this.restaurant,
     this.sockets,
   });
-  Restaurant get rest => restaurant;
-  fetchRestaurant(data) {
-    if (data is Map) {
-      data = json.encode(data);
-    }
 
-    var decoded = jsonDecode(data);
-//    print(decoded);
-    restaurant = Restaurant.fromJson(decoded);
-  }
+//  fetchRestaurant(data) {
+//    if (data is Map) {
+//      data = json.encode(data);
+//    }
+//
+//    var decoded = jsonDecode(data);
+////    print(decoded);
+//    restaurant = Restaurant.fromJson(decoded);
+//  }
 
   getConfiguredDataFromBackend(data) {
     if (data is Map) {
@@ -178,6 +179,8 @@ class ConfigureRestaurantData extends ChangeNotifier {
         category.foodList.removeWhere((food) => food.oid == decode["food_id"]);
       });
     }
+
+    notifyListeners();
   }
 
 //Todo: will be fetched using providers
@@ -341,6 +344,35 @@ class ConfigureRestaurantData extends ChangeNotifier {
       });
     }
 
+    if (type == "add_home_screen_tags") {
+      localData['restaurant_id'] = restaurantId;
+      localData['type'] = type;
+
+      encode = jsonEncode(localData);
+    }
+
+    if (type == "delete_home_screen_tags") {
+      //todo: check
+      localData['restaurant_id'] = restaurantId;
+      localData['type'] = type;
+
+      encode = jsonEncode(localData);
+    }
+
+    if (type == "attach_home_screen_tags") {
+      localData['restaurant_id'] = restaurantId;
+      localData['type'] = type;
+
+      encode = jsonEncode(localData);
+    }
+
+    if (type == "remove_home_screen_tags") {
+      //todo: check
+      localData['restaurant_id'] = restaurantId;
+      localData['type'] = type;
+
+      encode = jsonEncode(localData);
+    }
     print("before sending to cloud");
 
     print(encode);

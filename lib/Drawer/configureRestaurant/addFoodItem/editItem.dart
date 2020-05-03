@@ -1,14 +1,15 @@
 import 'package:adhara_socket_io_example/data.dart';
+import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class EditItem extends StatefulWidget {
   final MenuFoodItem foodItem;
-  final updateConfigDetailsToCloud;
+
   final menuType;
 
   EditItem({
     this.foodItem,
-    this.updateConfigDetailsToCloud,
     this.menuType,
   });
   @override
@@ -25,8 +26,8 @@ class _EditItemState extends State<EditItem> {
   final _foodOptionPriceEditController = TextEditingController();
   final _foodChoiceEditController = TextEditingController();
 
-  sendEditFields() {
-    widget.updateConfigDetailsToCloud({
+  sendEditFields(restaurantData) {
+    restaurantData.sendConfiguredDataToBackend({
       "food_id": widget.foodItem.oid,
       "category_type": widget.menuType,
       "food_dict": {
@@ -65,6 +66,8 @@ class _EditItemState extends State<EditItem> {
 
   @override
   Widget build(BuildContext context) {
+    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
+
     _itemNameEditController.text = widget.foodItem.name;
 
     _descriptionEditController.text = widget.foodItem.description;
@@ -405,7 +408,7 @@ class _EditItemState extends State<EditItem> {
                     ),
                     onPressed: () {
                       //todo: send edited fields
-                      sendEditFields();
+                      sendEditFields(restaurantData);
 
                       Navigator.of(context).pop(); // To close the dialog
                     },

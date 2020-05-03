@@ -1,13 +1,15 @@
 import 'package:adhara_socket_io_example/constants.dart';
-import 'package:adhara_socket_io_example/data.dart';
+import 'package:adhara_socket_io_example/fetchData/fetchAssistanceData.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Assistance extends StatelessWidget {
-  final List<AssistanceRequest> assistanceReq;
-  Assistance({@required this.assistanceReq});
+//  final List<AssistanceRequest> assistanceReq;
+//  Assistance({@required this.assistanceReq});
   @override
   Widget build(BuildContext context) {
+    final AssistanceData assistanceData = Provider.of<AssistanceData>(context);
     return Container(
       color: Colors.blueGrey,
       child: Column(
@@ -64,10 +66,10 @@ class Assistance extends StatelessWidget {
           ),
 
           //Todo: change it to actual data length
-          assistanceReq.length > 0
+          assistanceData.assistanceReq.length > 0
               ? Expanded(
                   child: ListView.builder(
-                    itemCount: assistanceReq.length,
+                    itemCount: assistanceData.assistanceReq.length,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
                       return Container(
@@ -78,7 +80,7 @@ class Assistance extends StatelessWidget {
                               child: Container(
                                 padding: EdgeInsets.only(left: 20),
                                 child: Text(
-                                  'Table : ${assistanceReq[index].table}' ??
+                                  'Table : ${assistanceData.assistanceReq[index].table}' ??
                                       " ",
                                   style: homePageS2,
                                   textAlign: TextAlign.left,
@@ -88,7 +90,9 @@ class Assistance extends StatelessWidget {
                             Expanded(
                               child: Center(
                                 child: Text(
-                                  assistanceReq[index].assistanceType ?? " ",
+                                  assistanceData.assistanceReq[index]
+                                          .assistanceType ??
+                                      " ",
                                   style: homePageS2,
                                 ),
                               ),
@@ -97,7 +101,8 @@ class Assistance extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   '${formatDate(
-                                        (assistanceReq[index].timeStamp),
+                                        (assistanceData
+                                            .assistanceReq[index].timeStamp),
                                         [HH, ':', nn],
                                       )}' ??
                                       " ",
@@ -108,7 +113,9 @@ class Assistance extends StatelessWidget {
                             Expanded(
                               child: Center(
                                 child: Text(
-                                  assistanceReq[index].acceptedBy ?? "Pending",
+                                  assistanceData
+                                          .assistanceReq[index].acceptedBy ??
+                                      "Pending",
                                   style: homePageS2,
                                 ),
                               ),

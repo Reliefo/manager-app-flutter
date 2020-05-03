@@ -2,17 +2,16 @@ import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHom
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/configureTags/navigateBetter/ConfigureNavigateBetterTags.dart';
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/mostPopular.dart';
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/test.dart';
-import 'package:adhara_socket_io_example/data.dart';
 import 'package:flutter/material.dart';
 
 class ConfigureHomeScreen extends StatelessWidget {
-  final Restaurant restaurant;
-  final updateConfigDetailsToCloud;
-
-  ConfigureHomeScreen({
-    @required this.restaurant,
-    this.updateConfigDetailsToCloud,
-  });
+//  final Restaurant restaurant;
+//  final updateConfigDetailsToCloud;
+//
+//  ConfigureHomeScreen({
+//    @required this.restaurant,
+//    this.updateConfigDetailsToCloud,
+//  });
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -43,8 +42,8 @@ class ConfigureHomeScreen extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => MostPopular(
-                                  restaurant: restaurant,
-                                ),
+//                                  restaurant: restaurant,
+                                    ),
                               ),
                             );
                           },
@@ -70,10 +69,10 @@ class ConfigureHomeScreen extends StatelessWidget {
                               MaterialPageRoute(
                                 builder: (context) =>
                                     ConfigureNavigateBetterTags(
-                                  updateConfigDetailsToCloud:
-                                      updateConfigDetailsToCloud,
-                                  restaurant: restaurant,
-                                ),
+//                                  updateConfigDetailsToCloud:
+//                                      updateConfigDetailsToCloud,
+//                                  restaurant: restaurant,
+                                        ),
                               ),
                             );
                           },
@@ -98,10 +97,10 @@ class ConfigureHomeScreen extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ConfigureHomeScreenTags(
-                                  updateConfigDetailsToCloud:
-                                      updateConfigDetailsToCloud,
-                                  restaurant: restaurant,
-                                ),
+//                                  updateConfigDetailsToCloud:
+//                                      updateConfigDetailsToCloud,
+//                                  restaurant: restaurant,
+                                    ),
                               ),
                             );
                           },

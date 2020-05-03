@@ -1,15 +1,17 @@
 import 'package:adhara_socket_io_example/constants.dart';
 import 'package:adhara_socket_io_example/data.dart';
+import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AssignStaff extends StatefulWidget {
-  final Restaurant restaurant;
-  final updateConfigDetailsToCloud;
-
-  AssignStaff({
-    @required this.restaurant,
-    this.updateConfigDetailsToCloud,
-  });
+//  final Restaurant restaurant;
+//  final updateConfigDetailsToCloud;
+//
+//  AssignStaff({
+//    @required this.restaurant,
+//    this.updateConfigDetailsToCloud,
+//  });
 
   @override
   _AssignStaffState createState() => _AssignStaffState();
@@ -22,35 +24,30 @@ class _AssignStaffState extends State<AssignStaff> {
   var _selectedTableLabel;
   var _selectedStaffLabel;
 
-  setDropDownVal() {
-    if (widget.restaurant.tables != null) {
-      _selectedTableLabel = widget.restaurant.tables[0];
-    }
+//  setDropDownVal(restaurantData) {
+//    if (restaurantData.restaurant.tables != null) {
+//      _selectedTableLabel = restaurantData.restaurant.tables[0];
+//    }
+//
+//    if (restaurantData.restaurant.staff != null) {
+//      _selectedStaffLabel = restaurantData.restaurant.staff[0];
+//    }
+//  }
 
-    if (widget.restaurant.staff != null) {
-      _selectedStaffLabel = widget.restaurant.staff[0];
-    }
-  }
-
-  sendAssignedStaff() {
+  sendAssignedStaff(restaurantData) {
     List selectedId = [];
     selectedStaff.forEach((f) {
       selectedId.add(f.oid);
     });
 
-    widget.updateConfigDetailsToCloud(
+    restaurantData.sendConfiguredDataToBackend(
         {"table_id": selectedTable.oid, "assigned_staff": selectedId},
         "assign_staff");
   }
 
   @override
-  void initState() {
-    setDropDownVal();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -82,8 +79,9 @@ class _AssignStaffState extends State<AssignStaff> {
                               padding: EdgeInsets.all(16),
                               child: DropdownButton(
                                 value: _selectedTableLabel,
-                                items: widget.restaurant.tables != null
-                                    ? widget.restaurant.tables.map((table) {
+                                items: restaurantData.restaurant.tables != null
+                                    ? restaurantData.restaurant.tables
+                                        .map((table) {
                                         return DropdownMenuItem(
                                           value: table,
                                           child: Text(table.name),
@@ -107,8 +105,9 @@ class _AssignStaffState extends State<AssignStaff> {
                               padding: EdgeInsets.all(16),
                               child: DropdownButton(
                                 value: _selectedStaffLabel,
-                                items: widget.restaurant.staff != null
-                                    ? widget.restaurant.staff.map((staff) {
+                                items: restaurantData.restaurant.staff != null
+                                    ? restaurantData.restaurant.staff
+                                        .map((staff) {
                                         return DropdownMenuItem(
                                           value: staff,
                                           child: Text(staff.name),
@@ -183,7 +182,7 @@ class _AssignStaffState extends State<AssignStaff> {
 //                                table.addTableStaff(selectedStaff);
 //                              }
 //                            });
-                          sendAssignedStaff();
+                          sendAssignedStaff(restaurantData);
 
                           selectedStaff.clear();
                         },
@@ -210,11 +209,11 @@ class _AssignStaffState extends State<AssignStaff> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text(widget.restaurant.tables != null
-                                ? 'No Of Tables : ${widget.restaurant.tables.length}'
+                            Text(restaurantData.restaurant.tables != null
+                                ? 'No Of Tables : ${restaurantData.restaurant.tables.length}'
                                 : 'No Of Tables : 0 '),
-                            Text(widget.restaurant.staff != null
-                                ? 'No Of Staff : ${widget.restaurant.staff.length}'
+                            Text(restaurantData.restaurant.staff != null
+                                ? 'No Of Staff : ${restaurantData.restaurant.staff.length}'
                                 : 'No Of Staff : 0'),
                           ],
                         ),
@@ -222,9 +221,10 @@ class _AssignStaffState extends State<AssignStaff> {
 
                       /////////////for displaying assigned staff////////////////////
                       Expanded(
-                        child: widget.restaurant.tables != null
+                        child: restaurantData.restaurant.tables != null
                             ? GridView.builder(
-                                itemCount: widget.restaurant.tables.length,
+                                itemCount:
+                                    restaurantData.restaurant.tables.length,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 2),
@@ -240,16 +240,17 @@ class _AssignStaffState extends State<AssignStaff> {
                                           padding:
                                               EdgeInsets.symmetric(vertical: 8),
                                           child: Text(
-                                            widget
+                                            restaurantData
                                                 .restaurant.tables[index].name,
                                             style: homePageS1,
                                           ),
                                         ),
-                                        widget.restaurant.tables[index].staff !=
+                                        restaurantData.restaurant.tables[index]
+                                                    .staff !=
                                                 null
                                             ? Expanded(
                                                 child: ListView.builder(
-                                                    itemCount: widget
+                                                    itemCount: restaurantData
                                                         .restaurant
                                                         .tables[index]
                                                         .staff
@@ -259,23 +260,26 @@ class _AssignStaffState extends State<AssignStaff> {
                                                     itemBuilder:
                                                         (context, index2) {
                                                       return ListTile(
-                                                        title: Text(widget
-                                                            .restaurant
-                                                            .tables[index]
-                                                            .staff[index2]
-                                                            .name),
+                                                        title: Text(
+                                                            restaurantData
+                                                                .restaurant
+                                                                .tables[index]
+                                                                .staff[index2]
+                                                                .name),
                                                         trailing: IconButton(
                                                           icon: Icon(
                                                               Icons.cancel),
                                                           onPressed: () {
-                                                            widget
-                                                                .updateConfigDetailsToCloud({
-                                                              "table_id": widget
-                                                                  .restaurant
-                                                                  .tables[index]
-                                                                  .oid,
+                                                            restaurantData
+                                                                .sendConfiguredDataToBackend({
+                                                              "table_id":
+                                                                  restaurantData
+                                                                      .restaurant
+                                                                      .tables[
+                                                                          index]
+                                                                      .oid,
                                                               "withdraw_staff_id":
-                                                                  widget
+                                                                  restaurantData
                                                                       .restaurant
                                                                       .tables[
                                                                           index]

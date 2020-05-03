@@ -1,17 +1,19 @@
 import 'package:adhara_socket_io_example/data.dart';
+import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MostPopular extends StatelessWidget {
-  final Restaurant restaurant;
+//  final Restaurant restaurant;
   List<MenuFoodItem> mostPopularBar = [];
   List<MenuFoodItem> mostPopularFood = [];
-  MostPopular({
-    this.restaurant,
-  });
+//  MostPopular({
+//    this.restaurant,
+//  });
 
-  getMostPopular() {
-    if (restaurant.barMenu != null) {
-      restaurant.barMenu.forEach((category) {
+  getMostPopular(restaurantData) {
+    if (restaurantData.restaurant.barMenu != null) {
+      restaurantData.restaurant.barMenu.forEach((category) {
         category.foodList.forEach((food) {
           if (food.tags.isNotEmpty) {
             food.tags.forEach((tag) {
@@ -23,8 +25,8 @@ class MostPopular extends StatelessWidget {
         });
       });
     }
-    if (restaurant.barMenu != null) {
-      restaurant.foodMenu.forEach((category) {
+    if (restaurantData.restaurant.barMenu != null) {
+      restaurantData.restaurant.foodMenu.forEach((category) {
         category.foodList.forEach((food) {
           if (food.tags.isNotEmpty) {
             food.tags.forEach((tag) {
@@ -40,7 +42,8 @@ class MostPopular extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    getMostPopular();
+    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
+    getMostPopular(restaurantData);
     return SafeArea(
       child: Scaffold(
         body: Container(

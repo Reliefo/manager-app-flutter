@@ -1,77 +1,80 @@
 import 'dart:convert';
 
 import 'package:adhara_socket_io_example/data.dart';
-import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
 import 'package:flutter/material.dart';
 
-class FetchOrderData extends ChangeNotifier {
-  List<TableOrder> queueOrders = [];
-  List<TableOrder> cookingOrders = [];
-  List<TableOrder> completedOrders = [];
-
-  ConfigureRestaurantData restaurantData = ConfigureRestaurantData();
-
-  initialOrderLists(data) {
-    if (data is Map) {
-      data = json.encode(data);
-    }
-    int queue = 0;
-    int cooking = 0;
-    int completed = 0;
-
-    var decoded = jsonDecode(data);
-
-    queueOrders.clear();
-    cookingOrders.clear();
-    completedOrders.clear();
-
-    decoded["queue"].forEach((item) {
-      TableOrder order = TableOrder.fromJson(item);
-
-      queueOrders.add(order);
-///////////for adding count to table
-      restaurantData.restaurant.tables.forEach((table) {
-        if (item["table_id"] == table.oid) {
-          item["orders"].forEach((order) {
-            queue = queue + order["food_list"].length;
-            print(queue);
-            table.updateOrderCount(queue, cooking, completed);
-          });
-        }
-        queue = 0;
-      });
-    });
-    decoded["cooking"].forEach((item) {
-      TableOrder order = TableOrder.fromJson(item);
-
-      cookingOrders.add(order);
-///////////for adding count to table
-      restaurantData.restaurant.tables.forEach((table) {
-        if (item["table_id"] == table.oid) {
-          item["orders"].forEach((order) {
-            cooking = cooking + order["food_list"].length;
-            table.updateOrderCount(queue, cooking, completed);
-          });
-        }
-        cooking = 0;
-      });
-    });
-    decoded["completed"].forEach((item) {
-      TableOrder order = TableOrder.fromJson(item);
-
-      completedOrders.add(order);
-///////////for adding count to table
-      restaurantData.restaurant.tables.forEach((table) {
-        if (item["table_id"] == table.oid) {
-          item["orders"].forEach((order) {
-            completed = completed + order["food_list"].length;
-            table.updateOrderCount(queue, cooking, completed);
-          });
-        }
-        completed = 0;
-      });
-    });
-  }
+class OrderData extends ChangeNotifier {
+  List<TableOrder> queueOrders;
+  List<TableOrder> cookingOrders;
+  List<TableOrder> completedOrders;
+  Restaurant restaurant;
+  OrderData({
+    this.restaurant,
+    this.queueOrders,
+    this.cookingOrders,
+    this.completedOrders,
+  });
+//  initialOrderLists(data) {
+//    if (data is Map) {
+//      data = json.encode(data);
+//    }
+//    int queue = 0;
+//    int cooking = 0;
+//    int completed = 0;
+//
+//    var decoded = jsonDecode(data);
+//
+//    queueOrders.clear();
+//    cookingOrders.clear();
+//    completedOrders.clear();
+//
+//    decoded["queue"].forEach((item) {
+//      TableOrder order = TableOrder.fromJson(item);
+//
+//      queueOrders.add(order);
+/////////////for adding count to table
+//      restaurant.tables.forEach((table) {
+//        if (item["table_id"] == table.oid) {
+//          item["orders"].forEach((order) {
+//            queue = queue + order["food_list"].length;
+//            print(queue);
+//            table.updateOrderCount(queue, cooking, completed);
+//          });
+//        }
+//        queue = 0;
+//      });
+//    });
+//    decoded["cooking"].forEach((item) {
+//      TableOrder order = TableOrder.fromJson(item);
+//
+//      cookingOrders.add(order);
+/////////////for adding count to table
+//      restaurant.tables.forEach((table) {
+//        if (item["table_id"] == table.oid) {
+//          item["orders"].forEach((order) {
+//            cooking = cooking + order["food_list"].length;
+//            table.updateOrderCount(queue, cooking, completed);
+//          });
+//        }
+//        cooking = 0;
+//      });
+//    });
+//    decoded["completed"].forEach((item) {
+//      TableOrder order = TableOrder.fromJson(item);
+//
+//      completedOrders.add(order);
+/////////////for adding count to table
+//      restaurant.tables.forEach((table) {
+//        if (item["table_id"] == table.oid) {
+//          item["orders"].forEach((order) {
+//            completed = completed + order["food_list"].length;
+//            table.updateOrderCount(queue, cooking, completed);
+//          });
+//        }
+//        completed = 0;
+//      });
+//    });
+//  }
 
   newOrders(data) {
     if (data is Map) {
@@ -84,7 +87,7 @@ class FetchOrderData extends ChangeNotifier {
 
     queueOrders.add(order);
 
-    restaurantData.restaurant.tables.forEach((table) {
+    restaurant.tables.forEach((table) {
       if (decoded["table_id"] == table.oid) {
         decoded["orders"].forEach((order) {
           queue = queue + order["food_list"].length;
@@ -113,7 +116,7 @@ class FetchOrderData extends ChangeNotifier {
     selectedOrder.forEach((tableorder) {
       if (tableorder.oId == decoded['table_order_id']) {
         currentTableId = tableorder.tableId;
-        restaurantData.restaurant.tables.forEach((table) {
+        restaurant.tables.forEach((table) {
           if (currentTableId == table.oid) {
             if (decoded['type'] == "cooking") {
               table.updateOrderCount(-1, 1, 0);
