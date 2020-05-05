@@ -21,6 +21,7 @@ class Completed extends StatelessWidget {
               shrinkWrap: true,
               itemCount: orderData.completedOrders.length,
               itemBuilder: (context, index) {
+//                print(orderData.completedOrders[index].timeStamp.runtimeType);
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[

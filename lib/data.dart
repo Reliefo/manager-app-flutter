@@ -313,14 +313,14 @@ class Staff {
   String oid;
   String name;
   //todo: update assistance history and order history
-//  List assistanceHistory;
-//  List orderHistory;
+  List<AssistanceRequest> assistanceHistory;
+  List orderHistory;
 
   Staff({
     this.name,
     this.oid,
-//    this.assistanceHistory,
-//    this.orderHistory,
+    this.assistanceHistory,
+    this.orderHistory,
   });
 
   Staff.fromJson(Map<String, dynamic> json) {
@@ -332,11 +332,19 @@ class Staff {
       name = json['name'];
     }
 
-//    if (json['assistance_history'] != null) {
-//      //todo: add assistance History
+//    if (json['assistance_history'].isNotEmpty) {
+//      //todo:check
+//      assistanceHistory = new List<AssistanceRequest>();
+//      json['assistance_history'].forEach((v) {
+//        assistanceHistory.add(new AssistanceRequest.fromJson(v));
+//      });
 //    }
 //    if (json['order_history'] != null) {
-//      //todo: add order History
+//      //todo:check
+//      orderHistory = new List<OrderHistory>();
+//      json['order_history'].forEach((v) {
+//        orderHistory.add(new OrderHistory.fromJson(v));
+//      });
 //    }
   }
 
@@ -793,6 +801,7 @@ class AssistanceRequest {
   DateTime timeStamp;
   String acceptedBy; // directly provided by fetchAccepted() in main page
   String table;
+  String tableId;
 
   AssistanceRequest({
     this.oId,
@@ -801,6 +810,7 @@ class AssistanceRequest {
     this.timeStamp,
     this.acceptedBy,
     this.table,
+    this.tableId,
   });
 
   AssistanceRequest.fromJson(Map<String, dynamic> json) {
@@ -822,6 +832,48 @@ class AssistanceRequest {
 
     if (json['table'] != null) {
       table = json['table'];
+    }
+
+    if (json['table_id'] != null) {
+      tableId = json['table_id'];
+    }
+  }
+}
+
+//"order_history": [
+//{
+//"table_order_id": "5eaebd6b792a3686411acc1d",
+//"order_id": "5eaebd6b792a3686411acc1c",
+//"food_id": "5ead65bfe1823a4f213256d7",
+//"timestamp": "2020-05-03 18:20:48.997083"
+//},]
+class OrderHistory {
+  String tableOrderId;
+  String orderId;
+  String foodId;
+  DateTime timeStamp;
+
+  OrderHistory({
+    this.tableOrderId,
+    this.orderId,
+    this.foodId,
+    this.timeStamp,
+  });
+
+  OrderHistory.fromJson(Map<String, dynamic> json) {
+    print("order history");
+    if (json['table_order_id'] != null) {
+      tableOrderId = json['table_order_id'];
+    }
+    if (json['order_id'] != null) {
+      orderId = json['order_id'];
+    }
+
+    if (json['food_id'] != null) {
+      foodId = json['food_id'];
+    }
+    if (json['timestamp'] != null) {
+      timeStamp = DateTime.parse(json['timestamp']);
     }
   }
 }

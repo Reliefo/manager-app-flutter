@@ -1,6 +1,7 @@
+import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/configureChefSpecial.dart';
+import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/configureMostPopular.dart';
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/configureTags/HomeScreenTags/configureHomeScreenTags.dart';
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/configureTags/navigateBetter/ConfigureNavigateBetterTags.dart';
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/mostPopular.dart';
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/test.dart';
 import 'package:flutter/material.dart';
 
@@ -35,17 +36,19 @@ class ConfigureHomeScreen extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('Most Popular'),
+                            child: Text('On Offer'),
                           ),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => MostPopular(
+//                            Navigator.push(
+//                              context,
+//                              MaterialPageRoute(
+//                                builder: (context) => AddFoodMenu(
+//                                  updateConfigDetailsToCloud:
+//                                      updateConfigDetailsToCloud,
 //                                  restaurant: restaurant,
-                                    ),
-                              ),
-                            );
+//                                ),
+//                              ),
+//                            );
                           },
                         ),
                       ),
@@ -122,17 +125,39 @@ class ConfigureHomeScreen extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('On Offer'),
+                            child: Text('Most Popular'),
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MostPopular(
+//                                  restaurant: restaurant,
+                                    ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(25),
+                      child: Card(
+                        color: Color(0xffE5EDF1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: FlatButton(
+                          child: Center(
+                            child: Text('Daily Special'),
                           ),
                           onPressed: () {
 //                            Navigator.push(
 //                              context,
 //                              MaterialPageRoute(
-//                                builder: (context) => AddFoodMenu(
-//                                  updateConfigDetailsToCloud:
-//                                      updateConfigDetailsToCloud,
-//                                  restaurant: restaurant,
-//                                ),
+//                                builder: (context) => ConfigureDaily(),
 //                              ),
 //                            );
                           },
@@ -150,24 +175,24 @@ class ConfigureHomeScreen extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('Bar Menu'),
+                            child: Text('Chef Special'),
                           ),
                           onPressed: () {
-//                            Navigator.push(
-//                              context,
-//                              MaterialPageRoute(
-//                                builder: (context) => AddBarMenu(
-//                                  updateConfigDetailsToCloud:
-//                                      updateConfigDetailsToCloud,
-//                                  restaurant: restaurant,
-//                                ),
-//                              ),
-//                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ConfigureChefSpecial(),
+                              ),
+                            );
                           },
                         ),
                       ),
                     ),
                   ),
+                ]),
+              ),
+              Expanded(
+                child: Row(children: <Widget>[
                   Expanded(
                     child: Container(
                       padding: EdgeInsets.all(25),
@@ -178,7 +203,7 @@ class ConfigureHomeScreen extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('op'),
+                            child: Text('Happy Hours'),
                           ),
                           onPressed: () {
 //                            Navigator.push(
@@ -194,10 +219,32 @@ class ConfigureHomeScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                ]),
-              ),
-              Expanded(
-                child: Row(children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(25),
+                      child: Card(
+                        color: Color(0xffE5EDF1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: FlatButton(
+                          child: Center(
+                            child: Text('nothing'),
+                          ),
+                          onPressed: () {
+//                            Navigator.push(
+//                              context,
+//                              MaterialPageRoute(
+//                                builder: (context) => ConfigureHomeScreen(
+//                                  restaurant: restaurant,
+//                                ),
+//                              ),
+//                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
                   Expanded(
                     child: Container(
                       padding: EdgeInsets.all(25),

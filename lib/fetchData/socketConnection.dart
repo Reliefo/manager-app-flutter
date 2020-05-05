@@ -33,6 +33,7 @@ class _SocketConnectionState extends State<SocketConnection> {
   List<TableOrder> cookingOrders = [];
   List<TableOrder> completedOrders = [];
   List<AssistanceRequest> assistanceReq = [];
+  Map<String, dynamic> registeredUser = {};
 
   SocketIOManager manager = SocketIOManager();
   Map<String, SocketIO> sockets = {};
@@ -105,6 +106,7 @@ class _SocketConnectionState extends State<SocketConnection> {
     socket.on("restaurant_object", (data) => fetchRestaurant(data));
 
     socket.on("updating_config", (data) => getConfiguredDataFromBackend(data));
+    socket.on("receive_your_people", (data) => fetchRegisteredUsers(data));
 
     socket.on("order_lists", (data) => initialOrderLists(data));
 
@@ -168,7 +170,7 @@ class _SocketConnectionState extends State<SocketConnection> {
       }
 
       var decoded = jsonDecode(data);
-//    print(decoded);
+      print(decoded);
       restaurant = Restaurant.fromJson(decoded);
     });
   }
@@ -396,6 +398,17 @@ class _SocketConnectionState extends State<SocketConnection> {
     });
   }
 
+  fetchRegisteredUsers(data) {
+    print("registered users");
+    print(data);
+//    {auth_username: MID001, restaurant_name: House of Commons, user_type: staff,
+//    object_id: 5ead65e1e1823a4f213257af, name: Kunal, username: SIDHOUKUN0,
+//    password: SIDHOUKUN128, status: Registration successful}
+    setState(() {
+      data.forEach((k, v) => registeredUser[k.toString()] = v);
+    });
+  }
+
   initialOrderLists(data) {
     setState(() {
       if (data is Map) {
@@ -485,10 +498,11 @@ class _SocketConnectionState extends State<SocketConnection> {
   @override
   Widget build(BuildContext context) {
     print("hereeeeww");
-    print(restaurant.name);
+//    print(registeredUser);
     return TabContainerBottom(
       sockets: sockets,
       restaurant: restaurant,
+      registeredUser: registeredUser,
       queueOrders: queueOrders,
       cookingOrders: cookingOrders,
       completedOrders: completedOrders,

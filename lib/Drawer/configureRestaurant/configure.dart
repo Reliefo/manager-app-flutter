@@ -3,6 +3,7 @@ import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addFoodMenu.
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addStaff.dart';
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/assignStaff.dart';
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/configureHomeScreen.dart';
+import 'package:adhara_socket_io_example/Drawer/configureRestaurant/registerStaff.dart';
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/test.dart';
 import 'package:adhara_socket_io_example/data.dart';
 import 'package:flutter/material.dart';
@@ -200,6 +201,54 @@ class Configure extends StatelessWidget {
               ),
               Expanded(
                 child: Row(children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(25),
+                      child: Card(
+                        color: Color(0xffE5EDF1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: FlatButton(
+                          child: Center(
+                            child: Text('Register Staff'),
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => RegisterStaff(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(25),
+                      child: Card(
+                        color: Color(0xffE5EDF1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: FlatButton(
+                          child: Center(
+                            child: Text('unused'),
+                          ),
+                          onPressed: () {
+//                            Navigator.push(
+//                              context,
+//                              MaterialPageRoute(
+//                                builder: (context) => TestScreen(),
+//                              ),
+//                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
                   Expanded(
                     child: Container(
                       padding: EdgeInsets.all(25),

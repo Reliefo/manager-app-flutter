@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 
 class RestaurantData extends ChangeNotifier {
   final Restaurant restaurant;
+  final Map<String, dynamic> registeredUser;
 
   final Map<String, SocketIO> sockets;
   RestaurantData({
     this.restaurant,
+    this.registeredUser,
     this.sockets,
   });
 
@@ -23,165 +25,165 @@ class RestaurantData extends ChangeNotifier {
 //    restaurant = Restaurant.fromJson(decoded);
 //  }
 
-  getConfiguredDataFromBackend(data) {
-    if (data is Map) {
-      data = json.encode(data);
-    }
-
-    var decode = jsonDecode(data);
-    print('configuring restaurant');
-    print(decode);
-    ////////////////////////////////    table      ///////////////////
-
-    if (decode["type"] == "add_tables") {
-      restaurant.addTableDetails(decode['tables']);
-    }
-
-    if (decode["type"] == "edit_tables") {
-      restaurant.tables.forEach((table) {
-        if (table.oid == decode["table_id"]) {
-          table.name = decode["editing_fields"]["name"];
-          table.seats = decode["editing_fields"]["seats"];
-        }
-      });
-    }
-
-    if (decode["type"] == "delete_tables") {
-      restaurant.tables.removeWhere((table) => table.oid == decode["table_id"]);
-    }
-    ////////////////////////////////    staff     ///////////////////
-    if (decode["type"] == "add_staff") {
-      restaurant.addStaffDetails(decode['staff']);
-    }
-
-    if (decode["type"] == "edit_staff") {
-      restaurant.staff.forEach((staff) {
-        if (staff.oid == decode["staff_id"]) {
-          staff.name = decode["editing_fields"]["name"];
-        }
-      });
-    }
-
-    if (decode["type"] == "delete_staff") {
-      restaurant.staff.removeWhere((staff) => staff.oid == decode["staff_id"]);
-    }
-    ////////////////////////////////    assign staff     ///////////////////
-    if (decode["type"] == "assign_staff") {
-      restaurant.tables.forEach((table) {
-        if (table.oid == decode["table_id"]) {
-          print('table matched: ${table.name}');
-
-          decode["assigned_staff"].forEach((assignedStaff) {
-            print("assigning new staff ");
-            print(assignedStaff);
-            restaurant.staff.forEach((restStaff) {
-              if (assignedStaff == restStaff.oid) {
-                table.addTableStaff(restStaff);
-              }
-            });
-          });
-        }
-      });
-    }
-
-    if (decode["type"] == "withdraw_staff") {
-      restaurant.tables.forEach((table) {
-        if (table.oid == decode["table_id"]) {
-          table.staff.removeWhere(
-            (staff) => staff.oid == decode["withdraw_staff_id"],
-          );
-        }
-      });
-    }
-////////////////////////////////////////   menu         /////////////////////
-    if (decode["type"] == "add_food_category") {
-      restaurant.addFoodMenuCategory(decode["category"]);
-    }
-
-    if (decode["type"] == "edit_food_category") {
-      restaurant.foodMenu.forEach((category) {
-        if (category.oid == decode["category_id"]) {
-          category.name = decode["editing_fields"]["name"];
-
-          category.description = decode["editing_fields"]["description"];
-        }
-      });
-    }
-
-    if (decode["type"] == "delete_food_category") {
-      restaurant.foodMenu
-          .removeWhere((category) => category.oid == decode["category_id"]);
-    }
-    if (decode["type"] == "add_bar_category") {
-      restaurant.addBarMenuCategory(decode["category"]);
-    }
-
-    if (decode["type"] == "edit_bar_category") {
-      restaurant.barMenu.forEach((category) {
-        if (category.oid == decode["category_id"]) {
-          category.name = decode["editing_fields"]["name"];
-
-          category.description = decode["editing_fields"]["description"];
-        }
-      });
-    }
-
-    if (decode["type"] == "delete_bar_category") {
-      restaurant.barMenu
-          .removeWhere((category) => category.oid == decode["category_id"]);
-    }
-
-    if (decode["type"] == "add_food_item") {
-      if (decode["category_type"] == "food") {
-        restaurant.foodMenu.forEach((category) {
-          if (category.oid == decode["category_id"]) {
-            print("${category.name} matched");
-            category.addFoodItem(decode["food_dict"]);
-          }
-        });
-      } else if (decode["category_type"] == "bar") {
-        restaurant.barMenu.forEach((category) {
-          if (category.oid == decode["category_id"]) {
-            print("${category.name} matched");
-            category.addFoodItem(decode["food_dict"]);
-          }
-        });
-      }
-    }
-
-    if (decode["type"] == "edit_food_item") {
-      if (decode["category_type"] == "food") {
-        restaurant.foodMenu.forEach((category) {
-          category.foodList.forEach((foodItem) {
-            if (foodItem.oid == decode["food_id"]) {
-              print("hjsdhsjhsjdh");
-              foodItem.addEdited(decode["editing_fields"]);
-            }
-          });
-        });
-      } else if (decode["category_type"] == "bar") {
-        restaurant.barMenu.forEach((category) {
-          category.foodList.forEach((foodItem) {
-            if (foodItem.oid == decode["food_id"]) {
-              print("hjsdhsjhsjdh");
-              foodItem.addEdited(decode["editing_fields"]);
-            }
-          });
-        });
-      }
-    }
-
-    if (decode["type"] == "delete_food_item") {
-      restaurant.foodMenu.forEach((category) {
-        category.foodList.removeWhere((food) => food.oid == decode["food_id"]);
-      });
-      restaurant.barMenu.forEach((category) {
-        category.foodList.removeWhere((food) => food.oid == decode["food_id"]);
-      });
-    }
-
-    notifyListeners();
-  }
+//  getConfiguredDataFromBackend(data) {
+//    if (data is Map) {
+//      data = json.encode(data);
+//    }
+//
+//    var decode = jsonDecode(data);
+//    print('configuring restaurant');
+//    print(decode);
+//    ////////////////////////////////    table      ///////////////////
+//
+//    if (decode["type"] == "add_tables") {
+//      restaurant.addTableDetails(decode['tables']);
+//    }
+//
+//    if (decode["type"] == "edit_tables") {
+//      restaurant.tables.forEach((table) {
+//        if (table.oid == decode["table_id"]) {
+//          table.name = decode["editing_fields"]["name"];
+//          table.seats = decode["editing_fields"]["seats"];
+//        }
+//      });
+//    }
+//
+//    if (decode["type"] == "delete_tables") {
+//      restaurant.tables.removeWhere((table) => table.oid == decode["table_id"]);
+//    }
+//    ////////////////////////////////    staff     ///////////////////
+//    if (decode["type"] == "add_staff") {
+//      restaurant.addStaffDetails(decode['staff']);
+//    }
+//
+//    if (decode["type"] == "edit_staff") {
+//      restaurant.staff.forEach((staff) {
+//        if (staff.oid == decode["staff_id"]) {
+//          staff.name = decode["editing_fields"]["name"];
+//        }
+//      });
+//    }
+//
+//    if (decode["type"] == "delete_staff") {
+//      restaurant.staff.removeWhere((staff) => staff.oid == decode["staff_id"]);
+//    }
+//    ////////////////////////////////    assign staff     ///////////////////
+//    if (decode["type"] == "assign_staff") {
+//      restaurant.tables.forEach((table) {
+//        if (table.oid == decode["table_id"]) {
+//          print('table matched: ${table.name}');
+//
+//          decode["assigned_staff"].forEach((assignedStaff) {
+//            print("assigning new staff ");
+//            print(assignedStaff);
+//            restaurant.staff.forEach((restStaff) {
+//              if (assignedStaff == restStaff.oid) {
+//                table.addTableStaff(restStaff);
+//              }
+//            });
+//          });
+//        }
+//      });
+//    }
+//
+//    if (decode["type"] == "withdraw_staff") {
+//      restaurant.tables.forEach((table) {
+//        if (table.oid == decode["table_id"]) {
+//          table.staff.removeWhere(
+//            (staff) => staff.oid == decode["withdraw_staff_id"],
+//          );
+//        }
+//      });
+//    }
+//////////////////////////////////////////   menu         /////////////////////
+//    if (decode["type"] == "add_food_category") {
+//      restaurant.addFoodMenuCategory(decode["category"]);
+//    }
+//
+//    if (decode["type"] == "edit_food_category") {
+//      restaurant.foodMenu.forEach((category) {
+//        if (category.oid == decode["category_id"]) {
+//          category.name = decode["editing_fields"]["name"];
+//
+//          category.description = decode["editing_fields"]["description"];
+//        }
+//      });
+//    }
+//
+//    if (decode["type"] == "delete_food_category") {
+//      restaurant.foodMenu
+//          .removeWhere((category) => category.oid == decode["category_id"]);
+//    }
+//    if (decode["type"] == "add_bar_category") {
+//      restaurant.addBarMenuCategory(decode["category"]);
+//    }
+//
+//    if (decode["type"] == "edit_bar_category") {
+//      restaurant.barMenu.forEach((category) {
+//        if (category.oid == decode["category_id"]) {
+//          category.name = decode["editing_fields"]["name"];
+//
+//          category.description = decode["editing_fields"]["description"];
+//        }
+//      });
+//    }
+//
+//    if (decode["type"] == "delete_bar_category") {
+//      restaurant.barMenu
+//          .removeWhere((category) => category.oid == decode["category_id"]);
+//    }
+//
+//    if (decode["type"] == "add_food_item") {
+//      if (decode["category_type"] == "food") {
+//        restaurant.foodMenu.forEach((category) {
+//          if (category.oid == decode["category_id"]) {
+//            print("${category.name} matched");
+//            category.addFoodItem(decode["food_dict"]);
+//          }
+//        });
+//      } else if (decode["category_type"] == "bar") {
+//        restaurant.barMenu.forEach((category) {
+//          if (category.oid == decode["category_id"]) {
+//            print("${category.name} matched");
+//            category.addFoodItem(decode["food_dict"]);
+//          }
+//        });
+//      }
+//    }
+//
+//    if (decode["type"] == "edit_food_item") {
+//      if (decode["category_type"] == "food") {
+//        restaurant.foodMenu.forEach((category) {
+//          category.foodList.forEach((foodItem) {
+//            if (foodItem.oid == decode["food_id"]) {
+//              print("hjsdhsjhsjdh");
+//              foodItem.addEdited(decode["editing_fields"]);
+//            }
+//          });
+//        });
+//      } else if (decode["category_type"] == "bar") {
+//        restaurant.barMenu.forEach((category) {
+//          category.foodList.forEach((foodItem) {
+//            if (foodItem.oid == decode["food_id"]) {
+//              print("hjsdhsjhsjdh");
+//              foodItem.addEdited(decode["editing_fields"]);
+//            }
+//          });
+//        });
+//      }
+//    }
+//
+//    if (decode["type"] == "delete_food_item") {
+//      restaurant.foodMenu.forEach((category) {
+//        category.foodList.removeWhere((food) => food.oid == decode["food_id"]);
+//      });
+//      restaurant.barMenu.forEach((category) {
+//        category.foodList.removeWhere((food) => food.oid == decode["food_id"]);
+//      });
+//    }
+//
+//    notifyListeners();
+//  }
 
 //Todo: will be fetched using providers
   sendConfiguredDataToBackend(localData, String type) {
@@ -379,5 +381,13 @@ class RestaurantData extends ChangeNotifier {
     //todo: get sockets from socket connection
     sockets['working'].emit('configuring_restaurant', [encode]);
     print('uploded to cloud');
+  }
+
+  sendStaffRegistrationToBackend(data) {
+    var encode;
+    print("test sending");
+    encode = jsonEncode(data);
+    print(encode);
+    sockets['working'].emit('register_your_people', [encode]);
   }
 }

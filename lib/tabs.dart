@@ -15,8 +15,9 @@ class TabContainerBottom extends StatelessWidget {
   final List<TableOrder> cookingOrders;
   final List<TableOrder> completedOrders;
   final List<AssistanceRequest> assistanceReq;
-  final restaurant;
+  final Restaurant restaurant;
   final sockets;
+  final Map<String, dynamic> registeredUser;
 
   TabContainerBottom({
     this.queueOrders,
@@ -25,6 +26,7 @@ class TabContainerBottom extends StatelessWidget {
     this.assistanceReq,
     this.restaurant,
     this.sockets,
+    this.registeredUser,
   });
 
   @override
@@ -35,6 +37,7 @@ class TabContainerBottom extends StatelessWidget {
           value: RestaurantData(
             restaurant: restaurant,
             sockets: sockets,
+            registeredUser: registeredUser,
           ),
         ),
         ChangeNotifierProvider<AssistanceData>.value(
