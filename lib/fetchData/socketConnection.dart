@@ -2,9 +2,6 @@ import 'dart:convert';
 
 import 'package:adhara_socket_io/adhara_socket_io.dart';
 import 'package:adhara_socket_io_example/data.dart';
-import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
-import 'package:adhara_socket_io_example/fetchData/fetchAssistanceData.dart';
-import 'package:adhara_socket_io_example/fetchData/fetchOrderData.dart';
 import 'package:adhara_socket_io_example/tabs.dart';
 import 'package:flutter/material.dart';
 
@@ -40,9 +37,9 @@ class _SocketConnectionState extends State<SocketConnection> {
   Map<String, bool> _isProbablyConnected = {};
   Session loginSession = Session();
 
-  RestaurantData configureRestaurantData = RestaurantData();
-  OrderData fetchOrderData = OrderData();
-  AssistanceData fetchAssistanceData = AssistanceData();
+//  RestaurantData configureRestaurantData = RestaurantData();
+//  OrderData fetchOrderData = OrderData();
+//  AssistanceData fetchAssistanceData = AssistanceData();
 
   String uri = "http://192.168.0.9:5050/";
   String connectingURI = "http://192.168.0.9:5050/login";
@@ -55,6 +52,7 @@ class _SocketConnectionState extends State<SocketConnection> {
     var output = await loginSession
         .post(connectingURI, {"username": "MID001", "password": "password123"});
     print("I am loggin in ");
+
     initSocket(uri, loginSession);
 
     print(output);
@@ -110,17 +108,17 @@ class _SocketConnectionState extends State<SocketConnection> {
 
     socket.on("order_lists", (data) => initialOrderLists(data));
 
-    socket.on("new_orders", (data) => fetchOrderData.newOrders(data));
-    socket.on("order_updates", (data) => fetchOrderData.orderUpdates(data));
+    socket.on("new_orders", (data) => pprint(data));
+    socket.on("order_updates", (data) => orderUpdates(data));
 
-    socket.on("assist", (data) => newAssistanceRequests(data));
+    socket.on("assist", (data) => pprint(data));
     socket.on("assist_updates", (data) => acceptedAssistanceReq(data));
 
 //    socket.on("user_scan", (data) => fetchScanUpdates(data));
 
     socket.connect();
     sockets[identifier] = socket;
-    RestaurantData(sockets: sockets);
+//    RestaurantData(sockets: sockets);
   }
 
   bool isProbablyConnected(String identifier) {
@@ -163,6 +161,7 @@ class _SocketConnectionState extends State<SocketConnection> {
     }
   }
 
+//////////////////////////////////restaurant///////////////////////////
   fetchRestaurant(data) {
     setState(() {
       if (data is Map) {
@@ -170,7 +169,9 @@ class _SocketConnectionState extends State<SocketConnection> {
       }
 
       var decoded = jsonDecode(data);
+      print("comfirming");
       print(decoded);
+
       restaurant = Restaurant.fromJson(decoded);
     });
   }
@@ -409,6 +410,7 @@ class _SocketConnectionState extends State<SocketConnection> {
     });
   }
 
+//////////////////////////orders//////////////////////////
   initialOrderLists(data) {
     setState(() {
       if (data is Map) {
@@ -473,6 +475,139 @@ class _SocketConnectionState extends State<SocketConnection> {
     });
   }
 
+  newOrders(data) {
+    print("new order");
+    if (data is Map) {
+      data = json.encode(data);
+    }
+    int queue = 0;
+    var decoded = jsonDecode(data);
+
+    TableOrder order = TableOrder.fromJson(decoded);
+    setState(() {
+      queueOrders.add(order);
+    });
+    restaurant.tables.forEach((table) {
+      if (decoded["table_id"] == table.oid) {
+        decoded["orders"].forEach((order) {
+          queue = queue + order["food_list"].length;
+        });
+        table.updateOrderCount(queue, 0, 0);
+      }
+      queue = 0;
+    });
+  }
+
+  orderUpdates(data) {
+    setState(() {
+      if (data is Map) {
+        data = json.encode(data);
+      }
+      var decoded = jsonDecode(data);
+
+      var selectedOrder;
+
+      if (decoded['type'] == "cooking") {
+        selectedOrder = queueOrders;
+      } else if (decoded['type'] == "completed") {
+        selectedOrder = cookingOrders;
+      }
+
+      var currentTableId;
+      selectedOrder.forEach((tableorder) {
+        if (tableorder.oId == decoded['table_order_id']) {
+          currentTableId = tableorder.tableId;
+          restaurant.tables.forEach((table) {
+            if (currentTableId == table.oid) {
+              if (decoded['type'] == "cooking") {
+                table.updateOrderCount(-1, 1, 0);
+              } else if (decoded['type'] == "completed") {
+                table.updateOrderCount(0, -1, 1);
+              }
+            }
+          });
+
+//          print('table id  matched${decoded['food_id']}');
+          tableorder.orders.forEach((order) {
+            if (order.oId == decoded['order_id']) {
+//              print('order id  matched${decoded['food_id']}');
+              order.foodList.forEach((fooditem) {
+                if (fooditem.foodId == decoded['food_id']) {
+//                  print('food id  matched${decoded['food_id']}');
+                  fooditem.status = decoded['type'];
+//                   push to cooking and completed orders
+                  pushTo(tableorder, order, fooditem, decoded['type']);
+//                  print('coming here at leastsadf');
+
+                  order.removeFoodItem(decoded['food_id']);
+//                  print('coming here at least');
+                  tableorder.cleanOrders(order.oId);
+                  if (tableorder.selfDestruct()) {
+//                    print('self destruct');
+
+                    selectedOrder.removeWhere(
+                        (taborder) => taborder.oId == tableorder.oId);
+                  }
+                }
+              });
+            }
+          });
+        }
+      });
+    });
+  }
+
+  pushTo(table_order, order, foodItem, type) {
+    setState(() {
+      var foundTable = false;
+      var foundOrder = false;
+      var pushingTo;
+      if (type == "cooking") {
+        pushingTo = cookingOrders;
+      } else if (type == "completed") {
+        pushingTo = completedOrders;
+      }
+
+      if (pushingTo.length == 0) {
+        TableOrder tableOrder = TableOrder.fromJsonNew(table_order.toJson());
+        Order currOrder = Order.fromJsonNew(order.toJson());
+        currOrder.addFirstFood(foodItem);
+
+        tableOrder.addFirstOrder(currOrder);
+//        print(tableOrder.orders[0].foodList[0].name);
+        pushingTo.add(tableOrder);
+      } else {
+        pushingTo.forEach((tableOrder) {
+          if (table_order.oId == tableOrder.oId) {
+            foundTable = true;
+            tableOrder.orders.forEach((currOrder) {
+              if (order.oId == currOrder.oId) {
+                foundOrder = true;
+                currOrder.addFood(foodItem);
+              }
+            });
+            if (!foundOrder) {
+              Order currOrder = Order.fromJsonNew(order.toJson());
+              currOrder.addFirstFood(foodItem);
+
+              tableOrder.addOrder(currOrder);
+            }
+          }
+        });
+        if (!foundTable) {
+          TableOrder tableOrder = TableOrder.fromJsonNew(table_order.toJson());
+          Order currOrder = Order.fromJsonNew(order.toJson());
+          currOrder.addFirstFood(foodItem);
+
+          tableOrder.addFirstOrder(currOrder);
+//          print(tableOrder.orders[0].foodList[0].name);
+          pushingTo.add(tableOrder);
+        }
+      }
+    });
+  }
+
+//////////////////////////Assistance//////////////////////////
   newAssistanceRequests(data) {
     if (data is Map) {
       data = json.encode(data);

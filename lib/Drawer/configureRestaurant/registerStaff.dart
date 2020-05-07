@@ -85,6 +85,8 @@ class _RegisterStaffState extends State<RegisterStaff> {
                           restaurantData.sendStaffRegistrationToBackend({
                             "auth_username": "MID001",
                             "restaurant_name": restaurantData.restaurant.name,
+                            "restaurant_id":
+                                restaurantData.restaurant.restaurantId,
                             "user_type": userType,
                             "object_id": _selectedStaffLabel.oid,
                             "name": _selectedStaffLabel.name,
