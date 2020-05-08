@@ -11,6 +11,7 @@ class Assistance extends StatelessWidget {
   Widget build(BuildContext context) {
     final AssistanceData assistanceData = Provider.of<AssistanceData>(context);
     return Container(
+//      color: Color(0xffDAE2EF),
       color: Colors.blueGrey,
       child: Column(
         children: <Widget>[
@@ -60,6 +61,36 @@ class Assistance extends StatelessWidget {
                       style: homePageS1,
                     ),
                   ),
+                ),
+              ],
+            ),
+          ),
+
+          Container(
+            decoration: BoxDecoration(
+              color: Color(0xffECF3F9),
+
+              borderRadius: BorderRadius.all(
+                  Radius.circular(15.0)), // set rounded corner radius
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 18.0, vertical: 14),
+            margin: EdgeInsets.symmetric(horizontal: 18.0, vertical: 2),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("Table 12", style: homePageS2),
+                    Text("2:30", style: homePageS2),
+                  ],
+                ),
+                SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("Assistance : Water"),
+                    Text("Accepted by Suresh"),
+                  ],
                 ),
               ],
             ),

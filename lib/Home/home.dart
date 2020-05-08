@@ -15,19 +15,19 @@ class HomePage extends StatelessWidget {
           child: Row(
             children: <Widget>[
               Expanded(
-                flex: 3,
+//                flex: 3,
                 child: Assistance(
 //                  assistanceReq: assistance.assistanceReq,
                     ),
               ),
               Expanded(
-                flex: 2,
+//                flex: 2,
                 child: Queued(
 //                  queueOrders: orders.queueOrders,
                     ),
               ),
               Expanded(
-                flex: 2,
+//                flex: 2,
                 child: Container(
                   color: Colors.blueGrey,
                   child: ListView(

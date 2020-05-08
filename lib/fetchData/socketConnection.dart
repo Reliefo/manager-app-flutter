@@ -41,16 +41,14 @@ class _SocketConnectionState extends State<SocketConnection> {
 //  OrderData fetchOrderData = OrderData();
 //  AssistanceData fetchAssistanceData = AssistanceData();
 
-  String uri = "http://192.168.0.9:5050/";
-  String connectingURI = "http://192.168.0.9:5050/login";
-//  String connectingURI =
-//      "http://ec2-13-232-202-63.ap-south-1.compute.amazonaws.com:5050/login";
-//  String uri =
-//      "http://ec2-13-232-202-63.ap-south-1.compute.amazonaws.com:5050/";
+//  String uri = "http://192.168.0.9:5050/";
+//  String connectingURI = "http://192.168.0.9:5050/login";
+  String loginUrl = "http://13.234.23.179:5050/login";
+  String uri = "http://13.234.23.179:5050/";
 
   login() async {
     var output = await loginSession
-        .post(connectingURI, {"username": "MID001", "password": "password123"});
+        .post(loginUrl, {"username": "MID001", "password": "password123"});
     print("I am loggin in ");
 
     initSocket(uri, loginSession);
@@ -108,10 +106,10 @@ class _SocketConnectionState extends State<SocketConnection> {
 
     socket.on("order_lists", (data) => initialOrderLists(data));
 
-    socket.on("new_orders", (data) => pprint(data));
+    socket.on("new_orders", (data) => newOrders(data));
     socket.on("order_updates", (data) => orderUpdates(data));
 
-    socket.on("assist", (data) => pprint(data));
+    socket.on("assist", (data) => newAssistanceRequests(data));
     socket.on("assist_updates", (data) => acceptedAssistanceReq(data));
 
 //    socket.on("user_scan", (data) => fetchScanUpdates(data));
@@ -476,25 +474,27 @@ class _SocketConnectionState extends State<SocketConnection> {
   }
 
   newOrders(data) {
-    print("new order");
-    if (data is Map) {
-      data = json.encode(data);
-    }
-    int queue = 0;
-    var decoded = jsonDecode(data);
-
-    TableOrder order = TableOrder.fromJson(decoded);
     setState(() {
-      queueOrders.add(order);
-    });
-    restaurant.tables.forEach((table) {
-      if (decoded["table_id"] == table.oid) {
-        decoded["orders"].forEach((order) {
-          queue = queue + order["food_list"].length;
-        });
-        table.updateOrderCount(queue, 0, 0);
+      print("new order");
+      if (data is Map) {
+        data = json.encode(data);
       }
-      queue = 0;
+      int queue = 0;
+      var decoded = jsonDecode(data);
+
+      TableOrder order = TableOrder.fromJson(decoded);
+
+      queueOrders.add(order);
+
+      restaurant.tables.forEach((table) {
+        if (decoded["table_id"] == table.oid) {
+          decoded["orders"].forEach((order) {
+            queue = queue + order["food_list"].length;
+          });
+          table.updateOrderCount(queue, 0, 0);
+        }
+        queue = 0;
+      });
     });
   }
 
@@ -609,13 +609,15 @@ class _SocketConnectionState extends State<SocketConnection> {
 
 //////////////////////////Assistance//////////////////////////
   newAssistanceRequests(data) {
-    if (data is Map) {
-      data = json.encode(data);
-    }
-    print("assistance req");
-    print(jsonDecode(data));
-    AssistanceRequest assist = AssistanceRequest.fromJson(jsonDecode(data));
-    assistanceReq.add(assist);
+    setState(() {
+      if (data is Map) {
+        data = json.encode(data);
+      }
+      print("assistance req");
+      print(jsonDecode(data));
+      AssistanceRequest assist = AssistanceRequest.fromJson(jsonDecode(data));
+      assistanceReq.add(assist);
+    });
   }
 
   acceptedAssistanceReq(data) {

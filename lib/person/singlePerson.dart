@@ -1,5 +1,6 @@
 import 'package:adhara_socket_io_example/constants.dart';
 import 'package:adhara_socket_io_example/data.dart';
+import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
 import 'package:adhara_socket_io_example/fetchData/fetchAssistanceData.dart';
 import 'package:date_format/date_format.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -10,6 +11,7 @@ class SinglePerson extends StatelessWidget {
   final Staff staff;
 //  final List<AssistanceRequest> assistanceReq;
   final List<AssistanceRequest> personAssistanceReq = [];
+  final List<String> allottedTables = [];
 
   SinglePerson({
     this.staff,
@@ -26,11 +28,24 @@ class SinglePerson extends StatelessWidget {
     });
   }
 
+  getAllottedTables(restaurantData) {
+    restaurantData.restaurant.tables.forEach((table) {
+      table.staff.forEach((tableStaff) {
+        if (tableStaff.oid == staff.oid) {
+          allottedTables.add(table.name);
+        }
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
+
     final AssistanceData assistanceData = Provider.of<AssistanceData>(context);
 
     getPersonAssistance(assistanceData);
+    getAllottedTables(restaurantData);
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -103,12 +118,12 @@ class SinglePerson extends StatelessWidget {
                             ),
                             Expanded(
                               child: ListView.builder(
-                                  itemCount: 4,
+                                  itemCount: allottedTables.length,
                                   itemBuilder: (context, index) {
                                     return Container(
                                       padding: EdgeInsets.all(8),
                                       child: Text(
-                                        'Table : no $index',
+                                        'Table : ${allottedTables[index]}',
                                         style: homePageS2,
                                       ),
                                     );
@@ -233,7 +248,7 @@ class SinglePerson extends StatelessWidget {
                                   sections: <PieChartSectionData>[
                                     PieChartSectionData(
                                       color: Colors.redAccent,
-                                      value: 4,
+                                      value: 40,
                                       title: 'Rejected',
                                       radius: 100,
                                       titleStyle: TextStyle(
@@ -243,7 +258,7 @@ class SinglePerson extends StatelessWidget {
                                     ),
                                     PieChartSectionData(
                                       color: Colors.green,
-                                      value: 8,
+                                      value: 40,
                                       title: 'Accepted',
                                       radius: 100,
                                       titleStyle: TextStyle(
