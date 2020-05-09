@@ -40,11 +40,12 @@ class _SocketConnectionState extends State<SocketConnection> {
 //  RestaurantData configureRestaurantData = RestaurantData();
 //  OrderData fetchOrderData = OrderData();
 //  AssistanceData fetchAssistanceData = AssistanceData();
+//
+  String uri = "http://192.168.0.9:5050/";
+  String loginUrl = "http://192.168.0.9:5050/login";
 
-//  String uri = "http://192.168.0.9:5050/";
-//  String connectingURI = "http://192.168.0.9:5050/login";
-  String loginUrl = "http://13.234.23.179:5050/login";
-  String uri = "http://13.234.23.179:5050/";
+//  String loginUrl = "https://liqr.cc/login";
+//  String uri = "https://liqr.cc/";
 
   login() async {
     var output = await loginSession
@@ -201,6 +202,24 @@ class _SocketConnectionState extends State<SocketConnection> {
       if (decode["type"] == "delete_tables") {
         restaurant.tables
             .removeWhere((table) => table.oid == decode["table_id"]);
+      }
+
+      ////////////////////////////////  kitchen staff     ///////////////////
+      if (decode["type"] == "add_kitchen_staff") {
+        restaurant.addKitchenStaffDetails(decode['kitchen_staff']);
+      }
+
+      if (decode["type"] == "edit_kitchen_staff") {
+        restaurant.kitchenStaff.forEach((kitchenStaff) {
+          if (kitchenStaff.oid == decode["kitchen_staff_id"]) {
+            kitchenStaff.name = decode["editing_fields"]["name"];
+          }
+        });
+      }
+
+      if (decode["type"] == "delete_kitchen_staff") {
+        restaurant.kitchenStaff.removeWhere(
+            (kitchenStaff) => kitchenStaff.oid == decode["kitchen_staff_id"]);
       }
       ////////////////////////////////    staff     ///////////////////
       if (decode["type"] == "add_staff") {

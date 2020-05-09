@@ -11,12 +11,12 @@ class Assistance extends StatelessWidget {
   Widget build(BuildContext context) {
     final AssistanceData assistanceData = Provider.of<AssistanceData>(context);
     return Container(
-//      color: Color(0xffDAE2EF),
-      color: Colors.blueGrey,
+//      color: Color(0xff9ec2e1),
+      color: Colors.grey[50],
       child: Column(
         children: <Widget>[
           Container(
-            color: Colors.black26,
+            color: Colors.grey,
             width: double.maxFinite,
             child: Center(
               child: Text(
@@ -25,46 +25,46 @@ class Assistance extends StatelessWidget {
               ),
             ),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 8),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.only(left: 20),
-                    child: Text(
-                      'Table',
-                      style: homePageS1,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      'Type',
-                      style: homePageS1,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      'Time',
-                      style: homePageS1,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      'Status',
-                      style: homePageS1,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+//          Container(
+//            padding: EdgeInsets.symmetric(vertical: 8),
+//            child: Row(
+//              children: <Widget>[
+//                Expanded(
+//                  child: Container(
+//                    padding: EdgeInsets.only(left: 20),
+//                    child: Text(
+//                      'Table',
+//                      style: homePageS1,
+//                    ),
+//                  ),
+//                ),
+//                Expanded(
+//                  child: Center(
+//                    child: Text(
+//                      'Type',
+//                      style: homePageS1,
+//                    ),
+//                  ),
+//                ),
+//                Expanded(
+//                  child: Center(
+//                    child: Text(
+//                      'Time',
+//                      style: homePageS1,
+//                    ),
+//                  ),
+//                ),
+//                Expanded(
+//                  child: Center(
+//                    child: Text(
+//                      'Status',
+//                      style: homePageS1,
+//                    ),
+//                  ),
+//                ),
+//              ],
+//            ),
+//          ),
 
           Container(
             decoration: BoxDecoration(
@@ -95,7 +95,93 @@ class Assistance extends StatelessWidget {
               ],
             ),
           ),
+          Container(
+            decoration: BoxDecoration(
+              color: Color(0xffECF3F9),
 
+              borderRadius: BorderRadius.all(
+                  Radius.circular(15.0)), // set rounded corner radius
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 18.0, vertical: 14),
+            margin: EdgeInsets.symmetric(horizontal: 18.0, vertical: 2),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("Table 12", style: homePageS2),
+                    Text("2:30", style: homePageS2),
+                  ],
+                ),
+                SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("Assistance : Water"),
+                    Text("Accepted by Suresh"),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: Color(0xffECF3F9),
+
+              borderRadius: BorderRadius.all(
+                  Radius.circular(15.0)), // set rounded corner radius
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 18.0, vertical: 14),
+            margin: EdgeInsets.symmetric(horizontal: 18.0, vertical: 2),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("Table 12", style: homePageS2),
+                    Text("Assistance : Water", style: homePageS2),
+                  ],
+                ),
+                SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("12:30"),
+                    Text("Accepted by Suresh"),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: Color(0xffECF3F9),
+
+              borderRadius: BorderRadius.all(
+                  Radius.circular(15.0)), // set rounded corner radius
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 18.0, vertical: 14),
+            margin: EdgeInsets.symmetric(horizontal: 18.0, vertical: 2),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("Assistance : Water", style: homePageS2),
+                    Text("Table 12", style: homePageS2),
+                  ],
+                ),
+                SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("Accepted by Suresh"),
+                    Text("12:30"),
+                  ],
+                ),
+              ],
+            ),
+          ),
           //Todo: change it to actual data length
           assistanceData.assistanceReq.length > 0
               ? Expanded(

@@ -211,6 +211,27 @@ class RestaurantData extends ChangeNotifier {
           {"restaurant_id": restaurantId, "type": type, "table_id": localData});
     }
 
+////////////////////////////////////kitchen staff//////////////////////////////
+    if (type == "add_kitchen_staff") {
+      encode = jsonEncode({
+        "restaurant_id": restaurantId,
+        "type": type,
+        "kitchen_staff": localData
+      });
+    }
+
+    if (type == "edit_kitchen_staff") {
+      localData['restaurant_id'] = restaurantId;
+      localData['type'] = type;
+      encode = jsonEncode(localData);
+    }
+
+    if (type == "delete_kitchen_staff") {
+      localData['restaurant_id'] = restaurantId;
+      localData['type'] = type;
+      encode = jsonEncode(localData);
+    }
+///////////////////////////////////////////////staff//////////////////////////////////
     if (type == "add_staff") {
       encode = jsonEncode(
           {"restaurant_id": restaurantId, "type": type, "staff": localData});

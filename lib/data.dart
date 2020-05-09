@@ -7,6 +7,7 @@ class Restaurant {
   List<Category> barMenu;
   List<Tables> tables;
   List<Staff> staff;
+  List<KitchenStaff> kitchenStaff;
   List<TableOrder> tableOrders;
   List<AssistanceRequest> assistanceRequests;
   List<String> homeScreenTags;
@@ -61,6 +62,13 @@ class Restaurant {
       });
     }
 
+    if (json['kitchen_staff'].isNotEmpty) {
+      kitchenStaff = new List<KitchenStaff>();
+      json['kitchen_staff'].forEach((v) {
+        kitchenStaff.add(new KitchenStaff.fromJson(v));
+      });
+    }
+
     if (json['tables'].isNotEmpty) {
       tables = new List<Tables>();
 
@@ -111,12 +119,19 @@ class Restaurant {
 
   addStaffDetails(data) {
     if (this.staff == null) {
-//      print('here');
       this.staff = new List<Staff>();
     }
     data.forEach((v) {
-//      print(v);
       this.staff.add(new Staff.addConfig(v));
+    });
+  }
+
+  addKitchenStaffDetails(data) {
+    if (this.kitchenStaff == null) {
+      this.kitchenStaff = new List<KitchenStaff>();
+    }
+    data.forEach((v) {
+      this.kitchenStaff.add(new KitchenStaff.addConfig(v));
     });
   }
 
@@ -357,6 +372,30 @@ class Staff {
 
   Staff.addConfig(staff) {
     oid = staff['staff_id'];
+    name = staff['name'];
+  }
+}
+
+class KitchenStaff {
+  String oid;
+  String name;
+
+  KitchenStaff({
+    this.name,
+    this.oid,
+  });
+  KitchenStaff.fromJson(Map<String, dynamic> json) {
+    if (json['_id']['\$oid'] != null) {
+      oid = json['_id']['\$oid'];
+    }
+
+    if (json['name'] != null) {
+      name = json['name'];
+    }
+  }
+
+  KitchenStaff.addConfig(staff) {
+    oid = staff['kitchen_staff_id'];
     name = staff['name'];
   }
 }

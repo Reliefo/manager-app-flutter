@@ -1,5 +1,6 @@
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addBarMenu.dart';
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addFoodMenu.dart';
+import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addKitchenStaff.dart';
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addStaff.dart';
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/assignStaff.dart';
 import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/configureHomeScreen.dart';
@@ -235,15 +236,15 @@ class Configure extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('unused'),
+                            child: Text('Kitchen Staff'),
                           ),
                           onPressed: () {
-//                            Navigator.push(
-//                              context,
-//                              MaterialPageRoute(
-//                                builder: (context) => TestScreen(),
-//                              ),
-//                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddKitchenStaff(),
+                              ),
+                            );
                           },
                         ),
                       ),

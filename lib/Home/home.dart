@@ -29,14 +29,15 @@ class HomePage extends StatelessWidget {
               Expanded(
 //                flex: 2,
                 child: Container(
-                  color: Colors.blueGrey,
+//                  color: Colors.blueGrey,
+                  color: Colors.grey[50],
                   child: ListView(
                     children: <Widget>[
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Container(
-                            color: Colors.black26,
+                            color: Colors.grey,
                             width: double.maxFinite,
                             child: Center(
                               child: Text(

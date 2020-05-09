@@ -1,4 +1,3 @@
-import 'package:adhara_socket_io_example/data.dart';
 import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +9,7 @@ class RegisterStaff extends StatefulWidget {
 
 class _RegisterStaffState extends State<RegisterStaff> {
   String userType = 'staff';
-  Staff _selectedStaffLabel;
+  var _selectedStaffLabel;
   @override
   Widget build(BuildContext context) {
     final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
@@ -58,27 +57,52 @@ class _RegisterStaffState extends State<RegisterStaff> {
                           ),
                         ],
                       ),
-                      Container(
-                        padding: EdgeInsets.all(16),
-                        child: DropdownButton(
-                          value: _selectedStaffLabel,
-                          items: restaurantData.restaurant.staff != null
-                              ? restaurantData.restaurant.staff.map((staff) {
-                                  return DropdownMenuItem(
-                                    value: staff,
-                                    child: Text(staff.name),
-                                  );
-                                }).toList()
-                              : [],
-                          hint: Text('Select the Staff'),
-                          isExpanded: true,
-                          onChanged: (selected) {
-                            setState(() {
-                              _selectedStaffLabel = selected;
-                            });
-                          },
-                        ),
-                      ),
+                      userType == "staff"
+                          ? Container(
+                              padding: EdgeInsets.all(16),
+                              child: DropdownButton(
+                                value: _selectedStaffLabel,
+                                items: restaurantData.restaurant.staff != null
+                                    ? restaurantData.restaurant.staff
+                                        .map((staff) {
+                                        return DropdownMenuItem(
+                                          value: staff,
+                                          child: Text(staff.name),
+                                        );
+                                      }).toList()
+                                    : [],
+                                hint: Text('Select the Staff'),
+                                isExpanded: true,
+                                onChanged: (selected) {
+                                  setState(() {
+                                    _selectedStaffLabel = selected;
+                                  });
+                                },
+                              ),
+                            )
+                          : Container(
+                              padding: EdgeInsets.all(16),
+                              child: DropdownButton(
+                                value: _selectedStaffLabel,
+                                items: restaurantData.restaurant.kitchenStaff !=
+                                        null
+                                    ? restaurantData.restaurant.kitchenStaff
+                                        .map((kitchenStaff) {
+                                        return DropdownMenuItem(
+                                          value: kitchenStaff,
+                                          child: Text(kitchenStaff.name),
+                                        );
+                                      }).toList()
+                                    : [],
+                                hint: Text('Select Kitchen Staff'),
+                                isExpanded: true,
+                                onChanged: (selected) {
+                                  setState(() {
+                                    _selectedStaffLabel = selected;
+                                  });
+                                },
+                              ),
+                            ),
                       FlatButton(
                         child: Text("Register"),
                         onPressed: () {
@@ -91,6 +115,8 @@ class _RegisterStaffState extends State<RegisterStaff> {
                             "object_id": _selectedStaffLabel.oid,
                             "name": _selectedStaffLabel.name,
                           });
+
+                          _selectedStaffLabel = null;
                         },
                       )
                     ],
