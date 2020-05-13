@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:adhara_socket_io/adhara_socket_io.dart';
-import 'package:adhara_socket_io_example/data.dart';
 import 'package:flutter/material.dart';
+import 'package:manager_app/data.dart';
 
 class RestaurantData extends ChangeNotifier {
   final Restaurant restaurant;

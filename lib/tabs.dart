@@ -1,9 +1,9 @@
-import 'package:adhara_socket_io_example/Drawer/drawermenu.dart';
-import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
-import 'package:adhara_socket_io_example/fetchData/fetchAssistanceData.dart';
-import 'package:adhara_socket_io_example/fetchData/fetchOrderData.dart';
-import 'package:adhara_socket_io_example/person/personView.dart';
 import 'package:flutter/material.dart';
+import 'package:manager_app/Drawer/drawermenu.dart';
+import 'package:manager_app/fetchData/configureRestaurantData.dart';
+import 'package:manager_app/fetchData/fetchAssistanceData.dart';
+import 'package:manager_app/fetchData/fetchOrderData.dart';
+import 'package:manager_app/person/personView.dart';
 import 'package:provider/provider.dart';
 
 import 'Home/home.dart';

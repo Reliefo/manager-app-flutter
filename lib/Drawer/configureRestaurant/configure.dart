@@ -1,13 +1,13 @@
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addBarMenu.dart';
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addFoodMenu.dart';
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addKitchenStaff.dart';
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addStaff.dart';
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/assignStaff.dart';
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/configureHomeScreen.dart';
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/registerStaff.dart';
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/test.dart';
-import 'package:adhara_socket_io_example/data.dart';
 import 'package:flutter/material.dart';
+import 'package:manager_app/Drawer/configureRestaurant/addBarMenu.dart';
+import 'package:manager_app/Drawer/configureRestaurant/addFoodMenu.dart';
+import 'package:manager_app/Drawer/configureRestaurant/addKitchenStaff.dart';
+import 'package:manager_app/Drawer/configureRestaurant/addStaff.dart';
+import 'package:manager_app/Drawer/configureRestaurant/assignStaff.dart';
+import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureHomeScreen.dart';
+import 'package:manager_app/Drawer/configureRestaurant/registerStaff.dart';
+import 'package:manager_app/Drawer/configureRestaurant/test.dart';
+import 'package:manager_app/data.dart';
 
 import 'addTable.dart';
 

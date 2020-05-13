@@ -1,4 +1,4 @@
-package com.infitio.adharasocketioexample;
+package com.liqr.managerapp;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

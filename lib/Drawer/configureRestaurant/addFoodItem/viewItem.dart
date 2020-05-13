@@ -1,6 +1,6 @@
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addFoodItem/editItem.dart';
-import 'package:adhara_socket_io_example/data.dart';
 import 'package:flutter/material.dart';
+import 'package:manager_app/Drawer/configureRestaurant/addFoodItem/editItem.dart';
+import 'package:manager_app/data.dart';
 
 class ViewItem extends StatelessWidget {
   final MenuFoodItem foodItem;

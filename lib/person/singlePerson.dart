@@ -1,10 +1,10 @@
-import 'package:adhara_socket_io_example/constants.dart';
-import 'package:adhara_socket_io_example/data.dart';
-import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
-import 'package:adhara_socket_io_example/fetchData/fetchAssistanceData.dart';
 import 'package:date_format/date_format.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:manager_app/constants.dart';
+import 'package:manager_app/data.dart';
+import 'package:manager_app/fetchData/configureRestaurantData.dart';
+import 'package:manager_app/fetchData/fetchAssistanceData.dart';
 import 'package:provider/provider.dart';
 
 class SinglePerson extends StatelessWidget {

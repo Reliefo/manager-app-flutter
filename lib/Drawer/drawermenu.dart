@@ -1,5 +1,5 @@
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configure.dart';
 import 'package:flutter/material.dart';
+import 'package:manager_app/Drawer/configureRestaurant/configure.dart';
 
 class DrawerMenu extends StatelessWidget {
 //  final Restaurant restaurant;

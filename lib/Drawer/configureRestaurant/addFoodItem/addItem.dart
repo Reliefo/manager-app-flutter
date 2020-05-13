@@ -1,7 +1,7 @@
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/addFoodItem/viewItem.dart';
-import 'package:adhara_socket_io_example/data.dart';
-import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
 import 'package:flutter/material.dart';
+import 'package:manager_app/Drawer/configureRestaurant/addFoodItem/viewItem.dart';
+import 'package:manager_app/data.dart';
+import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
 
 class AddItem extends StatefulWidget {
@@ -301,7 +301,9 @@ class _AddFoodItemState extends State<AddItem> {
                           ),
                 FlatButton(
                   child: Text('confirm item'),
-                  onPressed: confirmItem(restaurantData),
+                  onPressed: () {
+                    confirmItem(restaurantData);
+                  },
                 ),
 
                 ////////////////////// to display food item present in the menu///////////////////

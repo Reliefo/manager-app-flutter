@@ -1,5 +1,5 @@
-import 'package:adhara_socket_io_example/tabs.dart';
 import 'package:flutter/material.dart';
+import 'package:manager_app/tabs.dart';
 
 class StartingPage extends StatelessWidget {
   @override

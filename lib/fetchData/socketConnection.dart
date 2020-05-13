@@ -1,19 +1,21 @@
 import 'dart:convert';
 
 import 'package:adhara_socket_io/adhara_socket_io.dart';
-import 'package:adhara_socket_io_example/data.dart';
-import 'package:adhara_socket_io_example/tabs.dart';
 import 'package:flutter/material.dart';
+import 'package:manager_app/data.dart';
+import 'package:manager_app/tabs.dart';
+import 'package:manager_app/url.dart';
 
 import 'session.dart';
 
 class SocketConnection extends StatefulWidget {
-//  final uri;
-//  final loginSession;
-//  SocketConnection({
-//    this.uri,
-//    this.loginSession,
-//  });
+  final String jwt;
+  final String restaurantId;
+  SocketConnection({
+    this.jwt,
+    this.restaurantId,
+  });
+
   @override
   _SocketConnectionState createState() => _SocketConnectionState();
 }
@@ -21,7 +23,8 @@ class SocketConnection extends StatefulWidget {
 class _SocketConnectionState extends State<SocketConnection> {
   @override
   void initState() {
-    login();
+    initSocket(uri);
+//    login();
     super.initState();
   }
 
@@ -41,26 +44,26 @@ class _SocketConnectionState extends State<SocketConnection> {
 //  OrderData fetchOrderData = OrderData();
 //  AssistanceData fetchAssistanceData = AssistanceData();
 //
-  String uri = "http://192.168.0.9:5050/";
-  String loginUrl = "http://192.168.0.9:5050/login";
+//  String uri = "http://192.168.0.9:5050/";
+//  String loginUrl = "http://192.168.0.9:5050/login";
 
 //  String loginUrl = "https://liqr.cc/login";
 //  String uri = "https://liqr.cc/";
 
-  login() async {
-    var output = await loginSession
-        .post(loginUrl, {"username": "MID001", "password": "password123"});
-    print("I am loggin in ");
+//  login() async {
+//    var output = await loginSession
+//        .post(loginUrl, {"username": "MID001", "password": "password123"});
+//    print("I am loggin in ");
+//
+//    initSocket(uri, loginSession);
+//
+//    print(output);
+//  }
 
-    initSocket(uri, loginSession);
-
-    print(output);
-  }
-
-  initSocket(String uri, Session loginSession) async {
+  initSocket(String uri) async {
     print('hey from new init file');
-    print(loginSession.jwt);
-    print(sockets.length);
+//    print(loginSession.jwt);
+//    print(sockets.length);
     var identifier = 'working';
     SocketIO socket = await manager.createInstance(SocketOptions(
         //Socket IO server URI
@@ -68,7 +71,7 @@ class _SocketConnectionState extends State<SocketConnection> {
         nameSpace: "/reliefo",
         //Query params - can be used for authentication
         query: {
-          "jwt": loginSession.jwt,
+          "jwt": widget.jwt,
 //          "username": loginSession.username,
           "info": "new connection from adhara-socketio",
           "timestamp": DateTime.now().toString()
@@ -85,10 +88,10 @@ class _SocketConnectionState extends State<SocketConnection> {
       pprint({"Status": "connected..."});
 //      pprint(data);
 //      sendMessage("DEFAULT");
-      socket.emit("fetch_handshake", ["Hello world!"]);
-      socket.emit("rest_with_id", ["BNGHSR0001"]);
+
+      socket.emit("rest_with_id", [widget.restaurantId]);
       socket.emit("fetch_order_lists", ["arguments"]);
-      socket.emit("fetch_me", [" sending........."]);
+      socket.emit("check_logger", [" sending........."]);
     });
     socket.onConnectError(pprint);
     socket.onConnectTimeout(pprint);
@@ -97,8 +100,7 @@ class _SocketConnectionState extends State<SocketConnection> {
       print('object disconnnecgts');
 //      disconnect('working');
     });
-    socket.on("fetch", (data) => pprint(data));
-    socket.on("hand_shake", (data) => shakeHands(data));
+    socket.on("logger", (data) => pprint(data));
 
     socket.on("restaurant_object", (data) => fetchRestaurant(data));
 
@@ -139,25 +141,6 @@ class _SocketConnectionState extends State<SocketConnection> {
   printRest() {
     print("Printing rest name");
     print(restaurant.name);
-  }
-
-  shakeHands(data) {
-    print("HEREREHRAFNDOKSVOD");
-    if (data is Map) {
-      data = json.encode(data);
-    }
-
-    sockets['working'].emit('hand_shook', ["arg"]);
-  }
-
-  sendMessage(identifier) {
-    if (sockets[identifier] != null) {
-      print("sending message from '$identifier'...");
-      sockets[identifier].emit("fetchme", [
-        {'data': "ples recevie data HSIDFODSNVOSDNVODSNO"}
-      ]);
-      print("Message emitted from '$identifier'...");
-    }
   }
 
 //////////////////////////////////restaurant///////////////////////////
@@ -478,6 +461,8 @@ class _SocketConnectionState extends State<SocketConnection> {
         TableOrder order = TableOrder.fromJson(item);
 
         completedOrders.add(order);
+//        completedOrders.insert(0, order);
+
 ///////////for adding count to table
         restaurant.tables.forEach((table) {
           if (item["table_id"] == table.oid) {
@@ -632,29 +617,31 @@ class _SocketConnectionState extends State<SocketConnection> {
       if (data is Map) {
         data = json.encode(data);
       }
-      print("assistance req");
-      print(jsonDecode(data));
-      AssistanceRequest assist = AssistanceRequest.fromJson(jsonDecode(data));
-      assistanceReq.add(assist);
+      var decoded = jsonDecode(data);
+      print(decoded);
+      if (decoded.keys.toList().contains('status')) {
+        acceptedAssistanceReq(decoded);
+      } else {
+        AssistanceRequest assist = AssistanceRequest.adding(decoded);
+        assistanceReq.add(assist);
+      }
     });
   }
 
-  acceptedAssistanceReq(data) {
-    if (data is Map) {
-      data = json.encode(data);
-    }
-    print(jsonDecode(data));
-    assistanceReq.forEach((request) {
-      if (request.oId == jsonDecode(data)['assistance_id']) {
-        request.acceptedBy = jsonDecode(data)['staff_name'];
-      }
+  acceptedAssistanceReq(decoded) {
+    setState(() {
+      assistanceReq.forEach((request) {
+        if (request.oId == decoded['assistance_req_id']) {
+          request.acceptedBy = decoded['staff_name'];
+        }
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
     print("hereeeeww");
-//    print(registeredUser);
+//    print(assistanceReq);
     return TabContainerBottom(
       sockets: sockets,
       restaurant: restaurant,

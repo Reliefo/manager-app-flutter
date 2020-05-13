@@ -1,6 +1,6 @@
-import 'package:adhara_socket_io_example/constants.dart';
-import 'package:adhara_socket_io_example/fetchData/configureRestaurantData.dart';
 import 'package:flutter/material.dart';
+import 'package:manager_app/constants.dart';
+import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
 
 import 'singleTable.dart';

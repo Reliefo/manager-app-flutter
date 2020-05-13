@@ -1,5 +1,5 @@
-name: adhara_socket_io_example
-description: Demonstrates how to use the adhara_socket_io plugin.
+name: manager_app
+description: LiQR's Manager application.
 version: 1.0.0+1
 
 environment:
@@ -9,6 +9,9 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^4.0.5+1
+  shared_preferences: ^0.5.7+1
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -23,3 +26,19 @@ flutter:
 
   assets:
       - assets/icons/
+
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: fonts/Poppins-Regular.ttf
+          weight: 400
+        - asset: fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: fonts/Poppins-SemiBold.ttf
+          weight: 600
+
+
+
+
+
+

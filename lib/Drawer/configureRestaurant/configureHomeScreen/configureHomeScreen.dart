@@ -1,9 +1,9 @@
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/configureChefSpecial.dart';
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/configureMostPopular.dart';
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/configureTags/HomeScreenTags/configureHomeScreenTags.dart';
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/configureHomeScreen/configureTags/navigateBetter/ConfigureNavigateBetterTags.dart';
-import 'package:adhara_socket_io_example/Drawer/configureRestaurant/test.dart';
 import 'package:flutter/material.dart';
+import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureChefSpecial.dart';
+import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureMostPopular.dart';
+import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureTags/HomeScreenTags/configureHomeScreenTags.dart';
+import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureTags/navigateBetter/ConfigureNavigateBetterTags.dart';
+import 'package:manager_app/Drawer/configureRestaurant/test.dart';
 
 class ConfigureHomeScreen extends StatelessWidget {
 //  final Restaurant restaurant;

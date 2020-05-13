@@ -851,10 +851,21 @@ class AssistanceRequest {
     this.table,
     this.tableId,
   });
-
+//    {table: table14, table_id: 5eb41b91adb66da6f531212d, assistance_type: ketchup,
+//timestamp: 2020-05-12 13:11:11.544441, user_id: 5eba3ceadbecc1e361595049,
+//user: Neptune_11, assistance_req_id: 5eba5317dbecc1e3615951e2,
+//request_type: assistance_request, msg: Service has been requested}
   AssistanceRequest.fromJson(Map<String, dynamic> json) {
     if (json['_id']['\$oid'] != null) {
       oId = json['_id']['\$oid'];
+    }
+
+    if (json['table'] != null) {
+      table = json['table'];
+    }
+
+    if (json['table_id'] != null) {
+      tableId = json['table_id'];
     }
 
     if (json['user']['\$oid'] != null) {
@@ -868,6 +879,13 @@ class AssistanceRequest {
     if (json['timestamp'] != null) {
       timeStamp = DateTime.parse(json['timestamp']);
     }
+  }
+
+  AssistanceRequest.adding(Map<String, dynamic> json) {
+    print("here ass ");
+    if (json['assistance_req_id'] != null) {
+      oId = json['assistance_req_id'];
+    }
 
     if (json['table'] != null) {
       table = json['table'];
@@ -875,6 +893,18 @@ class AssistanceRequest {
 
     if (json['table_id'] != null) {
       tableId = json['table_id'];
+    }
+
+    if (json['user'] != null) {
+      user = json['user'];
+    }
+
+    if (json['assistance_type'] != null) {
+      assistanceType = json['assistance_type'];
+    }
+
+    if (json['timestamp'] != null) {
+      timeStamp = DateTime.parse(json['timestamp']);
     }
   }
 }
