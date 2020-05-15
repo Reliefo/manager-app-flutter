@@ -35,25 +35,25 @@ class OrderItemBuilder extends StatelessWidget {
                 children: <Widget>[
                   Flexible(
                     child: Container(
-//                                    padding: EdgeInsets.symmetric(vertical: 8),
+                      padding: EdgeInsets.symmetric(horizontal: 8),
                       child: Text(
-                        'Table : ${orderList[index].table}' ?? " ",
-                        style: homePageS1,
+                        orderList[index].table ?? " ",
+                        style: kHeaderStyleSmall,
                         textAlign: TextAlign.start,
                       ),
                     ),
                   ),
                   Flexible(
                     child: Container(
-//                                    padding: EdgeInsets.symmetric(vertical: 2),
+                      padding: EdgeInsets.symmetric(horizontal: 8),
                       child: Text(
 //
-                        'Arrival Time : ${formatDate(
+                        formatDate(
                               (orderList[index].timeStamp),
                               [HH, ':', nn],
-                            )}' ??
+                            ) ??
                             " ",
-                        style: homePageS3,
+                        style: kHeaderStyleSmall,
                         textAlign: TextAlign.end,
                       ),
                     ),
@@ -97,7 +97,7 @@ class OrderItemBuilder extends StatelessWidget {
                                           '${orderList[index].orders[index2].foodList[index3].name} x ${orderList[index].orders[index2].foodList[index3].quantity}' ??
                                               " ",
 //
-                                          style: homePageS3,
+                                          style: kTitleStyle,
                                         ),
                                       )
                                     : Container(
@@ -119,7 +119,7 @@ class OrderItemBuilder extends StatelessWidget {
                                               '${orderList[index].orders[index2].foodList[index3].name} x ${orderList[index].orders[index2].foodList[index3].quantity}' ??
                                                   " ",
 //
-                                              style: homePageS3,
+                                              style: kTitleStyle,
                                             ),
 
                                             // for checking instructions
@@ -130,6 +130,7 @@ class OrderItemBuilder extends StatelessWidget {
                                                       .foodList[index3]
                                                       .instructions ??
                                                   " ",
+                                              style: kSubTitleStyle,
                                             ),
                                           ],
                                         ),

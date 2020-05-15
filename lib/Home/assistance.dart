@@ -15,12 +15,12 @@ class Assistance extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Container(
-            color: Colors.grey,
+            color: kThemeColor,
             width: double.maxFinite,
             child: Center(
               child: Text(
                 'Assistance',
-                style: homePageS4,
+                style: kHeaderStyle,
               ),
             ),
           ),
@@ -121,7 +121,7 @@ class Assistance extends StatelessWidget {
                                 Text(
                                   'Table : ${assistanceData.assistanceReq[index].table}' ??
                                       " ",
-                                  style: homePageS2,
+                                  style: kTitleStyle,
                                   textAlign: TextAlign.left,
                                 ),
                                 Text(
@@ -131,7 +131,7 @@ class Assistance extends StatelessWidget {
                                         [HH, ':', nn],
                                       )}' ??
                                       " ",
-                                  style: homePageS2,
+                                  style: kTitleStyle,
                                 ),
                               ],
                             ),

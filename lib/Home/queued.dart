@@ -14,12 +14,12 @@ class Queued extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Container(
-            color: Colors.grey,
+            color: kThemeColor,
             width: double.maxFinite,
             child: Center(
               child: Text(
                 'Queued',
-                style: homePageS4,
+                style: kHeaderStyle,
               ),
             ),
           ),

@@ -7,6 +7,7 @@ import 'package:manager_app/Drawer/configureRestaurant/assignStaff.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureHomeScreen.dart';
 import 'package:manager_app/Drawer/configureRestaurant/registerStaff.dart';
 import 'package:manager_app/Drawer/configureRestaurant/test.dart';
+import 'package:manager_app/constants.dart';
 import 'package:manager_app/data.dart';
 
 import 'addTable.dart';
@@ -24,8 +25,10 @@ class Configure extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.grey,
-          title: Text('Configure Restaurant'),
+          backgroundColor: kThemeColor,
+          title: Text(
+            'Configure Restaurant',
+          ),
         ),
         body: Container(
           child: Column(
@@ -42,7 +45,10 @@ class Configure extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('Tables'),
+                            child: Text(
+                              'Tables',
+                              style: kHeaderStyleSmall,
+                            ),
                           ),
                           onPressed: () {
                             Navigator.push(
@@ -66,7 +72,10 @@ class Configure extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('Staff'),
+                            child: Text(
+                              'Staff',
+                              style: kHeaderStyleSmall,
+                            ),
                           ),
                           onPressed: () {
                             Navigator.push(
@@ -94,7 +103,10 @@ class Configure extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('Assign Staff'),
+                            child: Text(
+                              'Assign Staff',
+                              style: kHeaderStyleSmall,
+                            ),
                           ),
                           onPressed: () {
                             Navigator.push(
@@ -126,7 +138,10 @@ class Configure extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('Food Menu'),
+                            child: Text(
+                              'Food Menu',
+                              style: kHeaderStyleSmall,
+                            ),
                           ),
                           onPressed: () {
                             Navigator.push(
@@ -154,7 +169,10 @@ class Configure extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('Bar Menu'),
+                            child: Text(
+                              'Bar Menu',
+                              style: kHeaderStyleSmall,
+                            ),
                           ),
                           onPressed: () {
                             Navigator.push(
@@ -182,7 +200,10 @@ class Configure extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('Home Screen'),
+                            child: Text(
+                              'Home Screen',
+                              style: kHeaderStyleSmall,
+                            ),
                           ),
                           onPressed: () {
                             Navigator.push(
@@ -212,7 +233,10 @@ class Configure extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('Register Staff'),
+                            child: Text(
+                              'Register Staff',
+                              style: kHeaderStyleSmall,
+                            ),
                           ),
                           onPressed: () {
                             Navigator.push(
@@ -236,7 +260,10 @@ class Configure extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('Kitchen Staff'),
+                            child: Text(
+                              'Kitchen Staff',
+                              style: kHeaderStyleSmall,
+                            ),
                           ),
                           onPressed: () {
                             Navigator.push(
@@ -260,7 +287,10 @@ class Configure extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('testing'),
+                            child: Text(
+                              'testing',
+                              style: kHeaderStyleSmall,
+                            ),
                           ),
                           onPressed: () {
                             Navigator.push(

@@ -88,9 +88,11 @@ class _SocketConnectionState extends State<SocketConnection> {
       pprint({"Status": "connected..."});
 //      pprint(data);
 //      sendMessage("DEFAULT");
-
-      socket.emit("rest_with_id", [widget.restaurantId]);
-      socket.emit("fetch_order_lists", ["arguments"]);
+      socket.emit("fetch_rest_manager", [
+        jsonEncode({"restaurant_id": widget.restaurantId})
+      ]);
+//      socket.emit("rest_with_id", [widget.restaurantId]);
+//      socket.emit("fetch_order_lists", [widget.restaurantId]);
       socket.emit("check_logger", [" sending........."]);
     });
     socket.onConnectError(pprint);

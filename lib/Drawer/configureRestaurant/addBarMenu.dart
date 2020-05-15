@@ -120,7 +120,9 @@ class _AddMenuState extends State<AddBarMenu> {
                       child: RaisedButton(
                         color: Colors.grey,
                         child: Text('Add'),
-                        onPressed: _addCategory(restaurantData),
+                        onPressed: () {
+                          _addCategory(restaurantData);
+                        },
                       ),
                     ),
                   ],

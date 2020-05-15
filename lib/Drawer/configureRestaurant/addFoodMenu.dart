@@ -34,6 +34,7 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
   }
 
   _addCategory(restaurantData) {
+    print("coming here");
     setState(() {
       if (_categoryController.text.isNotEmpty) {
         _categoryValidate = false;
@@ -133,7 +134,9 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
                       child: RaisedButton(
                         color: Colors.grey,
                         child: Text('Add'),
-                        onPressed: _addCategory(restaurantData),
+                        onPressed: () {
+                          _addCategory(restaurantData);
+                        },
                       ),
                     ),
                   ],

@@ -107,7 +107,6 @@ class _RegisterStaffState extends State<RegisterStaff> {
                         child: Text("Register"),
                         onPressed: () {
                           restaurantData.sendStaffRegistrationToBackend({
-                            "auth_username": "MID001",
                             "restaurant_name": restaurantData.restaurant.name,
                             "restaurant_id":
                                 restaurantData.restaurant.restaurantId,

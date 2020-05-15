@@ -27,12 +27,12 @@ class HomePage extends StatelessWidget {
                 child: Column(
                   children: <Widget>[
                     Container(
-                      color: Colors.grey,
+                      color: kThemeColor,
                       width: double.maxFinite,
                       child: Center(
                         child: Text(
                           'Cooking',
-                          style: homePageS4,
+                          style: kHeaderStyle,
                         ),
                       ),
                     ),
@@ -61,12 +61,12 @@ class HomePage extends StatelessWidget {
                                     ),
                               ///////////////////////////////////////completed/////////////////////////////////
                               Container(
-                                color: Colors.black26,
+                                color: kThemeColor,
                                 width: double.maxFinite,
                                 child: Center(
                                   child: Text(
                                     'Completed',
-                                    style: homePageS4,
+                                    style: kHeaderStyle,
                                   ),
                                 ),
                               ),
