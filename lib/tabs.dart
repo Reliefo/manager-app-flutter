@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager_app/Drawer/drawermenu.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
-import 'package:manager_app/fetchData/fetchAssistanceData.dart';
 import 'package:manager_app/fetchData/fetchOrderData.dart';
 import 'package:manager_app/person/personView.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +13,7 @@ class TabContainerBottom extends StatelessWidget {
   final List<TableOrder> queueOrders;
   final List<TableOrder> cookingOrders;
   final List<TableOrder> completedOrders;
-  final List<AssistanceRequest> assistanceReq;
+//  final List<AssistanceRequest> assistanceReq;
   final Restaurant restaurant;
   final sockets;
   final Map<String, dynamic> registeredUser;
@@ -23,7 +22,7 @@ class TabContainerBottom extends StatelessWidget {
     this.queueOrders,
     this.cookingOrders,
     this.completedOrders,
-    this.assistanceReq,
+//    this.assistanceReq,
     this.restaurant,
     this.sockets,
     this.registeredUser,
@@ -40,11 +39,11 @@ class TabContainerBottom extends StatelessWidget {
             registeredUser: registeredUser,
           ),
         ),
-        ChangeNotifierProvider<AssistanceData>.value(
-          value: AssistanceData(
-            assistanceReq: assistanceReq,
-          ),
-        ),
+//        ChangeNotifierProvider<AssistanceData>.value(
+//          value: AssistanceData(
+//            assistanceReq: assistanceReq,
+//          ),
+//        ),
         ChangeNotifierProvider<OrderData>.value(
           value: OrderData(
             restaurant: restaurant,

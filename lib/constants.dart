@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 const kThemeColor = Color(0xffFFB023);
+
+const kLightThemeColor = Color(0xffF5DEB5);
+
+//Color kLightThemeColor = Colors.amber[100];
 //w400 Normal / regular / plain
 //w500 Medium
 //w600 Semi-bold

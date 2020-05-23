@@ -32,33 +32,13 @@ class _SocketConnectionState extends State<SocketConnection> {
   List<TableOrder> queueOrders = [];
   List<TableOrder> cookingOrders = [];
   List<TableOrder> completedOrders = [];
-  List<AssistanceRequest> assistanceReq = [];
+//  List<AssistanceRequest> assistanceReq = [];
   Map<String, dynamic> registeredUser = {};
 
   SocketIOManager manager = SocketIOManager();
   Map<String, SocketIO> sockets = {};
   Map<String, bool> _isProbablyConnected = {};
   Session loginSession = Session();
-
-//  RestaurantData configureRestaurantData = RestaurantData();
-//  OrderData fetchOrderData = OrderData();
-//  AssistanceData fetchAssistanceData = AssistanceData();
-//
-//  String uri = "http://192.168.0.9:5050/";
-//  String loginUrl = "http://192.168.0.9:5050/login";
-
-//  String loginUrl = "https://liqr.cc/login";
-//  String uri = "https://liqr.cc/";
-
-//  login() async {
-//    var output = await loginSession
-//        .post(loginUrl, {"username": "MID001", "password": "password123"});
-//    print("I am loggin in ");
-//
-//    initSocket(uri, loginSession);
-//
-//    print(output);
-//  }
 
   initSocket(String uri) async {
     print('hey from new init file');
@@ -115,13 +95,12 @@ class _SocketConnectionState extends State<SocketConnection> {
     socket.on("order_updates", (data) => orderUpdates(data));
 
     socket.on("assist", (data) => newAssistanceRequests(data));
-    socket.on("assist_updates", (data) => acceptedAssistanceReq(data));
 
-//    socket.on("user_scan", (data) => fetchScanUpdates(data));
+    socket.on("user_scan", (data) => fetchScanUpdates(data));
+    socket.on("billing", (data) => fetchBilled(data));
 
     socket.connect();
     sockets[identifier] = socket;
-//    RestaurantData(sockets: sockets);
   }
 
   bool isProbablyConnected(String identifier) {
@@ -155,6 +134,7 @@ class _SocketConnectionState extends State<SocketConnection> {
       var decoded = jsonDecode(data);
       print("comfirming");
       print(decoded);
+//      print("here:  ${decoded["navigate_better_tags"].length}");
 
       restaurant = Restaurant.fromJson(decoded);
     });
@@ -365,7 +345,7 @@ class _SocketConnectionState extends State<SocketConnection> {
         restaurant.foodMenu.forEach((category) {
           category.foodList.forEach((foodItem) {
             if (foodItem.oid == decode["food_id"]) {
-              foodItem.tags.add(decode["tag_to_attach"]);
+              foodItem.tags.add(decode["tag_name"]);
             }
           });
         });
@@ -373,7 +353,7 @@ class _SocketConnectionState extends State<SocketConnection> {
         restaurant.barMenu.forEach((category) {
           category.foodList.forEach((barItem) {
             if (barItem.oid == decode["food_id"]) {
-              barItem.tags.add(decode["tag_to_attach"]);
+              barItem.tags.add(decode["tag_name"]);
             }
           });
         });
@@ -399,6 +379,50 @@ class _SocketConnectionState extends State<SocketConnection> {
         });
       }
     });
+  }
+
+  fetchScanUpdates(data) {
+    setState(() {
+      if (data is Map) {
+        data = json.encode(data);
+      }
+
+      var decoded = jsonDecode(data);
+      print("inside scanned update");
+      print(decoded);
+
+//      {_id: {$oid: 5ebbc03a58aabe0f1c7f1599}, _cls: User.TempUser, name: Venus_1,
+//      dine_in_history: [], current_table_id: 5eb41b91adb66da6f5312123, personal_cart: [],
+//      timestamp: {$date: 1589322567835}, planet: Venus, planet_no: 1, unique_id: 9a8269f2-881f-4$Venus_1}
+      print(decoded["current_table_id"]);
+      print(decoded["_id"]["\$oid"]);
+      restaurant.tables.forEach((table) {
+        print("object");
+        print(table.oid);
+        if (table.oid == decoded["current_table_id"]) {
+          print("here");
+          if (!table.users.contains(decoded["_id"]["\$oid"])) {
+            print("adding user");
+            table.users.add(decoded["_id"]["\$oid"]);
+          }
+        }
+      });
+    });
+  }
+
+  fetchBilled(data) {
+    print("inside billing");
+    print(data);
+
+    if (data["status"] == "billed") {
+      setState(() {
+        completedOrders.forEach((order) {
+          print(order.tableId);
+        });
+        completedOrders
+            .removeWhere((order) => order.tableId == data["table_id"]);
+      });
+    }
   }
 
   fetchRegisteredUsers(data) {
@@ -487,6 +511,8 @@ class _SocketConnectionState extends State<SocketConnection> {
       }
       int queue = 0;
       var decoded = jsonDecode(data);
+
+      print(decoded);
 
       TableOrder order = TableOrder.fromJson(decoded);
 
@@ -619,21 +645,23 @@ class _SocketConnectionState extends State<SocketConnection> {
       if (data is Map) {
         data = json.encode(data);
       }
+      print("new assistanceReq");
       var decoded = jsonDecode(data);
       print(decoded);
-      if (decoded.keys.toList().contains('status')) {
+      print(decoded['status']);
+      if (decoded['status'] == "accepted") {
         acceptedAssistanceReq(decoded);
-      } else {
-        AssistanceRequest assist = AssistanceRequest.adding(decoded);
-        assistanceReq.add(assist);
+      } else if (decoded['status'] == "pending") {
+        AssistanceRequest assist = AssistanceRequest.fromJson(decoded);
+        restaurant.assistanceRequests.add(assist);
       }
     });
   }
 
   acceptedAssistanceReq(decoded) {
     setState(() {
-      assistanceReq.forEach((request) {
-        if (request.oId == decoded['assistance_req_id']) {
+      restaurant.assistanceRequests.forEach((request) {
+        if (request.assistanceReqId == decoded['assistance_req_id']) {
           request.acceptedBy = decoded['staff_name'];
         }
       });
@@ -643,7 +671,8 @@ class _SocketConnectionState extends State<SocketConnection> {
   @override
   Widget build(BuildContext context) {
     print("hereeeeww");
-//    print(assistanceReq);
+    print(restaurant.assistanceRequests);
+
     return TabContainerBottom(
       sockets: sockets,
       restaurant: restaurant,
@@ -651,7 +680,7 @@ class _SocketConnectionState extends State<SocketConnection> {
       queueOrders: queueOrders,
       cookingOrders: cookingOrders,
       completedOrders: completedOrders,
-      assistanceReq: assistanceReq,
+//      assistanceReq: assistanceReq,
     );
   }
 }

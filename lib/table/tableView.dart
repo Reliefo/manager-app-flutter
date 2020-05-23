@@ -6,18 +6,6 @@ import 'package:provider/provider.dart';
 import 'singleTable.dart';
 
 class TableView extends StatelessWidget {
-//  final Restaurant restaurantData.restaurant;
-//  final cookingOrders;
-//  final queueOrders;
-//  final assistanceReq;
-//
-//  TableView({
-////    @required this.restaurantData.restaurant,
-////    @required this.cookingOrders,
-////    @required this.queueOrders,
-//    @required this.assistanceReq,
-//  });
-
   Color getColour(index, restaurantData) {
     if (restaurantData.restaurant.tables[index].users != null) {
       if (restaurantData.restaurant.tables[index].cookingCount >
@@ -28,19 +16,7 @@ class TableView extends StatelessWidget {
         return Colors.red;
       }
       return Colors.green;
-    }
-
-    ///////////////////////////works correctly wen user is scanned////////////
-
-//    else if (restaurantData.restaurant.tables[index].cookingCount >
-//        restaurantData.restaurant.tables[index].queueCount) {
-//      return Colors.yellow;
-//    } else if (restaurantData.restaurant.tables[index].queueCount >
-//        restaurantData.restaurant.tables[index].cookingCount) {
-//      return Colors.red;
-//    }
-
-    else
+    } else
       return Colors.grey;
   }
 
@@ -52,55 +28,108 @@ class TableView extends StatelessWidget {
       child: Scaffold(
         body: Container(
           padding: EdgeInsets.all(10),
-          color: Colors.blueGrey,
+//          color: Colors.blueGrey,
           child: restaurantData.restaurant.tables != null
               ? GridView.builder(
                   itemCount: restaurantData.restaurant.tables.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 5,
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    mainAxisSpacing: 4.0,
+                    crossAxisSpacing: 4.0,
+                    childAspectRatio: 1,
+                    maxCrossAxisExtent: 200,
                   ),
                   itemBuilder: (BuildContext context, index) {
                     return GestureDetector(
                       child: Card(
-                        color: Colors.white,
+                        color: getColour(index, restaurantData),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
                         child: Container(
-                          color: getColour(index, restaurantData),
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: Column(
                             children: <Widget>[
                               Text(
-                                'Table-${restaurantData.restaurant.tables[index].name}',
-                                style: homePageS1,
+                                restaurantData.restaurant.tables[index].name,
+                                style: kHeaderStyleSmall,
                               ),
+                              SizedBox(height: 4.0),
                               Container(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                                child: Container(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          TextDisplay(
-                                            text:
-                                                'Servers : ${restaurantData.restaurant.tables[index].staff != null ? restaurantData.restaurant.tables[index].staff.length : '0'}',
-                                          ),
-                                          TextDisplay(
-                                            text:
-                                                'Scanned : ${restaurantData.restaurant.tables[index].users != null ? restaurantData.restaurant.tables[index].users.length : '0'}',
-                                          ),
-                                          TextDisplay(
-                                              text:
-                                                  'Cooking : ${restaurantData.restaurant.tables[index].cookingCount}'),
-                                          TextDisplay(
-                                              text:
-                                                  'Queued : ${restaurantData.restaurant.tables[index].queueCount}'),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                width: double.maxFinite,
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Row(
+                                      children: <Widget>[
+                                        Text(
+                                          'Servers : ',
+                                          style: kTitleStyle,
+                                        ),
+                                        Text(
+                                          restaurantData.restaurant
+                                                      .tables[index].staff !=
+                                                  null
+                                              ? restaurantData.restaurant
+                                                  .tables[index].staff.length
+                                                  .toString()
+                                              : '0',
+                                          style: kTitleStyle,
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 4.0),
+                                    Row(
+                                      children: <Widget>[
+                                        Text(
+                                          'Scanned : ',
+                                          style: kTitleStyle,
+                                        ),
+                                        Text(
+                                          restaurantData.restaurant
+                                                      .tables[index].users !=
+                                                  null
+                                              ? restaurantData.restaurant
+                                                  .tables[index].users.length
+                                                  .toString()
+                                              : '0',
+                                          style: kTitleStyle,
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 4.0),
+                                    Row(
+                                      children: <Widget>[
+                                        Text(
+                                          'Cooking : ',
+                                          style: kTitleStyle,
+                                        ),
+                                        Text(
+                                          restaurantData.restaurant
+                                              .tables[index].cookingCount
+                                              .toString(),
+                                          style: kTitleStyle,
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 4.0),
+                                    Row(
+                                      children: <Widget>[
+                                        Text(
+                                          'Queued : ',
+                                          style: kTitleStyle,
+                                        ),
+                                        Text(
+                                          restaurantData.restaurant
+                                              .tables[index].queueCount
+                                              .toString(),
+                                          style: kTitleStyle,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -112,9 +141,7 @@ class TableView extends StatelessWidget {
                           context: context,
                           builder: (context) => SingleTable(
                             table: restaurantData.restaurant.tables[index],
-//                            assistanceReq: assistanceReq,
-//                            cookingOrders: cookingOrders,
-//                            queueOrders: queueOrders,
+                            bill: restaurantData.billTheTable,
                           ),
                         );
                       },
@@ -127,22 +154,6 @@ class TableView extends StatelessWidget {
                   ),
                 ),
         ),
-      ),
-    );
-  }
-}
-
-class TextDisplay extends StatelessWidget {
-  final String text;
-  TextDisplay({@required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(8),
-      child: Text(
-        text,
-        style: homePageS2,
       ),
     );
   }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:manager_app/Drawer/configureRestaurant/addFoodItem/addItem.dart';
+import 'package:manager_app/Drawer/configureRestaurant/addFoodItem/addItem/addItem.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
 

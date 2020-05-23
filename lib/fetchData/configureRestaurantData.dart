@@ -329,7 +329,7 @@ class RestaurantData extends ChangeNotifier {
       if (localData['food_dict']["food_options"].length == 0)
         localData['food_dict'].remove('food_options');
 
-      localData['restaurant_id'] = restaurantId;
+      localData['food_dict']['restaurant_id'] = restaurantId;
       localData['type'] = type;
       encode = jsonEncode(localData);
     }
@@ -410,5 +410,13 @@ class RestaurantData extends ChangeNotifier {
     encode = jsonEncode(data);
     print(encode);
     sockets['working'].emit('register_your_people', [encode]);
+  }
+
+  billTheTable(data) {
+    var encode;
+    print("test sending");
+    encode = jsonEncode(data);
+    print(encode);
+    sockets['working'].emit('bill_the_table', [encode]);
   }
 }

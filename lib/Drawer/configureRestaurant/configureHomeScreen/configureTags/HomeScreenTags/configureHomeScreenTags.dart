@@ -6,14 +6,6 @@ import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
 
 class ConfigureHomeScreenTags extends StatefulWidget {
-//  final Restaurant restaurant;
-//  final updateConfigDetailsToCloud;
-//
-//  ConfigureHomeScreenTags({
-//    @required this.restaurant,
-//    this.updateConfigDetailsToCloud,
-//  });
-
   @override
   _ConfigureHomeScreenTagsState createState() =>
       _ConfigureHomeScreenTagsState();

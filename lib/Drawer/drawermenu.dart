@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configure.dart';
+import 'package:manager_app/Drawer/orderHistory/orderHistory.dart';
 
 class DrawerMenu extends StatelessWidget {
 //  final Restaurant restaurant;
@@ -39,6 +40,21 @@ class DrawerMenu extends StatelessWidget {
           },
         ),
 
+        Divider(),
+
+        FlatButton(
+          child: Center(
+            child: Text('Order History'),
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => OrderHistoryPage(),
+              ),
+            );
+          },
+        ),
         Divider(),
         ///////////////////
 

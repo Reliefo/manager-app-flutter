@@ -17,8 +17,27 @@ class AddBarItemToTags extends StatefulWidget {
 
 class _AddBarItemToTagsState extends State<AddBarItemToTags> {
   Category _selectedBarCategory;
-
   MenuFoodItem _selectedBarItem;
+  List<MenuFoodItem> displayItems = [];
+
+  getItems() {
+    List<MenuFoodItem> toDelete = [];
+
+    displayItems.clear();
+
+    _selectedBarCategory.foodList.forEach((foodItem) {
+      displayItems.add(foodItem);
+      foodItem.tags.forEach((tag) {
+        if (tag == widget.selectedTag) {
+          toDelete.add(foodItem);
+        }
+      });
+    });
+
+    toDelete.forEach((food) {
+      displayItems.removeWhere((element) => element == food);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,23 +71,26 @@ class _AddBarItemToTagsState extends State<AddBarItemToTags> {
             onChanged: (selected) {
               setState(() {
                 print(selected);
-
                 _selectedBarCategory = selected;
-                _selectedBarItem = _selectedBarCategory.foodList[0];
               });
+              getItems();
             },
           ),
           SizedBox(height: 20.0),
           DropdownButton(
             value: _selectedBarItem,
-            items: _selectedBarCategory != null
-                ? _selectedBarCategory.foodList.map((item) {
-                    return DropdownMenuItem(
-                      value: item,
-                      child: Text(item.name),
-                    );
-                  }).toList()
-                : [],
+            items:
+
+//            _selectedBarCategory != null
+//                ? _selectedBarCategory.foodList
+                displayItems != null
+                    ? displayItems.map((item) {
+                        return DropdownMenuItem(
+                          value: item,
+                          child: Text(item.name),
+                        );
+                      }).toList()
+                    : [],
             hint: Text('Select Bar Item'),
             isExpanded: true,
             onChanged: (selected) {
@@ -99,7 +121,7 @@ class _AddBarItemToTagsState extends State<AddBarItemToTags> {
                 onPressed: () {
                   restaurantData.sendConfiguredDataToBackend({
                     "food_id": _selectedBarItem.oid,
-                    "tag_to_attach": widget.selectedTag,
+                    "tag_name": widget.selectedTag,
                   }, "attach_home_screen_tags");
 
                   Navigator.of(context).pop(); // To close the dialog

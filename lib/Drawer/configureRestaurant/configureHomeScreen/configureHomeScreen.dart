@@ -4,6 +4,7 @@ import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/confi
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureTags/HomeScreenTags/configureHomeScreenTags.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureTags/navigateBetter/ConfigureNavigateBetterTags.dart';
 import 'package:manager_app/Drawer/configureRestaurant/test.dart';
+import 'package:manager_app/constants.dart';
 
 class ConfigureHomeScreen extends StatelessWidget {
 //  final Restaurant restaurant;
@@ -36,7 +37,10 @@ class ConfigureHomeScreen extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('On Offer'),
+                            child: Text(
+                              'On Offer',
+                              style: kHeaderStyleSmall,
+                            ),
                           ),
                           onPressed: () {
 //                            Navigator.push(
@@ -64,7 +68,10 @@ class ConfigureHomeScreen extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('Navigate Better Tags'),
+                            child: Text(
+                              'Navigate Better Tags',
+                              style: kHeaderStyleSmall,
+                            ),
                           ),
                           onPressed: () {
                             Navigator.push(
@@ -93,7 +100,10 @@ class ConfigureHomeScreen extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('Home Screen Tags'),
+                            child: Text(
+                              'Home Screen Tags',
+                              style: kHeaderStyleSmall,
+                            ),
                           ),
                           onPressed: () {
                             Navigator.push(
@@ -125,7 +135,10 @@ class ConfigureHomeScreen extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('Most Popular'),
+                            child: Text(
+                              'Most Popular',
+                              style: kHeaderStyleSmall,
+                            ),
                           ),
                           onPressed: () {
                             Navigator.push(
@@ -151,7 +164,10 @@ class ConfigureHomeScreen extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('Daily Special'),
+                            child: Text(
+                              'Daily Special',
+                              style: kHeaderStyleSmall,
+                            ),
                           ),
                           onPressed: () {
 //                            Navigator.push(
@@ -175,7 +191,10 @@ class ConfigureHomeScreen extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('Chef Special'),
+                            child: Text(
+                              'Chef Special',
+                              style: kHeaderStyleSmall,
+                            ),
                           ),
                           onPressed: () {
                             Navigator.push(
@@ -203,7 +222,10 @@ class ConfigureHomeScreen extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('Happy Hours'),
+                            child: Text(
+                              'Happy Hours',
+                              style: kHeaderStyleSmall,
+                            ),
                           ),
                           onPressed: () {
 //                            Navigator.push(
@@ -229,7 +251,10 @@ class ConfigureHomeScreen extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('nothing'),
+                            child: Text(
+                              'nothing',
+                              style: kHeaderStyleSmall,
+                            ),
                           ),
                           onPressed: () {
 //                            Navigator.push(
@@ -255,7 +280,10 @@ class ConfigureHomeScreen extends StatelessWidget {
                         ),
                         child: FlatButton(
                           child: Center(
-                            child: Text('testing'),
+                            child: Text(
+                              'testing',
+                              style: kHeaderStyleSmall,
+                            ),
                           ),
                           onPressed: () {
                             Navigator.push(

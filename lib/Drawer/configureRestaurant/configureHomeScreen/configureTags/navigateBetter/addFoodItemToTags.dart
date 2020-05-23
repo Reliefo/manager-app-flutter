@@ -22,6 +22,27 @@ class _AddFoodItemToTagsState extends State<AddFoodItemToTags> {
 
   MenuFoodItem _selectedFoodItem;
 
+  List<MenuFoodItem> displayItems = [];
+
+  getItems() {
+    List<MenuFoodItem> toDelete = [];
+
+    displayItems.clear();
+
+    _selectedFoodCategory.foodList.forEach((foodItem) {
+      displayItems.add(foodItem);
+      foodItem.tags.forEach((tag) {
+        if (tag == widget.selectedTag) {
+          toDelete.add(foodItem);
+        }
+      });
+    });
+
+    toDelete.forEach((food) {
+      displayItems.removeWhere((element) => element == food);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
@@ -56,21 +77,26 @@ class _AddFoodItemToTagsState extends State<AddFoodItemToTags> {
                 print(selected);
 
                 _selectedFoodCategory = selected;
-                _selectedFoodItem = _selectedFoodCategory.foodList[0];
               });
+              getItems();
             },
           ),
           SizedBox(height: 20.0),
           DropdownButton(
             value: _selectedFoodItem,
-            items: _selectedFoodCategory != null
-                ? _selectedFoodCategory.foodList.map((item) {
-                    return DropdownMenuItem(
-                      value: item,
-                      child: Text(item.name),
-                    );
-                  }).toList()
-                : [],
+            items:
+
+//            _selectedFoodCategory != null
+//                ? _selectedFoodCategory.foodList
+
+                displayItems != null
+                    ? displayItems.map((item) {
+                        return DropdownMenuItem(
+                          value: item,
+                          child: Text(item.name),
+                        );
+                      }).toList()
+                    : [],
             hint: Text('Select Food Item'),
             isExpanded: true,
             onChanged: (selected) {
@@ -101,7 +127,7 @@ class _AddFoodItemToTagsState extends State<AddFoodItemToTags> {
                 onPressed: () {
                   restaurantData.sendConfiguredDataToBackend({
                     "food_id": _selectedFoodItem.oid,
-                    "tag_to_attach": widget.selectedTag,
+                    "tag_name": widget.selectedTag,
                   }, "attach_home_screen_tags");
 
                   Navigator.of(context).pop(); // To close the dialog

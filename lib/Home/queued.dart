@@ -28,8 +28,10 @@ class Queued extends StatelessWidget {
           orderData.queueOrders.length > 0
               ? Flexible(
                   fit: FlexFit.loose,
-                  child: OrderItemBuilder(
-                    orderList: orderData.queueOrders,
+                  child: SingleChildScrollView(
+                    child: OrderItemBuilder(
+                      orderList: orderData.queueOrders,
+                    ),
                   ))
 
               // display when there in nothing in the queue

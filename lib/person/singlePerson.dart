@@ -1,27 +1,25 @@
-import 'package:date_format/date_format.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:manager_app/Home/assistanceReqBuilder.dart';
 import 'package:manager_app/constants.dart';
 import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
-import 'package:manager_app/fetchData/fetchAssistanceData.dart';
 import 'package:provider/provider.dart';
 
 class SinglePerson extends StatelessWidget {
   final Staff staff;
-//  final List<AssistanceRequest> assistanceReq;
+
   final List<AssistanceRequest> personAssistanceReq = [];
   final List<String> allottedTables = [];
 
   SinglePerson({
     this.staff,
-//    this.assistanceReq,
   });
 
   final startTime = '4:20 PM';
 
-  getPersonAssistance(assistanceData) {
-    assistanceData.assistanceReq.forEach((request) {
+  getPersonAssistance(assistanceList) {
+    assistanceList.forEach((request) {
       if (request.acceptedBy == staff.name) {
         personAssistanceReq.add(request);
       }
@@ -42,20 +40,17 @@ class SinglePerson extends StatelessWidget {
   Widget build(BuildContext context) {
     final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
 
-    final AssistanceData assistanceData = Provider.of<AssistanceData>(context);
-
-    getPersonAssistance(assistanceData);
+    getPersonAssistance(restaurantData.restaurant.assistanceRequests);
     getAllottedTables(restaurantData);
     return SafeArea(
       child: Scaffold(
         body: Container(
-          color: Colors.black54,
           child: Column(
             children: <Widget>[
               Container(
                 height: 60,
+                color: kThemeColor,
                 width: double.maxFinite,
-                color: Colors.black12,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -105,7 +100,7 @@ class SinglePerson extends StatelessWidget {
                       flex: 3,
                       child: Container(
                         padding: EdgeInsets.fromLTRB(20, 8, 8, 8),
-                        color: Colors.grey,
+                        color: Colors.grey[50],
                         child: Column(
                           children: <Widget>[
                             Container(
@@ -133,12 +128,13 @@ class SinglePerson extends StatelessWidget {
                         ),
                       ),
                     ),
+                    VerticalDivider(),
                     Expanded(
                       flex: 4,
                       child: Container(
                         margin: EdgeInsets.symmetric(horizontal: 2),
                         padding: EdgeInsets.all(8),
-                        color: Colors.grey,
+                        color: Colors.grey[50],
                         child: Column(
                           children: <Widget>[
                             Container(
@@ -147,91 +143,95 @@ class SinglePerson extends StatelessWidget {
                                 style: homePageS1,
                               ),
                             ),
-                            Container(
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Center(
-                                      child: Text(
-                                        'Type',
-                                        style: homePageS1,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Center(
-                                      child: Text(
-                                        'Time',
-                                        style: homePageS1,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Center(
-                                      child: Text(
-                                        'Status',
-                                        style: homePageS1,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+//                            Container(
+//                              child: Row(
+//                                children: <Widget>[
+//                                  Expanded(
+//                                    child: Center(
+//                                      child: Text(
+//                                        'Type',
+//                                        style: homePageS1,
+//                                      ),
+//                                    ),
+//                                  ),
+//                                  Expanded(
+//                                    child: Center(
+//                                      child: Text(
+//                                        'Time',
+//                                        style: homePageS1,
+//                                      ),
+//                                    ),
+//                                  ),
+//                                  Expanded(
+//                                    child: Center(
+//                                      child: Text(
+//                                        'Status',
+//                                        style: homePageS1,
+//                                      ),
+//                                    ),
+//                                  ),
+//                                ],
+//                              ),
+//                            ),
                             Expanded(
-                              child: ListView.builder(
-                                itemCount: personAssistanceReq.length,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                    margin: EdgeInsets.symmetric(vertical: 12),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: Center(
-                                            child: Text(
-                                              personAssistanceReq[index]
-                                                  .assistanceType,
-                                              style: homePageS2,
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Center(
-                                            child: Text(
-                                              '${formatDate(
-                                                    (personAssistanceReq[index]
-                                                        .timeStamp),
-                                                    [HH, ':', nn],
-                                                  )}' ??
-                                                  " ",
-                                              style: homePageS2,
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Center(
-                                            child: Text(
-                                              personAssistanceReq[index]
-                                                  .acceptedBy,
-                                              style: homePageS2,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
+                              child: AssistanceRequestBuilder(
+                                requestList: personAssistanceReq,
                               ),
+//                              child: ListView.builder(
+//                                itemCount: personAssistanceReq.length,
+//                                shrinkWrap: true,
+//                                itemBuilder: (context, index) {
+//                                  return Container(
+//                                    margin: EdgeInsets.symmetric(vertical: 12),
+//                                    child: Row(
+//                                      children: <Widget>[
+//                                        Expanded(
+//                                          child: Center(
+//                                            child: Text(
+//                                              personAssistanceReq[index]
+//                                                  .assistanceType,
+//                                              style: homePageS2,
+//                                            ),
+//                                          ),
+//                                        ),
+//                                        Expanded(
+//                                          child: Center(
+//                                            child: Text(
+//                                              '${formatDate(
+//                                                    (personAssistanceReq[index]
+//                                                        .timeStamp),
+//                                                    [HH, ':', nn],
+//                                                  )}' ??
+//                                                  " ",
+//                                              style: homePageS2,
+//                                            ),
+//                                          ),
+//                                        ),
+//                                        Expanded(
+//                                          child: Center(
+//                                            child: Text(
+//                                              personAssistanceReq[index]
+//                                                  .acceptedBy,
+//                                              style: homePageS2,
+//                                            ),
+//                                          ),
+//                                        ),
+//                                      ],
+//                                    ),
+//                                  );
+//                                },
+//                              ),
                             ),
                           ],
                         ),
                       ),
                     ),
+                    VerticalDivider(),
                     Expanded(
                       flex: 3,
                       child: Container(
                         padding: EdgeInsets.fromLTRB(20, 8, 8, 8),
-                        color: Colors.grey,
+                        color: Colors.grey[50],
                         child: Column(
                           children: <Widget>[
                             Container(

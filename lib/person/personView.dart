@@ -5,12 +5,6 @@ import 'package:provider/provider.dart';
 import 'singlePerson.dart';
 
 class PersonView extends StatelessWidget {
-//  final Restaurant restaurant;
-//  final assistanceReq;
-//  PersonView({
-////    this.restaurant,
-//    this.assistanceReq,
-//  });
   @override
   Widget build(BuildContext context) {
     final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
@@ -19,17 +13,23 @@ class PersonView extends StatelessWidget {
       child: Scaffold(
         body: Container(
           padding: EdgeInsets.all(10),
-          color: Colors.blueGrey,
+//          color: Colors.blueGrey,
           child: restaurantData.restaurant.staff != null
               ? GridView.builder(
                   itemCount: restaurantData.restaurant.staff.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 6,
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    mainAxisSpacing: 4.0,
+                    crossAxisSpacing: 4.0,
+                    childAspectRatio: 1,
+                    maxCrossAxisExtent: 200,
                   ),
                   itemBuilder: (BuildContext context, int index) {
                     return GestureDetector(
                       child: Card(
-                        color: Colors.white,
+                        color: Colors.amber[200],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: Column(

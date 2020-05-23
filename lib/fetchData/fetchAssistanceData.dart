@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:manager_app/data.dart';
-
-class AssistanceData extends ChangeNotifier {
-  final List<AssistanceRequest> assistanceReq;
-  AssistanceData({
-    this.assistanceReq,
-  });
+//import 'package:flutter/material.dart';
+//import 'package:manager_app/data.dart';
+//
+//class AssistanceData extends ChangeNotifier {
+//  final List<AssistanceRequest> assistanceReq;
+//  AssistanceData({
+//    this.assistanceReq,
+//  });
 //  fetchAssistRequests(data) { //done
 //  newAssistanceRequests(data) {
 //    if (data is Map) {
@@ -32,4 +32,4 @@ class AssistanceData extends ChangeNotifier {
 //    });
 //    notifyListeners();
 //  }
-}
+//}

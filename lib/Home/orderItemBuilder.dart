@@ -19,8 +19,7 @@ class OrderItemBuilder extends StatelessWidget {
       itemBuilder: (context, index) {
         return Container(
           decoration: BoxDecoration(
-//                          color: Color(0xffDFDFDF),
-            color: Colors.blue[100],
+            color: kLightThemeColor,
             borderRadius: BorderRadius.all(
               Radius.circular(10.0),
             ),
