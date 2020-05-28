@@ -1,17 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:manager_app/Drawer/configureRestaurant/registerStaff.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
 
 class AddStaff extends StatefulWidget {
-//  final updateConfigDetailsToCloud;
-//
-//  final Restaurant restaurant;
-//
-//  AddStaff({
-//    this.updateConfigDetailsToCloud,
-//    this.restaurant,
-//  });
-
   @override
   _AddDataState createState() => _AddDataState();
 }
@@ -171,6 +163,30 @@ class _AddDataState extends State<AddStaff> {
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
+                                      FlatButton(
+                                        child: Text("Register"),
+                                        onPressed: () {
+                                          restaurantData
+                                              .sendStaffRegistrationToBackend({
+                                            "restaurant_name":
+                                                restaurantData.restaurant.name,
+                                            "restaurant_id": restaurantData
+                                                .restaurant.restaurantId,
+                                            "user_type": "staff",
+                                            "object_id": restaurantData
+                                                .restaurant.staff[index].oid,
+                                            "name": restaurantData
+                                                .restaurant.staff[index].name,
+                                          });
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  RegisterStaff(),
+                                            ),
+                                          );
+                                        },
+                                      ),
                                       IconButton(
                                         icon: Icon(Icons.edit),
                                         onPressed: () {
@@ -291,18 +307,6 @@ class _AddDataState extends State<AddStaff> {
                     ],
                   ),
                 ),
-
-//                      Expanded(
-//                          child: ListView.builder(
-//                              itemCount: widget.staffNameList.length,
-//                              shrinkWrap: true,
-//                              primary: false,
-//                              itemBuilder: (context, index) {
-//                                return ListItem(
-//                                  staffNameList: widget.staffNameList,
-//                                  index: index,
-//                                );
-//                              })),
               ],
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureTags/addNewTag.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureTags/navigateBetter/addBarItemToTags.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureTags/navigateBetter/addFoodItemToTags.dart';
 import 'package:manager_app/data.dart';
@@ -22,9 +23,7 @@ class ConfigureNavigateBetterTags extends StatefulWidget {
 class _ConfigureNavigateBetterTagsState
     extends State<ConfigureNavigateBetterTags> {
   final tagController = TextEditingController();
-//  List<MenuFoodItem> barItems = [];
-//
-//  List<MenuFoodItem> foodItems = [];
+
   String radioItem = 'foodMenu';
 
   List<MenuFoodItem> selectedTagItems = [];
@@ -45,28 +44,39 @@ class _ConfigureNavigateBetterTagsState
 //      barItems.clear();
 //      foodItems.clear();
       selectedTagItems.clear();
-      restaurantData.restaurant.barMenu.forEach((category) {
-        category.foodList.forEach((food) {
-          if (food.tags.isNotEmpty) {
-            food.tags.forEach((tag) {
-              if (tag == selectedTag) {
-                selectedTagItems.add(food);
+      if (restaurantData.restaurant.barMenu != null &&
+          restaurantData.restaurant.barMenu.isNotEmpty) {
+        restaurantData.restaurant.barMenu.forEach((category) {
+          category.foodList.forEach((food) {
+            if (food.tags != null) {
+              if (food.tags.isNotEmpty) {
+                food.tags.forEach((tag) {
+                  if (tag == selectedTag) {
+                    selectedTagItems.add(food);
+                  }
+                });
               }
-            });
-          }
+            }
+          });
         });
-      });
-      restaurantData.restaurant.foodMenu.forEach((category) {
-        category.foodList.forEach((food) {
-          if (food.tags.isNotEmpty) {
-            food.tags.forEach((tag) {
-              if (tag == selectedTag) {
-                selectedTagItems.add(food);
+      }
+
+      if (restaurantData.restaurant.foodMenu != null &&
+          restaurantData.restaurant.foodMenu.isNotEmpty) {
+        restaurantData.restaurant.foodMenu.forEach((category) {
+          category.foodList.forEach((food) {
+            if (food.tags != null) {
+              if (food.tags.isNotEmpty) {
+                food.tags.forEach((tag) {
+                  if (tag == selectedTag) {
+                    selectedTagItems.add(food);
+                  }
+                });
               }
-            });
-          }
+            }
+          });
         });
-      });
+      }
     });
   }
 
@@ -100,6 +110,7 @@ class _ConfigureNavigateBetterTagsState
                                 builder: (BuildContext context) {
                                   // return object of type Dialog
                                   return AddNewTag(
+                                      addTo: "navigate_better",
                                       tagController: tagController);
                                 },
                               );
@@ -277,60 +288,51 @@ class _ConfigureNavigateBetterTagsState
                         ),
                       ),
                       Expanded(
-                        child: Column(
-                          children: <Widget>[
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Expanded(
-                                  child: RadioListTile(
-                                    groupValue: radioItem,
-                                    title: Text('Food Menu'),
-                                    value: 'foodMenu',
-                                    onChanged: (val) {
-                                      setState(() {
-                                        radioItem = val;
-                                      });
-                                    },
-                                  ),
+                        child: selectedTag != null
+                            ? SingleChildScrollView(
+                                child: Column(
+                                  children: <Widget>[
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: RadioListTile(
+                                            groupValue: radioItem,
+                                            title: Text('Food Menu'),
+                                            value: 'foodMenu',
+                                            onChanged: (val) {
+                                              setState(() {
+                                                radioItem = val;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: RadioListTile(
+                                            groupValue: radioItem,
+                                            title: Text('Bar Menu'),
+                                            value: 'barMenu',
+                                            onChanged: (val) {
+                                              setState(() {
+                                                radioItem = val;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    radioItem == "barMenu"
+                                        ? AddBarItemToTags(
+                                            selectedTag: selectedTag)
+                                        : AddFoodItemToTags(
+                                            selectedTag: selectedTag),
+                                  ],
                                 ),
-                                Expanded(
-                                  child: RadioListTile(
-                                    groupValue: radioItem,
-                                    title: Text('Bar Menu'),
-                                    value: 'barMenu',
-                                    onChanged: (val) {
-                                      setState(() {
-                                        radioItem = val;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                            selectedTag != null
-                                ? FlatButton(
-                                    child: Text("add Item"),
-                                    onPressed: () {
-                                      showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          // return object of type Dialog
-                                          return radioItem == "barMenu"
-                                              ? AddBarItemToTags(
-//                                                      restaurant:
-//                                                          widget.restaurant,
-                                                  selectedTag: selectedTag)
-                                              : AddFoodItemToTags(
-//                                                  restaurant: widget.restaurant,
-                                                  selectedTag: selectedTag);
-                                        },
-                                      );
-                                    })
-                                : Text(""),
-                          ],
-                        ),
+                              )
+                            : Center(
+                                child: Text("select tag"),
+                              ),
                       ),
                     ],
                   ),
@@ -339,81 +341,6 @@ class _ConfigureNavigateBetterTagsState
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class AddNewTag extends StatelessWidget {
-  const AddNewTag({
-    Key key,
-    @required this.tagController,
-  }) : super(key: key);
-
-  final TextEditingController tagController;
-
-  @override
-  Widget build(BuildContext context) {
-    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
-    return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min, // To make the card compact
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
-                "Enter Tag:  ",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16.0,
-                ),
-              ),
-              SizedBox(width: 20),
-              Container(
-                width: 200,
-                child: TextField(
-                  controller: tagController,
-                  autofocus: true,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 24.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              FlatButton(
-                child: Text(
-                  "Cancel",
-                  style: TextStyle(color: Colors.red),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop(); // To close the dialog
-                },
-              ),
-              FlatButton(
-                child: Text(
-                  "Done",
-                  style: TextStyle(color: Colors.green),
-                ),
-                onPressed: () {
-                  restaurantData.sendConfiguredDataToBackend({
-                    "add_to": "navigate_better",
-                    "tag_name": tagController.text
-                  }, "add_home_screen_tags");
-
-                  tagController.clear();
-
-                  Navigator.of(context).pop(); // To close the dialog
-                },
-              ),
-            ],
-          )
-        ],
       ),
     );
   }

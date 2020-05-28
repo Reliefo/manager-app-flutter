@@ -41,96 +41,87 @@ class _AddBarItemToTagsState extends State<AddBarItemToTags> {
 
   @override
   Widget build(BuildContext context) {
+    print("add bar item");
+    print(_selectedBarCategory);
     final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
-    return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min, // To make the card compact
-        children: <Widget>[
-          Text(
-            "Add item to: ${widget.selectedTag}",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16.0,
-            ),
-          ),
-          DropdownButton(
-            value: _selectedBarCategory,
-            items: restaurantData.restaurant.barMenu != null
-                ? restaurantData.restaurant.barMenu.map((category) {
-                    return DropdownMenuItem(
-                      value: category,
-                      child: Text(category.name),
-                    );
-                  }).toList()
-                : [],
-            hint: Text('Select Bar Category'),
-            isExpanded: true,
-            onChanged: (selected) {
-              setState(() {
-                print(selected);
-                _selectedBarCategory = selected;
-              });
-              getItems();
-            },
-          ),
-          SizedBox(height: 20.0),
-          DropdownButton(
-            value: _selectedBarItem,
-            items:
+    return Column(
+      mainAxisSize: MainAxisSize.min, // To make the card compact
+      children: <Widget>[
+//        Text(
+//          "Add item to: ${widget.selectedTag}",
+//          textAlign: TextAlign.center,
+//          style: TextStyle(
+//            fontSize: 16.0,
+//          ),
+//        ),
+        DropdownButton(
+          value: _selectedBarCategory,
+          items: restaurantData.restaurant.barMenu != null
+              ? restaurantData.restaurant.barMenu.map((category) {
+                  return DropdownMenuItem(
+                    value: category,
+                    child: Text(category.name),
+                  );
+                }).toList()
+              : [],
+          hint: Text('Select Bar Category'),
+          isExpanded: true,
+          onChanged: (selected) {
+            setState(() {
+              print(selected);
+              _selectedBarCategory = selected;
+            });
+            getItems();
+          },
+        ),
+        SizedBox(height: 20.0),
+        DropdownButton(
+          value: _selectedBarItem,
+          items:
 
 //            _selectedBarCategory != null
 //                ? _selectedBarCategory.foodList
-                displayItems != null
-                    ? displayItems.map((item) {
-                        return DropdownMenuItem(
-                          value: item,
-                          child: Text(item.name),
-                        );
-                      }).toList()
-                    : [],
-            hint: Text('Select Bar Item'),
-            isExpanded: true,
-            onChanged: (selected) {
-              setState(() {
-                print(selected);
-                _selectedBarItem = selected;
-              });
-            },
-          ),
-          SizedBox(height: 24.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              FlatButton(
-                child: Text(
-                  "Cancel",
-                  style: TextStyle(color: Colors.red),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop(); // To close the dialog
-                },
+              displayItems != null
+                  ? displayItems.map((item) {
+                      return DropdownMenuItem(
+                        value: item,
+                        child: Text(item.name),
+                      );
+                    }).toList()
+                  : [],
+          hint: Text('Select Bar Item'),
+          isExpanded: true,
+          onChanged: (selected) {
+            setState(() {
+              print(selected);
+              _selectedBarItem = selected;
+            });
+          },
+        ),
+        SizedBox(height: 24.0),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            FlatButton(
+              child: Text(
+                "Add Item",
+                style: TextStyle(color: Colors.green),
               ),
-              FlatButton(
-                child: Text(
-                  "Add Item",
-                  style: TextStyle(color: Colors.green),
-                ),
-                onPressed: () {
-                  restaurantData.sendConfiguredDataToBackend({
-                    "food_id": _selectedBarItem.oid,
-                    "tag_name": widget.selectedTag,
-                  }, "attach_home_screen_tags");
+              onPressed: () {
+                restaurantData.sendConfiguredDataToBackend({
+                  "food_id": _selectedBarItem.oid,
+                  "tag_name": widget.selectedTag,
+                }, "attach_home_screen_tags");
 
-                  Navigator.of(context).pop(); // To close the dialog
-                },
-              ),
-            ],
-          )
-        ],
-      ),
+                setState(() {
+                  _selectedBarCategory = null;
+                  _selectedBarItem = null;
+                });
+              },
+            ),
+          ],
+        )
+      ],
     );
   }
 }

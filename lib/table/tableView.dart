@@ -7,7 +7,7 @@ import 'singleTable.dart';
 
 class TableView extends StatelessWidget {
   Color getColour(index, restaurantData) {
-    if (restaurantData.restaurant.tables[index].users != null) {
+    if (restaurantData.restaurant.tables[index].users.isNotEmpty) {
       if (restaurantData.restaurant.tables[index].cookingCount >
           restaurantData.restaurant.tables[index].queueCount) {
         return Colors.yellow;

@@ -9,7 +9,8 @@ import 'package:provider/provider.dart';
 class SinglePerson extends StatelessWidget {
   final Staff staff;
 
-  final List<AssistanceRequest> personAssistanceReq = [];
+  final List<AssistanceRequest> personRequest = [];
+  final List<StaffOrderHistory> personOrders = [];
   final List<String> allottedTables = [];
 
   SinglePerson({
@@ -18,12 +19,26 @@ class SinglePerson extends StatelessWidget {
 
   final startTime = '4:20 PM';
 
-  getPersonAssistance(assistanceList) {
-    assistanceList.forEach((request) {
-      if (request.acceptedBy == staff.name) {
-        personAssistanceReq.add(request);
-      }
-    });
+  getPersonRequest(restaurantData) {
+    if (restaurantData.restaurant.assistanceRequests != null) {
+      restaurantData.restaurant.assistanceRequests.forEach((request) {
+        if (request.acceptedBy == staff.name) {
+          personRequest.add(request);
+        }
+      });
+    }
+
+    if (restaurantData.restaurant.staff != null) {
+      restaurantData.restaurant.staff.forEach((restStaff) {
+        if (restStaff.oid == staff.oid) {
+          if (restStaff.orderHistory != null) {
+            restStaff.orderHistory.forEach((order) {
+              personOrders.add(order);
+            });
+          }
+        }
+      });
+    }
   }
 
   getAllottedTables(restaurantData) {
@@ -40,7 +55,7 @@ class SinglePerson extends StatelessWidget {
   Widget build(BuildContext context) {
     final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
 
-    getPersonAssistance(restaurantData.restaurant.assistanceRequests);
+    getPersonRequest(restaurantData);
     getAllottedTables(restaurantData);
     return SafeArea(
       child: Scaffold(
@@ -143,84 +158,10 @@ class SinglePerson extends StatelessWidget {
                                 style: homePageS1,
                               ),
                             ),
-//                            Container(
-//                              child: Row(
-//                                children: <Widget>[
-//                                  Expanded(
-//                                    child: Center(
-//                                      child: Text(
-//                                        'Type',
-//                                        style: homePageS1,
-//                                      ),
-//                                    ),
-//                                  ),
-//                                  Expanded(
-//                                    child: Center(
-//                                      child: Text(
-//                                        'Time',
-//                                        style: homePageS1,
-//                                      ),
-//                                    ),
-//                                  ),
-//                                  Expanded(
-//                                    child: Center(
-//                                      child: Text(
-//                                        'Status',
-//                                        style: homePageS1,
-//                                      ),
-//                                    ),
-//                                  ),
-//                                ],
-//                              ),
-//                            ),
                             Expanded(
                               child: AssistanceRequestBuilder(
-                                requestList: personAssistanceReq,
+                                requestList: personRequest,
                               ),
-//                              child: ListView.builder(
-//                                itemCount: personAssistanceReq.length,
-//                                shrinkWrap: true,
-//                                itemBuilder: (context, index) {
-//                                  return Container(
-//                                    margin: EdgeInsets.symmetric(vertical: 12),
-//                                    child: Row(
-//                                      children: <Widget>[
-//                                        Expanded(
-//                                          child: Center(
-//                                            child: Text(
-//                                              personAssistanceReq[index]
-//                                                  .assistanceType,
-//                                              style: homePageS2,
-//                                            ),
-//                                          ),
-//                                        ),
-//                                        Expanded(
-//                                          child: Center(
-//                                            child: Text(
-//                                              '${formatDate(
-//                                                    (personAssistanceReq[index]
-//                                                        .timeStamp),
-//                                                    [HH, ':', nn],
-//                                                  )}' ??
-//                                                  " ",
-//                                              style: homePageS2,
-//                                            ),
-//                                          ),
-//                                        ),
-//                                        Expanded(
-//                                          child: Center(
-//                                            child: Text(
-//                                              personAssistanceReq[index]
-//                                                  .acceptedBy,
-//                                              style: homePageS2,
-//                                            ),
-//                                          ),
-//                                        ),
-//                                      ],
-//                                    ),
-//                                  );
-//                                },
-//                              ),
                             ),
                           ],
                         ),

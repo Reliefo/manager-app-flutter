@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configure.dart';
 import 'package:manager_app/Drawer/orderHistory/orderHistory.dart';
+import 'package:manager_app/authentication/loginPage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerMenu extends StatelessWidget {
-//  final Restaurant restaurant;
-//  final updateConfigDetailsToCloud;
-//
-//  final getRest;
-//  final login;
-//
-//  DrawerMenu({
-//    @required this.restaurant,
-//    this.updateConfigDetailsToCloud,
-//    this.getRest,
-//    this.login,
-//  });
+  clearData() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -31,10 +26,7 @@ class DrawerMenu extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => Configure(
-//                  updateConfigDetailsToCloud: updateConfigDetailsToCloud,
-//                  restaurant: rest.restaurant,
-                    ),
+                builder: (context) => Configure(),
               ),
             );
           },
@@ -59,9 +51,18 @@ class DrawerMenu extends StatelessWidget {
         ///////////////////
 
         FlatButton(
-          child: Text('login'),
+          child: Center(
+            child: Text('Logout'),
+          ),
           onPressed: () {
-//            login();
+            clearData();
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LoginPage(),
+              ),
+            );
           },
         ),
         FlatButton(

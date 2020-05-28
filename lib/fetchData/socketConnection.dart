@@ -116,7 +116,7 @@ class _SocketConnectionState extends State<SocketConnection> {
     if (data is Map) {
       data = json.encode(data);
     }
-    print(data);
+    print("from logger: $data");
   }
 
   printRest() {
@@ -200,8 +200,31 @@ class _SocketConnectionState extends State<SocketConnection> {
       }
 
       if (decode["type"] == "delete_staff") {
-        restaurant.staff
-            .removeWhere((staff) => staff.oid == decode["staff_id"]);
+//        {restaurant_id: BNGHSR0003, type: delete_staff, staff_id: 5eca869084f3f4e32ec2625e}
+        setState(() {
+          restaurant.staff
+              .removeWhere((staff) => staff.oid == decode["staff_id"]);
+        });
+        setState(() {
+          restaurant.tables.forEach((table) {
+            print(" table name ${table.name}");
+            if (table.staff != null && table.staff.isNotEmpty) {
+              var thisStaff;
+              table.staff.forEach((staff) {
+                print(" table name: ${table.name}  staff name : ${staff.name}");
+                if (staff.oid == decode["staff_id"]) {
+                  print("staff matched : ${staff.name}");
+                  thisStaff = staff;
+
+                  print("rererewwe");
+                }
+              });
+
+              table.staff.removeWhere((element) => thisStaff == element);
+            } else
+              print("is empty");
+          });
+        });
       }
       ////////////////////////////////    assign staff     ///////////////////
       if (decode["type"] == "assign_staff") {
@@ -413,14 +436,14 @@ class _SocketConnectionState extends State<SocketConnection> {
   fetchBilled(data) {
     print("inside billing");
     print(data);
-
+//todo: implement billing when requested from customer app
     if (data["status"] == "billed") {
       setState(() {
-        completedOrders.forEach((order) {
-          print(order.tableId);
-        });
         completedOrders
             .removeWhere((order) => order.tableId == data["table_id"]);
+
+        restaurant.assistanceRequests
+            .removeWhere((request) => request.tableId == data["table_id"]);
       });
     }
   }
@@ -536,7 +559,8 @@ class _SocketConnectionState extends State<SocketConnection> {
         data = json.encode(data);
       }
       var decoded = jsonDecode(data);
-
+      print("order updateds");
+      print(decoded);
       var selectedOrder;
 
       if (decoded['type'] == "cooking") {
@@ -568,6 +592,8 @@ class _SocketConnectionState extends State<SocketConnection> {
 //                  print('food id  matched${decoded['food_id']}');
                   fooditem.status = decoded['type'];
 //                   push to cooking and completed orders
+                  print("before pushing");
+                  print(tableorder.toJson());
                   pushTo(tableorder, order, fooditem, decoded['type']);
 //                  print('coming here at leastsadf');
 
@@ -652,7 +678,11 @@ class _SocketConnectionState extends State<SocketConnection> {
       if (decoded['status'] == "accepted") {
         acceptedAssistanceReq(decoded);
       } else if (decoded['status'] == "pending") {
+        if (restaurant.assistanceRequests == null) {
+          restaurant.assistanceRequests = new List<AssistanceRequest>();
+        }
         AssistanceRequest assist = AssistanceRequest.fromJson(decoded);
+
         restaurant.assistanceRequests.add(assist);
       }
     });
@@ -662,17 +692,33 @@ class _SocketConnectionState extends State<SocketConnection> {
     setState(() {
       restaurant.assistanceRequests.forEach((request) {
         if (request.assistanceReqId == decoded['assistance_req_id']) {
-          request.acceptedBy = decoded['staff_name'];
+          request.acceptedBy = {
+            "staff_name": decoded['accepted_by']['staff_name'],
+            "staff_id": decoded['accepted_by']['staff_id']
+          };
         }
       });
+    });
+  }
+
+  printOrders() {
+//    print("completed");
+//    completedOrders.forEach((completed) {
+//      print(completed.tableId);
+//    });
+    print("cooking");
+    cookingOrders.forEach((cooking) {
+      print(cooking.tableId);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     print("hereeeeww");
-    print(restaurant.assistanceRequests);
-
+//    printOrders();
+//    print(restaurant.assistanceRequests);
+//    print(restaurant.tables[1].staff[0].name);
+//      5eccc49668b1b9d33f7108ac
     return TabContainerBottom(
       sockets: sockets,
       restaurant: restaurant,

@@ -167,7 +167,7 @@ class Tables {
   String name;
   String seats;
   List<Staff> staff;
-  List<String> users; //todo: add scanned user details to table object
+  List<String> users = []; //todo: add scanned user details to table object
 
   List<TableOrder> tableOrders;
 //  List<AssistanceRequest> tableAssistanceRequest;
@@ -345,7 +345,7 @@ class Staff {
   String name;
   //todo: update assistance history and order history
   List<AssistanceRequest> assistanceHistory;
-  List orderHistory;
+  List<StaffOrderHistory> orderHistory;
 
   Staff({
     this.name,
@@ -370,13 +370,17 @@ class Staff {
 //        assistanceHistory.add(new AssistanceRequest.fromJson(v));
 //      });
 //    }
-//    if (json['order_history'] != null) {
-//      //todo:check
-//      orderHistory = new List<OrderHistory>();
-//      json['order_history'].forEach((v) {
-//        orderHistory.add(new OrderHistory.fromJson(v));
-//      });
-//    }
+    print("before adding staff history");
+    if (json['order_history'] != null) {
+      //todo:check
+      print("before adding staff historyfdfdfd");
+      orderHistory = new List<StaffOrderHistory>();
+      json['order_history'].forEach((v) {
+        print(v);
+        orderHistory.add(new StaffOrderHistory.fromJson(v));
+      });
+    }
+    print("after adding staff history");
   }
 
   addStaff(staff) {
@@ -392,6 +396,87 @@ class Staff {
   }
 }
 
+class StaffOrderHistory {
+  String tableOrderId;
+  String orderId;
+  String foodId;
+  String kitchenStaffId;
+  String table;
+  String tableId;
+  String user;
+  DateTime timestamp;
+  String food;
+  String status;
+  String acceptedBy;
+
+  StaffOrderHistory({
+    this.tableOrderId,
+    this.orderId,
+    this.foodId,
+    this.kitchenStaffId,
+    this.table,
+    this.tableId,
+    this.user,
+    this.timestamp,
+    this.food,
+    this.status,
+    this.acceptedBy,
+  });
+
+  StaffOrderHistory.fromJson(Map<String, dynamic> json) {
+    if (json['table_order_id'] != null) {
+      tableOrderId = json['table_order_id'];
+    }
+    if (json['order_id'] != null) {
+      orderId = json['order_id'];
+    }
+    if (json['food_id'] != null) {
+      foodId = json['food_id'];
+    }
+    if (json['kitchen_staff_id'] != null) {
+      kitchenStaffId = json['kitchen_staff_id'];
+    }
+    if (json['table'] != null) {
+      table = json['table'];
+    }
+    if (json['table_id'] != null) {
+      tableId = json['table_id'];
+    }
+    if (json['user'] != null) {
+      user = json['user'];
+    }
+
+    if (json['timestamp'] != null) {
+      timestamp = DateTime.parse(json['timestamp']);
+    }
+    if (json['food_name'] != null) {
+      food = json['food_name'];
+    }
+    if (json['status'] != null) {
+      status = json['status'];
+    }
+    if (json['staff_id'] != null) {
+      acceptedBy = json['staff_id'];
+    }
+  }
+}
+
+//{
+//"table_order_id": "5ec4f44a52fb64704df9b2c1",
+//"type": "on_the_way",
+//"order_id": "5ec4f44a52fb64704df9b2c0",
+//"food_id": "5eb41b85adb66da6f5312064",
+//"kitchen_staff_id": "5ebbf19bdcfeedd2a5c55c93",
+//"table": "table6",
+//"table_id": "5eb41b91adb66da6f5312125",
+//"user": "Saturn_1",
+//"timestamp": "2020-05-20 14:42:09.397902",
+//"food_name": "SPICY TRICOLOUR CHAAT",
+//"request_type": "pickup_request",
+//"status": "accepted",
+//"restaurant_id": null,
+//"staff_id": "5eb41bbaadb66da6f5312132"
+//}
 class KitchenStaff {
   String oid;
   String name;
@@ -597,45 +682,6 @@ class FoodOption {
   }
 }
 
-//class MainCategory {
-//  String oid;
-//  String description;
-//  String name;
-//  List<SubCategory> subCategory;
-//
-//  MainCategory({
-//    this.oid,
-//    this.description,
-//    this.name,
-//    this.subCategory,
-//  });
-//
-//  MainCategory.fromJson(Map<String, dynamic> json) {
-//    oid = json['_id']['\$oid'];
-//
-//    name = json['name'];
-//
-//    description = json['description'];
-//
-//    if (json['sub_category'] != null) {
-//      subCategory = new List<SubCategory>();
-//      json['sub_category'].forEach((v) {
-//        subCategory.add(new SubCategory.fromJson(v));
-//      });
-//    }
-//  }
-//
-////  Map<String, dynamic> toJson() {
-////    final Map<String, dynamic> data = new Map<String, dynamic>();
-////    data['description'] = this.description;
-////    data['name'] = this.name;
-////    if (this.subCategory != null) {
-////      data['sub_category'] = this.subCategory.map((v) => v.toJson()).toList();
-////    }
-////    return data;
-////  }
-//}
-///////////////////////////////////////////////////////////////////////////////////
 class TableOrder {
   String oId;
   String table;
@@ -667,6 +713,10 @@ class TableOrder {
       tableId = json['table_id'];
     }
 
+//    if (json['table_id'] != null) {
+//      tableId = json['table_id'];
+//    }
+
     if (json['orders'] != null) {
       orders = new List<Order>();
       json['orders'].forEach((v) {
@@ -680,13 +730,15 @@ class TableOrder {
   }
 
   TableOrder.fromJsonNew(Map<String, dynamic> json) {
+    print("innside table order");
+    print(json);
     oId = json['oId'];
-
     table = json['table'];
     tableId = json['table_id'];
     status = json['status'];
     timeStamp = json['timestamp'];
   }
+
   addFirstOrder(Order order) {
     this.orders = new List<Order>();
     this.orders.add(order);
@@ -714,6 +766,7 @@ class TableOrder {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['oId'] = this.oId;
     data['table'] = this.table;
+    data['table_id'] = this.tableId;
     data['status'] = this.status;
     data['timestamp'] = this.timeStamp;
     return data;

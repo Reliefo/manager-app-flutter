@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager_app/Drawer/configureRestaurant/registerStaff.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
 
@@ -163,6 +164,32 @@ class _AddDataState extends State<AddKitchenStaff> {
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
+                                      FlatButton(
+                                        child: Text("Register"),
+                                        onPressed: () {
+                                          restaurantData
+                                              .sendStaffRegistrationToBackend({
+                                            "restaurant_name":
+                                                restaurantData.restaurant.name,
+                                            "restaurant_id": restaurantData
+                                                .restaurant.restaurantId,
+                                            "user_type": "kitchen",
+                                            "object_id": restaurantData
+                                                .restaurant
+                                                .kitchenStaff[index]
+                                                .oid,
+                                            "name": restaurantData.restaurant
+                                                .kitchenStaff[index].name,
+                                          });
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  RegisterStaff(),
+                                            ),
+                                          );
+                                        },
+                                      ),
                                       IconButton(
                                         icon: Icon(Icons.edit),
                                         onPressed: () {

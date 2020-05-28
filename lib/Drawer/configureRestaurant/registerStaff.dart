@@ -23,105 +23,105 @@ class _RegisterStaffState extends State<RegisterStaff> {
         body: Container(
           child: Row(
             children: <Widget>[
-              Expanded(
-                child: Container(
-                  color: Colors.cyan,
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Expanded(
-                            child: RadioListTile(
-                              groupValue: userType,
-                              title: Text('Staff'),
-                              value: 'staff',
-                              onChanged: (val) {
-                                setState(() {
-                                  userType = val;
-                                });
-                              },
-                            ),
-                          ),
-                          Expanded(
-                            child: RadioListTile(
-                              groupValue: userType,
-                              title: Text('Kitchen'),
-                              value: 'kitchen',
-                              onChanged: (val) {
-                                setState(() {
-                                  userType = val;
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      userType == "staff"
-                          ? Container(
-                              padding: EdgeInsets.all(16),
-                              child: DropdownButton(
-                                value: _selectedStaffLabel,
-                                items: restaurantData.restaurant.staff != null
-                                    ? restaurantData.restaurant.staff
-                                        .map((staff) {
-                                        return DropdownMenuItem(
-                                          value: staff,
-                                          child: Text(staff.name),
-                                        );
-                                      }).toList()
-                                    : [],
-                                hint: Text('Select the Staff'),
-                                isExpanded: true,
-                                onChanged: (selected) {
-                                  setState(() {
-                                    _selectedStaffLabel = selected;
-                                  });
-                                },
-                              ),
-                            )
-                          : Container(
-                              padding: EdgeInsets.all(16),
-                              child: DropdownButton(
-                                value: _selectedStaffLabel,
-                                items: restaurantData.restaurant.kitchenStaff !=
-                                        null
-                                    ? restaurantData.restaurant.kitchenStaff
-                                        .map((kitchenStaff) {
-                                        return DropdownMenuItem(
-                                          value: kitchenStaff,
-                                          child: Text(kitchenStaff.name),
-                                        );
-                                      }).toList()
-                                    : [],
-                                hint: Text('Select Kitchen Staff'),
-                                isExpanded: true,
-                                onChanged: (selected) {
-                                  setState(() {
-                                    _selectedStaffLabel = selected;
-                                  });
-                                },
-                              ),
-                            ),
-                      FlatButton(
-                        child: Text("Register"),
-                        onPressed: () {
-                          restaurantData.sendStaffRegistrationToBackend({
-                            "restaurant_name": restaurantData.restaurant.name,
-                            "restaurant_id":
-                                restaurantData.restaurant.restaurantId,
-                            "user_type": userType,
-                            "object_id": _selectedStaffLabel.oid,
-                            "name": _selectedStaffLabel.name,
-                          });
-
-                          _selectedStaffLabel = null;
-                        },
-                      )
-                    ],
-                  ),
-                ),
-              ),
+//              Expanded(
+//                child: Container(
+//                  color: Colors.cyan,
+//                  child: Column(
+//                    children: <Widget>[
+//                      Row(
+//                        crossAxisAlignment: CrossAxisAlignment.start,
+//                        children: <Widget>[
+//                          Expanded(
+//                            child: RadioListTile(
+//                              groupValue: userType,
+//                              title: Text('Staff'),
+//                              value: 'staff',
+//                              onChanged: (val) {
+//                                setState(() {
+//                                  userType = val;
+//                                });
+//                              },
+//                            ),
+//                          ),
+//                          Expanded(
+//                            child: RadioListTile(
+//                              groupValue: userType,
+//                              title: Text('Kitchen'),
+//                              value: 'kitchen',
+//                              onChanged: (val) {
+//                                setState(() {
+//                                  userType = val;
+//                                });
+//                              },
+//                            ),
+//                          ),
+//                        ],
+//                      ),
+//                      userType == "staff"
+//                          ? Container(
+//                              padding: EdgeInsets.all(16),
+//                              child: DropdownButton(
+//                                value: _selectedStaffLabel,
+//                                items: restaurantData.restaurant.staff != null
+//                                    ? restaurantData.restaurant.staff
+//                                        .map((staff) {
+//                                        return DropdownMenuItem(
+//                                          value: staff,
+//                                          child: Text(staff.name),
+//                                        );
+//                                      }).toList()
+//                                    : [],
+//                                hint: Text('Select the Staff'),
+//                                isExpanded: true,
+//                                onChanged: (selected) {
+//                                  setState(() {
+//                                    _selectedStaffLabel = selected;
+//                                  });
+//                                },
+//                              ),
+//                            )
+//                          : Container(
+//                              padding: EdgeInsets.all(16),
+//                              child: DropdownButton(
+//                                value: _selectedStaffLabel,
+//                                items: restaurantData.restaurant.kitchenStaff !=
+//                                        null
+//                                    ? restaurantData.restaurant.kitchenStaff
+//                                        .map((kitchenStaff) {
+//                                        return DropdownMenuItem(
+//                                          value: kitchenStaff,
+//                                          child: Text(kitchenStaff.name),
+//                                        );
+//                                      }).toList()
+//                                    : [],
+//                                hint: Text('Select Kitchen Staff'),
+//                                isExpanded: true,
+//                                onChanged: (selected) {
+//                                  setState(() {
+//                                    _selectedStaffLabel = selected;
+//                                  });
+//                                },
+//                              ),
+//                            ),
+//                      FlatButton(
+//                        child: Text("Register"),
+//                        onPressed: () {
+//                          restaurantData.sendStaffRegistrationToBackend({
+//                            "restaurant_name": restaurantData.restaurant.name,
+//                            "restaurant_id":
+//                                restaurantData.restaurant.restaurantId,
+//                            "user_type": userType,
+//                            "object_id": _selectedStaffLabel.oid,
+//                            "name": _selectedStaffLabel.name,
+//                          });
+//
+//                          _selectedStaffLabel = null;
+//                        },
+//                      )
+//                    ],
+//                  ),
+//                ),
+//              ),
               Expanded(
                 child: Container(
                   color: Colors.orange,

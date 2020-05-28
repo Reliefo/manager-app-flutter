@@ -338,55 +338,51 @@ class _AddFoodItemState extends State<AddItem> {
                   endIndent: 12,
                 ),
                 Expanded(
-                  child: Column(
-                    children: <Widget>[
-                      widget.category.foodList != null
-                          ? ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: widget.category.foodList.length,
-                              itemBuilder: (context, index) {
-                                return FlatButton(
-                                  child: ListTile(
-                                    title: Text(
-                                        widget.category.foodList[index].name),
-                                    subtitle: Text(widget
-                                        .category.foodList[index].description),
-                                    trailing: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        IconButton(
-                                          icon: Icon(Icons.cancel),
-                                          onPressed: () {
-                                            restaurantData
-                                                .sendConfiguredDataToBackend({
-                                              "category_type": widget.menuType,
-                                              "food_id": widget
-                                                  .category.foodList[index].oid
-                                            }, "delete_food_item");
-                                          },
-                                        ),
-                                      ],
+                  child: widget.category.foodList != null
+                      ? ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: widget.category.foodList.length,
+                          itemBuilder: (context, index) {
+                            return FlatButton(
+                              child: ListTile(
+                                title:
+                                    Text(widget.category.foodList[index].name),
+                                subtitle: Text(widget
+                                    .category.foodList[index].description),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    IconButton(
+                                      icon: Icon(Icons.cancel),
+                                      onPressed: () {
+                                        restaurantData
+                                            .sendConfiguredDataToBackend({
+                                          "category_type": widget.menuType,
+                                          "food_id": widget
+                                              .category.foodList[index].oid
+                                        }, "delete_food_item");
+                                      },
                                     ),
-                                  ),
-                                  onPressed: () {
-                                    //////////////////////////////// view item ///////////////
-                                    showDialog(
+                                  ],
+                                ),
+                              ),
+                              onPressed: () {
+                                //////////////////////////////// view item ///////////////
+                                showDialog(
 //                                    barrierDismissible: false,
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return ViewItem(
-                                            menuType: widget.menuType,
-                                            foodItem:
-                                                widget.category.foodList[index],
-                                          );
-                                        });
-                                  },
-                                );
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return ViewItem(
+                                        menuType: widget.menuType,
+                                        foodItem:
+                                            widget.category.foodList[index],
+                                      );
+                                    });
                               },
-                            )
-                          : Text('no items'),
-                    ],
-                  ),
+                            );
+                          },
+                        )
+                      : Text('no items'),
                 ),
               ],
             ),

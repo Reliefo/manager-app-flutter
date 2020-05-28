@@ -5,14 +5,6 @@ import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
 
 class AssignStaff extends StatefulWidget {
-//  final Restaurant restaurant;
-//  final updateConfigDetailsToCloud;
-//
-//  AssignStaff({
-//    @required this.restaurant,
-//    this.updateConfigDetailsToCloud,
-//  });
-
   @override
   _AssignStaffState createState() => _AssignStaffState();
 }
@@ -42,13 +34,15 @@ class _AssignStaffState extends State<AssignStaff> {
     restaurantData.restaurant.staff.forEach((staff) {
       displayStaff.add(staff);
     });
-    selectedTable.staff.forEach((staff) {
-      displayStaff.removeWhere((element) => element == staff);
-    });
+    if (selectedStaff.isNotEmpty && selectedStaff != null) {
+      selectedTable.staff.forEach((staff) {
+        displayStaff.removeWhere((element) => element == staff);
+      });
+    }
   }
 
   removeDisplayStaff() {
-    if (selectedStaff.isNotEmpty) {
+    if (selectedStaff.isNotEmpty && selectedStaff != null) {
       selectedStaff.forEach((staff) {
         displayStaff.removeWhere((element) => element == staff);
       });
@@ -72,6 +66,7 @@ class _AssignStaffState extends State<AssignStaff> {
           children: <Widget>[
             Expanded(
               child: Container(
+                height: double.maxFinite,
                 padding: EdgeInsets.symmetric(vertical: 12, horizontal: 18),
                 color: Color(0xffE0EAF0),
                 child: Card(
@@ -80,137 +75,127 @@ class _AssignStaffState extends State<AssignStaff> {
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                   child: SingleChildScrollView(
-                    child: Container(
-                      height: double.maxFinite,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                            padding: EdgeInsets.all(16),
-                            child: Text('Assign Staff To Table'),
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: Container(
-                                  padding: EdgeInsets.all(16),
-                                  child: DropdownButton(
-                                    value: _selectedTableLabel,
-                                    items:
-                                        restaurantData.restaurant.tables != null
-                                            ? restaurantData.restaurant.tables
-                                                .map((table) {
-                                                return DropdownMenuItem(
-                                                  value: table,
-                                                  child: Text(table.name),
-                                                );
-                                              }).toList()
-                                            : [],
-                                    hint: Text('Select the Table'),
-                                    isExpanded: true,
-                                    onChanged: (selected) {
-                                      setState(() {
-                                        print(selected);
-                                        _selectedTableLabel = selected;
-                                        selectedTable = selected;
-                                      });
-                                      getStaff(restaurantData);
-                                    },
-                                  ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          child: Text('Assign Staff To Table'),
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Container(
+                                padding: EdgeInsets.all(16),
+                                child: DropdownButton(
+                                  value: _selectedTableLabel,
+                                  items:
+                                      restaurantData.restaurant.tables != null
+                                          ? restaurantData.restaurant.tables
+                                              .map((table) {
+                                              return DropdownMenuItem(
+                                                value: table,
+                                                child: Text(table.name),
+                                              );
+                                            }).toList()
+                                          : [],
+                                  hint: Text('Select the Table'),
+                                  isExpanded: true,
+                                  onChanged: (selected) {
+                                    setState(() {
+                                      print(selected);
+                                      _selectedTableLabel = selected;
+                                      selectedTable = selected;
+                                    });
+                                    displayStaff.clear();
+                                    selectedStaff.clear();
+                                    getStaff(restaurantData);
+                                  },
                                 ),
                               ),
-                              Expanded(
-                                child: Container(
-                                  padding: EdgeInsets.all(16),
-                                  child: DropdownButton(
-//                                    value: "_selectedStaffLabel",
-                                    items:
-//                                        restaurantData.restaurant.staff != null
-//                                            ? restaurantData.restaurant.staff
-                                        displayStaff != null
-                                            ? displayStaff.map((staff) {
-                                                return DropdownMenuItem(
-                                                  value: staff,
-                                                  child: Text(staff.name),
-                                                );
-                                              }).toList()
-                                            : [],
-                                    hint: Text('Select the Staff'),
-                                    isExpanded: true,
-                                    onChanged: (selected) {
-                                      setState(() {
-                                        _selectedStaffLabel = selected;
-                                        selectedStaff.add(selected);
-                                      });
-                                      removeDisplayStaff();
-                                    },
-                                  ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                padding: EdgeInsets.all(16),
+                                child: DropdownButton(
+                                  items: displayStaff != null
+                                      ? displayStaff.map((staff) {
+                                          return DropdownMenuItem(
+                                            value: staff,
+                                            child: Text(staff.name),
+                                          );
+                                        }).toList()
+                                      : [],
+                                  hint: Text('Select the Staff'),
+                                  isExpanded: true,
+                                  onChanged: (selected) {
+                                    setState(() {
+                                      _selectedStaffLabel = selected;
+                                      selectedStaff.add(selected);
+                                    });
+                                    removeDisplayStaff();
+                                  },
                                 ),
                               ),
-                            ],
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 20),
+                          child: selectedTable != null
+                              ? Text(
+                                  'Selected Table : ${selectedTable.name}',
+                                  style: homePageS1,
+                                )
+                              : Text(
+                                  'Selected Table :',
+                                  style: homePageS1,
+                                ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 20),
+                          child: Text(
+                            'Selected Staffs :',
+                            style: homePageS1,
                           ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 20),
-                            child: selectedTable != null
-                                ? Text(
-                                    'Selected Table : ${selectedTable.name}',
-                                    style: homePageS1,
-                                  )
-                                : Text(
-                                    'Selected Table :',
-                                    style: homePageS1,
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          child: ListView.builder(
+                              shrinkWrap: true,
+                              primary: false,
+                              itemCount: selectedStaff.length,
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  title: Text(
+                                    selectedStaff[index].name,
+                                    style: homePageS2,
                                   ),
+                                  trailing: IconButton(
+                                    icon: Icon(Icons.cancel),
+                                    onPressed: () {
+                                      setState(() {
+                                        selectedStaff.removeAt(index);
+                                      });
+                                    },
+                                  ),
+                                );
+                              }),
+                        ),
+                        FlatButton(
+                          child: Container(
+                            child: Text('Confirm'),
                           ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 20),
-                            child: Text(
-                              'Selected Staffs :',
-                              style: homePageS1,
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 8),
-                            child: ListView.builder(
-                                shrinkWrap: true,
-                                primary: false,
-                                itemCount: selectedStaff.length,
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                    title: Text(
-                                      selectedStaff[index].name,
-                                      style: homePageS2,
-                                    ),
-                                    trailing: IconButton(
-                                      icon: Icon(Icons.cancel),
-                                      onPressed: () {
-                                        setState(() {
-                                          selectedStaff.removeAt(index);
-                                        });
-                                      },
-                                    ),
-                                  );
-                                }),
-                          ),
-                          FlatButton(
-                            child: Container(
-                              child: Text('Confirm'),
-                            ),
-                            onPressed: () {
-//                            widget.restaurant.tables.forEach((table) {
-//                              if (table.oid == selectedTable.oid) {
-//                                print('table matched: ${table.name}');
-//                                table.addTableStaff(selectedStaff);
-//                              }
-//                            });
-                              sendAssignedStaff(restaurantData);
+                          onPressed: () {
+                            sendAssignedStaff(restaurantData);
 
-                              selectedStaff.clear();
-                            },
-                          ),
-                        ],
-                      ),
+                            selectedStaff.clear();
+                          },
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -270,8 +255,13 @@ class _AssignStaffState extends State<AssignStaff> {
                                           ),
                                         ),
                                         restaurantData.restaurant.tables[index]
-                                                    .staff !=
-                                                null
+                                                        .staff !=
+                                                    null &&
+                                                restaurantData
+                                                    .restaurant
+                                                    .tables[index]
+                                                    .staff
+                                                    .isNotEmpty
                                             ? Expanded(
                                                 child: ListView.builder(
                                                     itemCount: restaurantData
@@ -311,8 +301,6 @@ class _AssignStaffState extends State<AssignStaff> {
                                                                           index2]
                                                                       .oid
                                                             }, "withdraw_staff");
-
-                                                            //todo:
                                                           },
                                                         ),
                                                       );

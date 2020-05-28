@@ -46,97 +46,89 @@ class _AddFoodItemToTagsState extends State<AddFoodItemToTags> {
   @override
   Widget build(BuildContext context) {
     final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
-    return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min, // To make the card compact
-        children: <Widget>[
-          Text(
-            "Add item to: ${widget.selectedTag}",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16.0,
+    return Column(
+      mainAxisSize: MainAxisSize.min, // To make the card compact
+      children: <Widget>[
+//        Text(
+//          "Add item to: ${widget.selectedTag}",
+//          textAlign: TextAlign.center,
+//          style: TextStyle(
+//            fontSize: 16.0,
+//          ),
+//        ),
+        DropdownButton(
+          value: _selectedFoodCategory,
+          items: restaurantData.restaurant.foodMenu != null
+              ? restaurantData.restaurant.foodMenu.map((category) {
+                  return DropdownMenuItem(
+                    value: category,
+                    child: Text(category.name),
+                  );
+                }).toList()
+              : [],
+          hint: Text('Select Food Category'),
+          isExpanded: true,
+          onChanged: (selected) {
+            setState(() {
+              print(selected);
+
+              _selectedFoodCategory = selected;
+            });
+            getItems();
+          },
+        ),
+        SizedBox(height: 20.0),
+        DropdownButton(
+          value: _selectedFoodItem,
+          items: displayItems != null
+              ? displayItems.map((item) {
+                  return DropdownMenuItem(
+                    value: item,
+                    child: Text(item.name),
+                  );
+                }).toList()
+              : [],
+          hint: Text('Select Food Item'),
+          isExpanded: true,
+          onChanged: (selected) {
+            setState(() {
+              print(selected);
+              _selectedFoodItem = selected;
+            });
+          },
+        ),
+        SizedBox(height: 24.0),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+//              FlatButton(
+//                child: Text(
+//                  "Cancel",
+//                  style: TextStyle(color: Colors.red),
+//                ),
+//                onPressed: () {
+//                  Navigator.of(context).pop(); // To close the dialog
+//                },
+//              ),
+            FlatButton(
+              child: Text(
+                "Add Item",
+                style: TextStyle(color: Colors.green),
+              ),
+              onPressed: () {
+                restaurantData.sendConfiguredDataToBackend({
+                  "food_id": _selectedFoodItem.oid,
+                  "tag_name": widget.selectedTag,
+                }, "attach_home_screen_tags");
+                setState(() {
+                  _selectedFoodCategory = null;
+                  _selectedFoodItem = null;
+                });
+              },
             ),
-          ),
-          DropdownButton(
-            value: _selectedFoodCategory,
-            items: restaurantData.restaurant.foodMenu != null
-                ? restaurantData.restaurant.foodMenu.map((category) {
-                    return DropdownMenuItem(
-                      value: category,
-                      child: Text(category.name),
-                    );
-                  }).toList()
-                : [],
-            hint: Text('Select Food Category'),
-            isExpanded: true,
-            onChanged: (selected) {
-              setState(() {
-                print(selected);
-
-                _selectedFoodCategory = selected;
-              });
-              getItems();
-            },
-          ),
-          SizedBox(height: 20.0),
-          DropdownButton(
-            value: _selectedFoodItem,
-            items:
-
-//            _selectedFoodCategory != null
-//                ? _selectedFoodCategory.foodList
-
-                displayItems != null
-                    ? displayItems.map((item) {
-                        return DropdownMenuItem(
-                          value: item,
-                          child: Text(item.name),
-                        );
-                      }).toList()
-                    : [],
-            hint: Text('Select Food Item'),
-            isExpanded: true,
-            onChanged: (selected) {
-              setState(() {
-                print(selected);
-                _selectedFoodItem = selected;
-              });
-            },
-          ),
-          SizedBox(height: 24.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              FlatButton(
-                child: Text(
-                  "Cancel",
-                  style: TextStyle(color: Colors.red),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop(); // To close the dialog
-                },
-              ),
-              FlatButton(
-                child: Text(
-                  "Add Item",
-                  style: TextStyle(color: Colors.green),
-                ),
-                onPressed: () {
-                  restaurantData.sendConfiguredDataToBackend({
-                    "food_id": _selectedFoodItem.oid,
-                    "tag_name": widget.selectedTag,
-                  }, "attach_home_screen_tags");
-
-                  Navigator.of(context).pop(); // To close the dialog
-                },
-              ),
-            ],
-          )
-        ],
-      ),
+          ],
+        )
+      ],
     );
   }
 }

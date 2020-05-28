@@ -195,9 +195,7 @@ class _LoginPageState extends State<LoginPage> {
 
       _saveData();
     }
-// 201 for temp password Matched successfully
-    // 200 for original password Matched successfully
-    // 403 for temp password Match failed.
+
     if (statusCode == 200 || statusCode == 201 || statusCode == 403) {
       setState(() {
         responseCode = statusCode;

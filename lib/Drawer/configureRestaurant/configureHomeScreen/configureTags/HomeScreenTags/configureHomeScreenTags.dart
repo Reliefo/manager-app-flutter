@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureTags/addNewTag.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureTags/navigateBetter/addBarItemToTags.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureTags/navigateBetter/addFoodItemToTags.dart';
 import 'package:manager_app/data.dart';
@@ -20,41 +21,55 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
 
   String selectedTag;
 
+  String radioItem = 'foodMenu';
+
+  List<MenuFoodItem> selectedTagItems = [];
+
+  getTagItems(selectedTag, restaurantData) {
+    setState(() {
+//      barItems.clear();
+//      foodItems.clear();
+      selectedTagItems.clear();
+      if (restaurantData.restaurant.barMenu != null &&
+          restaurantData.restaurant.barMenu.isNotEmpty) {
+        restaurantData.restaurant.barMenu.forEach((category) {
+          category.foodList.forEach((food) {
+            if (food.tags != null) {
+              if (food.tags.isNotEmpty) {
+                food.tags.forEach((tag) {
+                  if (tag == selectedTag) {
+                    selectedTagItems.add(food);
+                  }
+                });
+              }
+            }
+          });
+        });
+      }
+      if (restaurantData.restaurant.foodMenu != null &&
+          restaurantData.restaurant.foodMenu.isNotEmpty) {
+        restaurantData.restaurant.foodMenu.forEach((category) {
+          category.foodList.forEach((food) {
+            if (food.tags != null) {
+              if (food.tags.isNotEmpty) {
+                food.tags.forEach((tag) {
+                  if (tag == selectedTag) {
+                    selectedTagItems.add(food);
+                  }
+                });
+              }
+            }
+          });
+        });
+      }
+    });
+  }
+
   _onSelected(int index, restaurantData) {
     setState(() {
       _selectedIndex = index;
 
       selectedTag = restaurantData.restaurant.homeScreenTags[index];
-    });
-  }
-
-  getTagItems(selectedTag, restaurantData) {
-    setState(() {
-      barItems.clear();
-      foodItems.clear();
-
-      restaurantData.restaurant.barMenu.forEach((category) {
-        category.foodList.forEach((food) {
-          if (food.tags.isNotEmpty) {
-            food.tags.forEach((tag) {
-              if (tag == selectedTag) {
-                barItems.add(food);
-              }
-            });
-          }
-        });
-      });
-      restaurantData.restaurant.foodMenu.forEach((category) {
-        category.foodList.forEach((food) {
-          if (food.tags.isNotEmpty) {
-            food.tags.forEach((tag) {
-              if (tag == selectedTag) {
-                foodItems.add(food);
-              }
-            });
-          }
-        });
-      });
     });
   }
 
@@ -88,6 +103,7 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
                                 builder: (BuildContext context) {
                                   // return object of type Dialog
                                   return AddNewTag(
+                                      addTo: "home_screen",
                                       tagController: tagController);
                                 },
                               );
@@ -201,186 +217,230 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
               Expanded(
                 child: Container(
                   color: Colors.blue,
-                  child: selectedTag == null
-                      ? Center(
-                          child: Text("Select Tag"),
-                        )
-                      : Column(
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.symmetric(vertical: 10),
-                              child: ListTile(
-                                title: Text('Add New Bar Item to $selectedTag'),
-                                trailing: Icon(Icons.add),
-                                onTap: () {
-                                  showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      // return object of type Dialog
-                                      return AddBarItemToTags(
-                                        selectedTag: selectedTag,
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                            Expanded(
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: barItems.length,
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                    title: Text(barItems[index].name),
-                                    trailing: IconButton(
-                                      icon: Icon(Icons.cancel),
-                                      onPressed: () {
-                                        restaurantData
-                                            .sendConfiguredDataToBackend({
-                                          "food_id": barItems[index].oid,
-                                          "tag_name": selectedTag,
-                                        }, "remove_home_screen_tags");
-                                      },
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: ListTile(
+                          title: selectedTag != null
+                              ? Text('Items in $selectedTag')
+                              : Text('Select Tag to Show Items !'),
                         ),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: selectedTagItems.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(selectedTagItems[index].name),
+                              trailing: IconButton(
+                                icon: Icon(Icons.cancel),
+                                onPressed: () {
+                                  restaurantData.sendConfiguredDataToBackend({
+                                    "food_id": selectedTagItems[index].oid,
+                                    "tag_name": selectedTag,
+                                  }, "remove_home_screen_tags");
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Expanded(
                 child: Container(
                   color: Colors.yellow,
-                  child: selectedTag == null
-                      ? Center(
-                          child: Text("Select Tag"),
-                        )
-                      : Column(
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.symmetric(vertical: 10),
-                              child: ListTile(
-                                title:
-                                    Text('Add New Food Item to $selectedTag'),
-                                trailing: Icon(Icons.add),
-                                onTap: () {
-                                  showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      // return object of type Dialog
-                                      return AddFoodItemToTags(
-                                        selectedTag: selectedTag,
-//                                        restaurant: widget.restaurant,
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                            Expanded(
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: foodItems.length,
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                    title: Text(foodItems[index].name),
-                                    trailing: IconButton(
-                                      icon: Icon(Icons.cancel),
-                                      onPressed: () {
-                                        restaurantData
-                                            .sendConfiguredDataToBackend({
-                                          "food_id": foodItems[index].oid,
-                                          "tag_name": selectedTag,
-                                        }, "remove_home_screen_tags");
-                                      },
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: ListTile(
+                          title: selectedTag != null
+                              ? Text('Add New Item to $selectedTag')
+                              : Text('Select Tag to Add Items'),
+                          onTap: () {
+                            showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (BuildContext context) {
+                                // return object of type Dialog
+                                return AddFoodItemToTags(
+                                  selectedTag: selectedTag,
+//                                  restaurant: widget.restaurant,
+                                );
+                              },
+                            );
+                          },
                         ),
+                      ),
+                      Expanded(
+                        child: selectedTag != null
+                            ? SingleChildScrollView(
+                                child: Column(
+                                  children: <Widget>[
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: RadioListTile(
+                                            groupValue: radioItem,
+                                            title: Text('Food Menu'),
+                                            value: 'foodMenu',
+                                            onChanged: (val) {
+                                              setState(() {
+                                                radioItem = val;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: RadioListTile(
+                                            groupValue: radioItem,
+                                            title: Text('Bar Menu'),
+                                            value: 'barMenu',
+                                            onChanged: (val) {
+                                              setState(() {
+                                                radioItem = val;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    radioItem == "barMenu"
+                                        ? AddBarItemToTags(
+                                            selectedTag: selectedTag)
+                                        : AddFoodItemToTags(
+                                            selectedTag: selectedTag),
+                                  ],
+                                ),
+                              )
+                            : Center(
+                                child: Text("select tag"),
+                              ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
+
+//              Expanded(
+//                child: Container(
+//                  color: Colors.blue,
+//                  child: selectedTag == null
+//                      ? Center(
+//                          child: Text("Select Tag"),
+//                        )
+//                      : Column(
+//                          children: <Widget>[
+//                            Container(
+//                              padding: EdgeInsets.symmetric(vertical: 10),
+//                              child: ListTile(
+//                                title: Text('Add New Bar Item to $selectedTag'),
+//                                trailing: Icon(Icons.add),
+//                                onTap: () {
+//                                  showDialog(
+//                                    barrierDismissible: false,
+//                                    context: context,
+//                                    builder: (BuildContext context) {
+//                                      // return object of type Dialog
+//                                      return AddBarItemToTags(
+//                                        selectedTag: selectedTag,
+//                                      );
+//                                    },
+//                                  );
+//                                },
+//                              ),
+//                            ),
+//                            Expanded(
+//                              child: ListView.builder(
+//                                shrinkWrap: true,
+//                                itemCount: barItems.length,
+//                                itemBuilder: (context, index) {
+//                                  return ListTile(
+//                                    title: Text(barItems[index].name),
+//                                    trailing: IconButton(
+//                                      icon: Icon(Icons.cancel),
+//                                      onPressed: () {
+//                                        restaurantData
+//                                            .sendConfiguredDataToBackend({
+//                                          "food_id": barItems[index].oid,
+//                                          "tag_name": selectedTag,
+//                                        }, "remove_home_screen_tags");
+//                                      },
+//                                    ),
+//                                  );
+//                                },
+//                              ),
+//                            ),
+//                          ],
+//                        ),
+//                ),
+//              ),
+//              Expanded(
+//                child: Container(
+//                  color: Colors.yellow,
+//                  child: selectedTag == null
+//                      ? Center(
+//                          child: Text("Select Tag"),
+//                        )
+//                      : Column(
+//                          children: <Widget>[
+//                            Container(
+//                              padding: EdgeInsets.symmetric(vertical: 10),
+//                              child: ListTile(
+//                                title:
+//                                    Text('Add New Food Item to $selectedTag'),
+//                                trailing: Icon(Icons.add),
+//                                onTap: () {
+//                                  showDialog(
+//                                    barrierDismissible: false,
+//                                    context: context,
+//                                    builder: (BuildContext context) {
+//                                      // return object of type Dialog
+//                                      return AddFoodItemToTags(
+//                                        selectedTag: selectedTag,
+////                                        restaurant: widget.restaurant,
+//                                      );
+//                                    },
+//                                  );
+//                                },
+//                              ),
+//                            ),
+//                            Expanded(
+//                              child: ListView.builder(
+//                                shrinkWrap: true,
+//                                itemCount: foodItems.length,
+//                                itemBuilder: (context, index) {
+//                                  return ListTile(
+//                                    title: Text(foodItems[index].name),
+//                                    trailing: IconButton(
+//                                      icon: Icon(Icons.cancel),
+//                                      onPressed: () {
+//                                        restaurantData
+//                                            .sendConfiguredDataToBackend({
+//                                          "food_id": foodItems[index].oid,
+//                                          "tag_name": selectedTag,
+//                                        }, "remove_home_screen_tags");
+//                                      },
+//                                    ),
+//                                  );
+//                                },
+//                              ),
+//                            ),
+//                          ],
+//                        ),
+//                ),
+//              ),
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class AddNewTag extends StatelessWidget {
-  const AddNewTag({
-    Key key,
-    @required this.tagController,
-  }) : super(key: key);
-
-  final TextEditingController tagController;
-
-  @override
-  Widget build(BuildContext context) {
-    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
-    return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min, // To make the card compact
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
-                "Enter Tag:  ",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16.0,
-                ),
-              ),
-              SizedBox(width: 20),
-              Container(
-                width: 200,
-                child: TextField(
-                  controller: tagController,
-                  autofocus: true,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 24.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              FlatButton(
-                child: Text(
-                  "Cancel",
-                  style: TextStyle(color: Colors.red),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop(); // To close the dialog
-                },
-              ),
-              FlatButton(
-                child: Text(
-                  "Done",
-                  style: TextStyle(color: Colors.green),
-                ),
-                onPressed: () {
-                  restaurantData.sendConfiguredDataToBackend(
-                      {"add_to": "home_screen", "tag_name": tagController.text},
-                      "add_home_screen_tags");
-                  tagController.clear();
-                  Navigator.of(context).pop(); // To close the dialog
-                },
-              ),
-            ],
-          )
-        ],
       ),
     );
   }
