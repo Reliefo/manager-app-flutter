@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager_app/Drawer/configureRestaurant/registerStaff.dart';
+import 'package:manager_app/constants.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
 
@@ -34,7 +35,7 @@ class _AddDataState extends State<AddStaff> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.grey,
+          backgroundColor: kThemeColor,
           title: Text('Staff Data'),
         ),
         body: Container(
@@ -82,8 +83,11 @@ class _AddDataState extends State<AddStaff> {
                       child: Container(
                         padding: EdgeInsets.all(8),
                         child: RaisedButton(
-                          color: Colors.grey,
-                          child: Text('Add'),
+                          color: kThemeColor,
+                          child: Text(
+                            'Add',
+                            style: kTitleStyle,
+                          ),
                           onPressed: _addStaff,
                         ),
                       ),
@@ -97,25 +101,31 @@ class _AddDataState extends State<AddStaff> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       restaurantData.restaurant.staff == null
-                          ? Text('No Of Staffs :')
+                          ? Text('No of Staffs :')
                           : Text(
-                              'No Of Staffs : ${restaurantData.restaurant.staff.length} ',
+                              'No of Staffs : ${restaurantData.restaurant.staff.length} ',
+                              style: kTitleStyle,
                             ),
                       temporaryStaffNames.length == 0
                           ? Text(
                               'All Staff updated to cloud',
                               style: TextStyle(
+                                  fontFamily: "Poppins",
                                   color: Colors.green,
                                   fontWeight: FontWeight.bold),
                             )
                           : Text(
                               '${temporaryStaffNames.length} Staff not updated to cloud',
                               style: TextStyle(
+                                  fontFamily: "Poppins",
                                   color: Colors.red,
                                   fontWeight: FontWeight.bold),
                             ),
                       RaisedButton(
-                        child: Text('Upload to Cloud'),
+                        child: Text(
+                          'Upload to Cloud',
+                          style: kTitleStyle,
+                        ),
                         onPressed: () {
                           setState(() {
                             restaurantData.sendConfiguredDataToBackend(
@@ -140,7 +150,9 @@ class _AddDataState extends State<AddStaff> {
                           itemBuilder: (context, index) {
                             return ListTile(
                               title: Text(
-                                  'Name : ${temporaryStaffNames[index]['name']}'),
+                                'Name : ${temporaryStaffNames[index]['name']}',
+                                style: kTitleStyle,
+                              ),
                               trailing: IconButton(
                                 icon: Icon(Icons.cancel),
                                 onPressed: () {
@@ -159,12 +171,17 @@ class _AddDataState extends State<AddStaff> {
                               itemBuilder: (context, index) {
                                 return ListTile(
                                   title: Text(
-                                      'Name : ${restaurantData.restaurant.staff[index].name}'),
+                                    'Name : ${restaurantData.restaurant.staff[index].name}',
+                                    style: kTitleStyle,
+                                  ),
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
                                       FlatButton(
-                                        child: Text("Register"),
+                                        child: Text(
+                                          "Register",
+                                          style: kTitleStyle,
+                                        ),
                                         onPressed: () {
                                           restaurantData
                                               .sendStaffRegistrationToBackend({
@@ -217,9 +234,7 @@ class _AddDataState extends State<AddStaff> {
                                                           "Staff Name :  ",
                                                           textAlign:
                                                               TextAlign.center,
-                                                          style: TextStyle(
-                                                            fontSize: 16.0,
-                                                          ),
+                                                          style: kTitleStyle,
                                                         ),
                                                         SizedBox(width: 20),
                                                         Container(
@@ -242,6 +257,8 @@ class _AddDataState extends State<AddStaff> {
                                                           child: Text(
                                                             "Cancel",
                                                             style: TextStyle(
+                                                                fontFamily:
+                                                                    "Poppins",
                                                                 color:
                                                                     Colors.red),
                                                           ),
@@ -255,6 +272,8 @@ class _AddDataState extends State<AddStaff> {
                                                           child: Text(
                                                             "Done",
                                                             style: TextStyle(
+                                                                fontFamily:
+                                                                    "Poppins",
                                                                 color: Colors
                                                                     .green),
                                                           ),
@@ -315,74 +334,3 @@ class _AddDataState extends State<AddStaff> {
     );
   }
 }
-
-//class ListItem extends StatefulWidget {
-//  final List<String> staffNameList;
-//  final int index;
-//
-//  ListItem({
-//    @required this.staffNameList,
-//    this.index,
-//  });
-//  @override
-//  _ListItemState createState() => _ListItemState();
-//}
-//
-//class _ListItemState extends State<ListItem> {
-//  bool _isEditing = false;
-//  bool _done = true;
-//  final editingController = TextEditingController();
-//  @override
-//  Widget build(BuildContext context) {
-//    return ListTile(
-//      title: _isEditing
-//          ? TextFormField(
-//              enabled: _isEditing,
-//              controller: editingController,
-//              decoration: InputDecoration(
-//                hintText: 'Staff Name',
-//              ),
-//            )
-//          : Text('${widget.staffNameList[widget.index]}'),
-//
-//      // The icon button which will notify list item to change
-//      trailing: !_isEditing
-//          ? GestureDetector(
-//              child: Icon(
-//                Icons.edit,
-//                color: Colors.black,
-//              ),
-//              onTap: () {
-//                setState(() {
-//                  if (_isEditing == true) {
-//                    _isEditing = false;
-//                  }
-//                  if (_isEditing == false) {
-//                    _isEditing = true;
-//                  }
-//                });
-//              },
-//            )
-//          : GestureDetector(
-//              child: Icon(
-//                Icons.done,
-//                color: Colors.black,
-//              ),
-//              onTap: () {
-//                setState(() {
-//                  if (_done == true) {
-//                    _done = false;
-//                    _isEditing = false;
-//                  }
-//                  if (_done == false) {
-//                    _done = true;
-//                  }
-//                  widget.staffNameList
-//                      .insert(widget.index, editingController.text);
-//                  widget.staffNameList.removeAt(widget.index + 1);
-//                });
-//              },
-//            ),
-//    );
-//  }
-//}

@@ -13,6 +13,7 @@ class TabContainerBottom extends StatelessWidget {
   final List<TableOrder> queueOrders;
   final List<TableOrder> cookingOrders;
   final List<TableOrder> completedOrders;
+  final String managerName;
 //  final List<AssistanceRequest> assistanceReq;
   final Restaurant restaurant;
   final sockets;
@@ -22,7 +23,7 @@ class TabContainerBottom extends StatelessWidget {
     this.queueOrders,
     this.cookingOrders,
     this.completedOrders,
-//    this.assistanceReq,
+    this.managerName,
     this.restaurant,
     this.sockets,
     this.registeredUser,
@@ -60,11 +61,9 @@ class TabContainerBottom extends StatelessWidget {
           child: Scaffold(
             drawer: Drawer(
               child: DrawerMenu(
-//                restaurant: restaurant,
-//            updateConfigDetailsToCloud: updateConfigDetailsToCloud,
-//            login: login,
-//            getRest: getRest,
-                  ),
+                managerName: managerName,
+                restaurantName: restaurant.name,
+              ),
             ),
             body: TabBarView(
               physics: NeverScrollableScrollPhysics(),

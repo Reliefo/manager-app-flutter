@@ -49,7 +49,9 @@ class HomePage extends StatelessWidget {
                                   ? Flexible(
                                       fit: FlexFit.loose,
                                       child: OrderItemBuilder(
-                                          orderList: orderData.cookingOrders),
+                                        reverseOrder: false,
+                                        orderList: orderData.cookingOrders,
+                                      ),
                                     )
                                   : Flexible(
                                       fit: FlexFit.loose,
@@ -74,7 +76,9 @@ class HomePage extends StatelessWidget {
                                   ? Flexible(
                                       fit: FlexFit.loose,
                                       child: OrderItemBuilder(
-                                          orderList: orderData.completedOrders),
+                                        reverseOrder: true,
+                                        orderList: orderData.completedOrders,
+                                      ),
                                     )
                                   : Flexible(
                                       fit: FlexFit.loose,

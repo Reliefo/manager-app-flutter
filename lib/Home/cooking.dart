@@ -12,7 +12,10 @@ class Cooking extends StatelessWidget {
     return orderData.cookingOrders.length > 0
         ? Flexible(
             fit: FlexFit.loose,
-            child: OrderItemBuilder(orderList: orderData.cookingOrders),
+            child: OrderItemBuilder(
+              reverseOrder: false,
+              orderList: orderData.cookingOrders,
+            ),
           )
         : Flexible(
             fit: FlexFit.loose,

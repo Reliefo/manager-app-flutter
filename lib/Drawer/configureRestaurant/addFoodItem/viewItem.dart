@@ -84,6 +84,52 @@ class ViewItem extends StatelessWidget {
                   ),
                 )
               : Text(""),
+
+///////////////////////////////////////////////////////////////////// for add Ons///////////////////////////
+
+          foodItem.foodOption != null
+              ? Center(
+                  child: Container(
+                    height: 100,
+                    width: 300,
+                    child: ListView.builder(
+                        primary: false,
+                        shrinkWrap: true,
+                        itemCount: foodItem.foodOption.addOns != null
+                            ? foodItem.foodOption.addOns.length
+                            : 0,
+                        itemBuilder: (context, index2) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Expanded(
+                                child: Row(
+                                  children: <Widget>[
+                                    Text(
+                                      "Add-On :  ${foodItem.foodOption.addOns[index2]["add_on_name"]} ",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                      ),
+                                    ),
+                                    SizedBox(width: 20),
+                                    Text(
+                                      "Price :  ${foodItem.foodOption.addOns[index2]["add_on_price"]} ",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(width: 20),
+                            ],
+                          );
+                        }),
+                  ),
+                )
+              : Text(""),
 ///////////////////////////////////////////////////////////////for Choices////////////////////////////
           foodItem.foodOption != null
               ? Container(

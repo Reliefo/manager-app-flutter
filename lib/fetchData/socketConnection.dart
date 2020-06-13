@@ -11,9 +11,11 @@ import 'session.dart';
 class SocketConnection extends StatefulWidget {
   final String jwt;
   final String restaurantId;
+  final String managerName;
   SocketConnection({
     this.jwt,
     this.restaurantId,
+    this.managerName,
   });
 
   @override
@@ -24,7 +26,7 @@ class _SocketConnectionState extends State<SocketConnection> {
   @override
   void initState() {
     initSocket(uri);
-//    login();
+
     super.initState();
   }
 
@@ -132,8 +134,9 @@ class _SocketConnectionState extends State<SocketConnection> {
       }
 
       var decoded = jsonDecode(data);
-      print("comfirming");
-      print(decoded);
+      if (debug) {
+        print("Restaurant is here");
+      }
 //      print("here:  ${decoded["navigate_better_tags"].length}");
 
       restaurant = Restaurant.fromJson(decoded);
@@ -171,20 +174,86 @@ class _SocketConnectionState extends State<SocketConnection> {
 
       ////////////////////////////////  kitchen staff     ///////////////////
       if (decode["type"] == "add_kitchen_staff") {
-        restaurant.addKitchenStaffDetails(decode['kitchen_staff']);
+        restaurant.kitchens.forEach((kitchen) {
+          if (kitchen.oid == decode["kitchen_id"]) {
+            KitchenStaff kitchenStaff =
+                KitchenStaff.fromJson(decode["kitchen_staff"]);
+
+            kitchen.kitchenStaffList.add(kitchenStaff);
+          }
+        });
       }
 
       if (decode["type"] == "edit_kitchen_staff") {
-        restaurant.kitchenStaff.forEach((kitchenStaff) {
-          if (kitchenStaff.oid == decode["kitchen_staff_id"]) {
-            kitchenStaff.name = decode["editing_fields"]["name"];
+        restaurant.kitchens.forEach((kitchen) {
+          if (kitchen.oid == decode["kitchen_id"]) {
+            kitchen.kitchenStaffList.forEach((kitchenStaff) {
+              if (kitchenStaff.oid == decode["kitchen_staff_id"]) {
+                kitchenStaff.name = decode["editing_fields"]["name"];
+              }
+            });
           }
         });
       }
 
       if (decode["type"] == "delete_kitchen_staff") {
-        restaurant.kitchenStaff.removeWhere(
+        Kitchen selectedKitchen;
+        restaurant.kitchens.forEach((kitchen) {
+          if (kitchen.oid == decode["kitchen_id"]) {
+            selectedKitchen = kitchen;
+          }
+        });
+
+        selectedKitchen.kitchenStaffList.removeWhere(
             (kitchenStaff) => kitchenStaff.oid == decode["kitchen_staff_id"]);
+      }
+
+      /////////////////////////////////  kitchen //////////////////////
+      if (decode["type"] == "add_kitchen") {
+        print(decode);
+        setState(() {
+          restaurant.kitchens.add(new Kitchen.addConfig(decode));
+        });
+      }
+
+      if (decode["type"] == "edit_kitchen") {
+        restaurant.kitchens.forEach((kitchen) {
+          if (kitchen.oid == decode["kitchen_id"]) {
+            kitchen.name = decode["editing_fields"]["name"];
+          }
+        });
+      }
+
+      if (decode["type"] == "delete_kitchen") {
+        print(decode);
+        setState(() {
+          restaurant.kitchens
+              .removeWhere((element) => element.oid == decode["kitchen_id"]);
+        });
+      }
+////////////////// assign category to kitchen/////////////////////////
+
+      if (decode["type"] == "category_kitchen") {
+        print(decode);
+        setState(() {
+          restaurant.kitchens.forEach((kitchen) {
+            if (kitchen.oid == decode["kitchen_id"]) {
+              decode["categories"].forEach((assignedCategory) {
+                restaurant.barMenu.forEach((category) {
+                  if (category.oid == assignedCategory) {
+                    kitchen.categoriesList.add(category);
+                  }
+                });
+
+                restaurant.foodMenu.forEach((category) {
+                  if (category.oid == assignedCategory) {
+                    kitchen.categoriesList.add(category);
+                  }
+                });
+              });
+            }
+          });
+        });
       }
       ////////////////////////////////    staff     ///////////////////
       if (decode["type"] == "add_staff") {
@@ -232,15 +301,15 @@ class _SocketConnectionState extends State<SocketConnection> {
           if (table.oid == decode["table_id"]) {
             print('table matched: ${table.name}');
 
-            decode["assigned_staff"].forEach((assignedStaff) {
-              print("assigning new staff ");
-              print(assignedStaff);
-              restaurant.staff.forEach((restStaff) {
-                if (assignedStaff == restStaff.oid) {
-                  table.addTableStaff(restStaff);
-                }
-              });
+//            decode["assigned_staff"].forEach((assignedStaff) {
+//              print("assigning new staff ");
+//              print(assignedStaff);
+            restaurant.staff.forEach((restStaff) {
+              if (decode["assigned_staff"] == restStaff.oid) {
+                table.addTableStaff(restStaff);
+              }
             });
+//            });
           }
         });
       }
@@ -419,15 +488,18 @@ class _SocketConnectionState extends State<SocketConnection> {
 //      timestamp: {$date: 1589322567835}, planet: Venus, planet_no: 1, unique_id: 9a8269f2-881f-4$Venus_1}
       print(decoded["current_table_id"]);
       print(decoded["_id"]["\$oid"]);
+
       restaurant.tables.forEach((table) {
-        print("object");
-        print(table.oid);
-        if (table.oid == decoded["current_table_id"]) {
-          print("here");
-          if (!table.users.contains(decoded["_id"]["\$oid"])) {
-            print("adding user");
-            table.users.add(decoded["_id"]["\$oid"]);
+        Users selectedUser;
+        table.users.forEach((user) {
+          if (user.oid == decoded['_id']['\$oid']) {
+            selectedUser = user;
           }
+        });
+        table.users.remove(selectedUser);
+
+        if (table.oid == decoded["current_table_id"]) {
+          table.users.add(Users.fromJson(decoded));
         }
       });
     });
@@ -436,16 +508,42 @@ class _SocketConnectionState extends State<SocketConnection> {
   fetchBilled(data) {
     print("inside billing");
     print(data);
+    print(data["order_history"].keys.toList());
 //todo: implement billing when requested from customer app
     if (data["status"] == "billed") {
       setState(() {
+        /////////////////////// add bill to history ///////////////////
+        RestaurantOrderHistory history =
+            RestaurantOrderHistory.fromJson(data["order_history"]);
+
+        restaurant.orderHistory.add(history);
+
+        ///////////////////////  remove and clean ////////////////////
+        queueOrders.removeWhere((order) => order.tableId == data["table_id"]);
+
+        cookingOrders.removeWhere((order) => order.tableId == data["table_id"]);
         completedOrders
             .removeWhere((order) => order.tableId == data["table_id"]);
-
         restaurant.assistanceRequests
             .removeWhere((request) => request.tableId == data["table_id"]);
+
+        Tables billedTable;
+        restaurant.tables.forEach((table) {
+          if (table.oid == data["table_id"]) {
+            print("table found");
+            billedTable = table;
+          }
+        });
+
+        print("for each complete");
+        billedTable.users.clear();
+        print("user cleared");
+        billedTable.queueCount = 0;
+        billedTable.cookingCount = 0;
+        billedTable.completedCount = 0;
       });
     }
+    print("table comp");
   }
 
   fetchRegisteredUsers(data) {
@@ -689,6 +787,8 @@ class _SocketConnectionState extends State<SocketConnection> {
   }
 
   acceptedAssistanceReq(decoded) {
+    print("tessdee");
+//    print(decoded);
     setState(() {
       restaurant.assistanceRequests.forEach((request) {
         if (request.assistanceReqId == decoded['assistance_req_id']) {
@@ -698,35 +798,32 @@ class _SocketConnectionState extends State<SocketConnection> {
           };
         }
       });
-    });
-  }
 
-  printOrders() {
-//    print("completed");
-//    completedOrders.forEach((completed) {
-//      print(completed.tableId);
-//    });
-    print("cooking");
-    cookingOrders.forEach((cooking) {
-      print(cooking.tableId);
+      restaurant.staff.forEach((staff) {
+        if (staff.oid == decoded['accepted_by']["staff_id"]) {
+          print("staff matched");
+          if (staff.requestHistory == null) {
+            staff.requestHistory = new List<AssistanceRequest>();
+          }
+          AssistanceRequest assist = AssistanceRequest.fromJson(decoded);
+          staff.requestHistory.add(assist);
+        }
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
     print("hereeeeww");
-//    printOrders();
-//    print(restaurant.assistanceRequests);
-//    print(restaurant.tables[1].staff[0].name);
-//      5eccc49668b1b9d33f7108ac
+
     return TabContainerBottom(
+      managerName: widget.managerName,
       sockets: sockets,
       restaurant: restaurant,
       registeredUser: registeredUser,
       queueOrders: queueOrders,
       cookingOrders: cookingOrders,
       completedOrders: completedOrders,
-//      assistanceReq: assistanceReq,
     );
   }
 }

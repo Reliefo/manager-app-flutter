@@ -211,26 +211,6 @@ class RestaurantData extends ChangeNotifier {
           {"restaurant_id": restaurantId, "type": type, "table_id": localData});
     }
 
-////////////////////////////////////kitchen staff//////////////////////////////
-    if (type == "add_kitchen_staff") {
-      encode = jsonEncode({
-        "restaurant_id": restaurantId,
-        "type": type,
-        "kitchen_staff": localData
-      });
-    }
-
-    if (type == "edit_kitchen_staff") {
-      localData['restaurant_id'] = restaurantId;
-      localData['type'] = type;
-      encode = jsonEncode(localData);
-    }
-
-    if (type == "delete_kitchen_staff") {
-      localData['restaurant_id'] = restaurantId;
-      localData['type'] = type;
-      encode = jsonEncode(localData);
-    }
 ///////////////////////////////////////////////staff//////////////////////////////////
     if (type == "add_staff") {
       encode = jsonEncode(
@@ -268,6 +248,53 @@ class RestaurantData extends ChangeNotifier {
         "withdraw_staff_id": localData["withdraw_staff_id"],
       });
     }
+
+    ////////////////////////////////////kitchen staff//////////////////////////////
+    if (type == "add_kitchen_staff") {
+      localData['restaurant_id'] = restaurantId;
+      localData['type'] = type;
+      encode = jsonEncode(localData);
+    }
+
+    if (type == "edit_kitchen_staff") {
+      localData['restaurant_id'] = restaurantId;
+      localData['type'] = type;
+      encode = jsonEncode(localData);
+    }
+
+    if (type == "delete_kitchen_staff") {
+      localData['restaurant_id'] = restaurantId;
+      localData['type'] = type;
+      encode = jsonEncode(localData);
+    }
+
+    ////////////////////////////  kitchen ///////////////////////
+
+    if (type == "add_kitchen") {
+      localData['restaurant_id'] = restaurantId;
+      localData['type'] = type;
+      encode = jsonEncode(localData);
+    }
+
+    if (type == "edit_kitchen") {
+      localData['restaurant_id'] = restaurantId;
+      localData['type'] = type;
+      encode = jsonEncode(localData);
+    }
+
+    if (type == "delete_kitchen") {
+      localData['restaurant_id'] = restaurantId;
+      localData['type'] = type;
+      encode = jsonEncode(localData);
+    }
+
+    ////////////////////////////assign category ////////////////
+    if (type == "category_kitchen") {
+      localData['restaurant_id'] = restaurantId;
+      localData['type'] = type;
+      encode = jsonEncode(localData);
+    }
+
 ////////////////////////////////////////   menu         /////////////////////
     if (type == "add_food_category") {
       encode = jsonEncode(
@@ -395,6 +422,14 @@ class RestaurantData extends ChangeNotifier {
       localData['type'] = type;
 
       encode = jsonEncode(localData);
+    }
+
+    if (type == "set_taxes") {
+      encode = jsonEncode({
+        "restaurant_id": restaurantId,
+        "type": type,
+        "taxes": localData["taxes"],
+      });
     }
     print("before sending to cloud");
 

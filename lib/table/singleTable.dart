@@ -61,17 +61,13 @@ class SingleTable extends StatelessWidget {
             title: Text("Order is not Completed"),
             content: Text("Try to bill after order is completed"),
             actions: <Widget>[
-//              FlatButton(
-//                child: new Text("Delete"),
-//                onPressed: () {
-//                  restaurantData.sendConfiguredDataToBackend(
-//                      restaurantData.restaurant.barMenu[index].oid,
-//                      "delete_bar_category");
-//
-//                  Navigator.of(context).pop();
-//                },
-//              ),
-              // usually buttons at the bottom of the dialog
+              FlatButton(
+                child: new Text("Force Bill"),
+                onPressed: () {
+                  bill({"table_id": table.oid});
+                  Navigator.of(context).pop();
+                },
+              ),
               FlatButton(
                 child: Text("Back"),
                 onPressed: () {
@@ -173,6 +169,14 @@ class SingleTable extends StatelessWidget {
                           ],
                         ),
                       ),
+                    ),
+                    VerticalDivider(),
+                    Expanded(
+                      child: ListView.builder(
+                          itemCount: table.users.length,
+                          itemBuilder: (context, index) {
+                            return Text(table.users[index].name);
+                          }),
                     ),
                     VerticalDivider(),
                     Expanded(

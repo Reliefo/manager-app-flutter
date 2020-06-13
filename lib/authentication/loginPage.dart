@@ -16,8 +16,10 @@ class _LoginPageState extends State<LoginPage> {
   GlobalKey<FormState> _key = new GlobalKey();
   bool _validate = false;
   String username, password;
-  String jwt, refreshToken, objectId, restaurantId;
+  String jwt, refreshToken, objectId, restaurantId, managerName;
   int responseCode;
+
+  String responseFromBackend;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
       home: responseCode == 200
           ? SocketConnection(
               jwt: jwt,
-//              objectId: objectId,
+              managerName: managerName,
               restaurantId: restaurantId,
             )
           : Scaffold(
@@ -95,6 +97,13 @@ class _LoginPageState extends State<LoginPage> {
           },
         ),
         SizedBox(height: 15.0),
+        responseFromBackend != null
+            ? Text(responseFromBackend)
+            : Container(
+                height: 0,
+                width: 0,
+              ),
+        SizedBox(height: 15.0),
         RaisedButton(
           onPressed: _sendToServer,
           child: Text('Login'),
@@ -122,10 +131,12 @@ class _LoginPageState extends State<LoginPage> {
     String refreshTokenToSave = refreshToken.toString();
     String objectIdToSave = objectId.toString();
     String restaurantIdToSave = restaurantId.toString();
+    String managerNameToSave = managerName.toString();
     await data.setString('jwt', jwtToSave);
     await data.setString('refreshToken', refreshTokenToSave);
     await data.setString('objectId', objectIdToSave);
     await data.setString('restaurantId', restaurantIdToSave);
+    await data.setString('managerName', managerNameToSave);
 
     print("Saved tokens to storage");
   }
@@ -184,6 +195,8 @@ class _LoginPageState extends State<LoginPage> {
     print("status code");
 
     print(statusCode);
+    print("response");
+    print(decoded);
 
     if (statusCode == 200) {
       setState(() {
@@ -191,9 +204,14 @@ class _LoginPageState extends State<LoginPage> {
         refreshToken = decoded['refresh_token'];
         objectId = decoded['object_id'];
         restaurantId = decoded['restaurant_id'];
+        managerName = decoded['name'];
       });
 
       _saveData();
+    } else {
+      setState(() {
+        responseFromBackend = decoded["status"];
+      });
     }
 
     if (statusCode == 200 || statusCode == 201 || statusCode == 403) {

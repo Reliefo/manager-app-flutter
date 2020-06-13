@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:manager_app/constants.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
 
 class AddData extends StatefulWidget {
-////  final updateConfigDetailsToCloud;
-//
-//  AddData({
-//    this.updateConfigDetailsToCloud,
-////    this.restaurant,
-//  });
-
   @override
   _AddDataState createState() => _AddDataState();
 }
@@ -61,7 +55,7 @@ class _AddDataState extends State<AddData> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.grey,
+          backgroundColor: kThemeColor,
           title: Text('Table Data'),
         ),
         body: Container(
@@ -135,8 +129,11 @@ class _AddDataState extends State<AddData> {
                         child: Container(
                       padding: EdgeInsets.all(8),
                       child: RaisedButton(
-                        color: Colors.grey,
-                        child: Text('Add'),
+                        color: kThemeColor,
+                        child: Text(
+                          'Add',
+                          style: kTitleStyle,
+                        ),
                         onPressed: _addTable,
                       ),
                     )),
@@ -148,25 +145,31 @@ class _AddDataState extends State<AddData> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       restaurantData.restaurant.tables == null
-                          ? Text('No Of Tables :')
+                          ? Text('No of Tables :')
                           : Text(
-                              'No Of Tables : ${restaurantData.restaurant.tables.length} ',
+                              'No of Tables : ${restaurantData.restaurant.tables.length} ',
+                              style: kTitleStyle,
                             ),
                       temporaryTables.length == 0
                           ? Text(
                               'All tables updated to cloud',
                               style: TextStyle(
                                   color: Colors.green,
+                                  fontFamily: "Poppins",
                                   fontWeight: FontWeight.bold),
                             )
                           : Text(
                               '${temporaryTables.length} tables not updated to cloud',
                               style: TextStyle(
                                   color: Colors.red,
+                                  fontFamily: "Poppins",
                                   fontWeight: FontWeight.bold),
                             ),
                       RaisedButton(
-                        child: Text('Upload to Cloud'),
+                        child: Text(
+                          'Upload to Cloud',
+                          style: kTitleStyle,
+                        ),
                         onPressed: () {
                           setState(() {
                             restaurantData.sendConfiguredDataToBackend(
@@ -191,9 +194,13 @@ class _AddDataState extends State<AddData> {
                           itemBuilder: (context, index) {
                             return ListTile(
                               title: Text(
-                                  'Table Name : ${temporaryTables[index]['name']}'),
+                                'Table Name : ${temporaryTables[index]['name']}',
+                                style: kTitleStyle,
+                              ),
                               subtitle: Text(
-                                  'Capacity : ${temporaryTables[index]['seats']} Seats'),
+                                'Capacity : ${temporaryTables[index]['seats']} Seats',
+                                style: kSubTitleStyle,
+                              ),
                               trailing: IconButton(
                                 icon: Icon(Icons.cancel),
                                 onPressed: () {
@@ -215,9 +222,13 @@ class _AddDataState extends State<AddData> {
                               itemBuilder: (context, index) {
                                 return ListTile(
                                   title: Text(
-                                      'Table Name : ${restaurantData.restaurant.tables[index].name}'),
+                                    'Table Name : ${restaurantData.restaurant.tables[index].name}',
+                                    style: kTitleStyle,
+                                  ),
                                   subtitle: Text(
-                                      'Capacity : ${restaurantData.restaurant.tables[index].seats} Seats'),
+                                    'Capacity : ${restaurantData.restaurant.tables[index].seats} Seats',
+                                    style: kSubTitleStyle,
+                                  ),
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
@@ -254,9 +265,7 @@ class _AddDataState extends State<AddData> {
                                                           "Table Name :  ",
                                                           textAlign:
                                                               TextAlign.center,
-                                                          style: TextStyle(
-                                                            fontSize: 16.0,
-                                                          ),
+                                                          style: kTitleStyle,
                                                         ),
                                                         SizedBox(width: 20),
                                                         Container(
@@ -279,9 +288,7 @@ class _AddDataState extends State<AddData> {
                                                           "Seating Capacity :  ",
                                                           textAlign:
                                                               TextAlign.center,
-                                                          style: TextStyle(
-                                                            fontSize: 16.0,
-                                                          ),
+                                                          style: kTitleStyle,
                                                         ),
                                                         SizedBox(width: 20),
                                                         Container(
@@ -303,6 +310,8 @@ class _AddDataState extends State<AddData> {
                                                           child: Text(
                                                             "Cancel",
                                                             style: TextStyle(
+                                                                fontFamily:
+                                                                    "Poppins",
                                                                 color:
                                                                     Colors.red),
                                                           ),
@@ -316,6 +325,8 @@ class _AddDataState extends State<AddData> {
                                                           child: Text(
                                                             "Done",
                                                             style: TextStyle(
+                                                                fontFamily:
+                                                                    "Poppins",
                                                                 color: Colors
                                                                     .green),
                                                           ),

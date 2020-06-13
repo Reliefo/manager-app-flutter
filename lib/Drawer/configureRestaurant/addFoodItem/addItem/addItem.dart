@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:manager_app/Drawer/configureRestaurant/addFoodItem/addItem/addOns.dart';
 import 'package:manager_app/Drawer/configureRestaurant/addFoodItem/addItem/choices.dart';
 import 'package:manager_app/Drawer/configureRestaurant/addFoodItem/addItem/options.dart';
 import 'package:manager_app/Drawer/configureRestaurant/addFoodItem/viewItem.dart';
+import 'package:manager_app/constants.dart';
 import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
@@ -22,28 +24,26 @@ class _AddFoodItemState extends State<AddItem> {
   Map<String, dynamic> foodTemp = {};
   List<String> choices = [];
   List<Map<String, dynamic>> options = [];
+  List<Map<String, dynamic>> addOns = [];
   List<String> editChoices = [];
   Map<String, String> editOptions;
   bool optionsCheckBoxValue = false;
   bool choicesCheckBoxValue = false;
+  bool addOnCheckBoxValue = false;
   final itemNameController = TextEditingController();
   final descriptionController = TextEditingController();
   final priceController = TextEditingController();
+  final addOnsPriceController = TextEditingController();
   final foodOptionController = TextEditingController();
+  final addOnsController = TextEditingController();
   final foodChoiceController = TextEditingController();
 
   final FocusNode itemNameFocus = FocusNode();
   final FocusNode descriptionFocus = FocusNode();
   final FocusNode priceFocus = FocusNode();
   final FocusNode foodOptionFocus = FocusNode();
+  final FocusNode addOnsFocus = FocusNode();
   final FocusNode foodChoiceFocus = FocusNode();
-
-//  final _itemNameEditController = TextEditingController();
-//  final _descriptionEditController = TextEditingController();
-//  final _priceEditController = TextEditingController();
-//  final _foodOptionEditController = TextEditingController();
-//  final _foodOptionPriceEditController = TextEditingController();
-//  final _foodChoiceEditController = TextEditingController();
 
   _fieldFocusChange(
       BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
@@ -60,7 +60,11 @@ class _AddFoodItemState extends State<AddItem> {
           "name": itemNameController.text,
           "description": descriptionController.text,
           "price": priceController.text,
-          "food_options": {"options": options, "choices": choices}
+          "food_options": {
+            "options": options,
+            "choices": choices,
+            "add_ons": addOns,
+          }
         },
       };
     });
@@ -75,6 +79,203 @@ class _AddFoodItemState extends State<AddItem> {
     foodTemp.clear();
     options.clear();
     choices.clear();
+    addOns.clear();
+  }
+
+  Widget _addItemLayout() {
+    if (optionsCheckBoxValue ||
+        addOnCheckBoxValue ||
+        choicesCheckBoxValue == true) {
+      if (optionsCheckBoxValue == true &&
+          addOnCheckBoxValue == true &&
+          choicesCheckBoxValue == true) {
+        // all options, choice and add-ons
+//todo: replace options with add-on
+        return Column(
+          children: <Widget>[
+            Choices(
+              foodChoiceController: foodChoiceController,
+              priceController: priceController,
+              foodChoiceFocus: foodChoiceFocus,
+              choices: choices,
+            ),
+            Options(
+              priceController: priceController,
+              foodOptionController: foodOptionController,
+              foodOptionFocus: foodOptionFocus,
+              options: options,
+            ),
+            AddOns(
+              addOnsPriceController: addOnsPriceController,
+              addOnsController: addOnsController,
+              addOnsFocus: addOnsFocus,
+              addOns: addOns,
+            ),
+          ],
+        );
+      }
+      if (optionsCheckBoxValue == true &&
+          addOnCheckBoxValue == true &&
+          choicesCheckBoxValue == false) {
+        print("coming here 1");
+        return Column(
+          children: <Widget>[
+            Options(
+              priceController: priceController,
+              foodOptionController: foodOptionController,
+              foodOptionFocus: foodOptionFocus,
+              options: options,
+            ),
+            AddOns(
+              addOnsPriceController: addOnsPriceController,
+              addOnsController: addOnsController,
+              addOnsFocus: addOnsFocus,
+              addOns: addOns,
+            ),
+          ],
+        );
+      }
+      if (choicesCheckBoxValue == true &&
+          (optionsCheckBoxValue == true || addOnCheckBoxValue == true)) {
+        if (choicesCheckBoxValue == true &&
+            optionsCheckBoxValue == true &&
+            addOnCheckBoxValue == false) {
+          // both choice and option
+
+          return Column(
+            children: <Widget>[
+              Choices(
+                foodChoiceController: foodChoiceController,
+                priceController: priceController,
+                foodChoiceFocus: foodChoiceFocus,
+                choices: choices,
+              ),
+              Options(
+                priceController: priceController,
+                foodOptionController: foodOptionController,
+                foodOptionFocus: foodOptionFocus,
+                options: options,
+              ),
+            ],
+          );
+        }
+
+        if (choicesCheckBoxValue == true &&
+            addOnCheckBoxValue == true &&
+            optionsCheckBoxValue == false) {
+          // both choice and add-ons
+//todo: replace options with add-on
+          return Column(
+            children: <Widget>[
+              Choices(
+                foodChoiceController: foodChoiceController,
+                priceController: priceController,
+                foodChoiceFocus: foodChoiceFocus,
+                choices: choices,
+              ),
+              AddOns(
+                addOnsPriceController: addOnsPriceController,
+                addOnsController: addOnsController,
+                addOnsFocus: addOnsFocus,
+                addOns: addOns,
+              ),
+            ],
+          );
+        }
+      } else if (choicesCheckBoxValue == true &&
+          optionsCheckBoxValue == false &&
+          addOnCheckBoxValue == false) {
+        //only choices
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
+              flex: 2,
+              child: Container(
+                padding: EdgeInsets.all(12),
+                child: TextFormField(
+                  controller: priceController,
+                  focusNode: priceFocus,
+                  decoration: InputDecoration(
+                    labelText: "Price",
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    //fillColor: Colors.green
+                  ),
+                  keyboardType: TextInputType.text,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Please enter Price';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: Choices(
+                foodChoiceController: foodChoiceController,
+                priceController: priceController,
+                foodChoiceFocus: foodChoiceFocus,
+                choices: choices,
+              ),
+            ),
+          ],
+        );
+      }
+      if (optionsCheckBoxValue == true && choicesCheckBoxValue == false) {
+        //options without choice
+        return Options(
+          priceController: priceController,
+          foodOptionController: foodOptionController,
+          foodOptionFocus: foodOptionFocus,
+          options: options,
+        );
+      }
+      if (addOnCheckBoxValue == true && choicesCheckBoxValue == false) {
+        //add-ons without choice
+//todo: replace options with add-on
+        return AddOns(
+          addOnsPriceController: addOnsPriceController,
+          addOnsController: addOnsController,
+          addOnsFocus: addOnsFocus,
+          addOns: addOns,
+        );
+      }
+    } else {
+      //only food item without choices, options, and add-ons
+      return Row(
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.all(12),
+              child: TextFormField(
+                controller: priceController,
+                focusNode: priceFocus,
+                decoration: InputDecoration(
+                  labelText: "Price",
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  //fillColor: Colors.green
+                ),
+                keyboardType: TextInputType.text,
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter Price';
+                  }
+                  return null;
+                },
+              ),
+            ),
+          ),
+        ],
+      );
+    }
   }
 
   @override
@@ -85,7 +286,7 @@ class _AddFoodItemState extends State<AddItem> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.grey,
+          backgroundColor: kThemeColor,
           title: Text(widget.category.name ?? " "),
         ),
         body: Container(
@@ -153,7 +354,7 @@ class _AddFoodItemState extends State<AddItem> {
                                             });
                                           },
                                         ),
-                                        Text('have options'),
+                                        Text('options'),
                                       ],
                                     ),
                                     Column(
@@ -166,7 +367,20 @@ class _AddFoodItemState extends State<AddItem> {
                                             });
                                           },
                                         ),
-                                        Text('have choice'),
+                                        Text('choice'),
+                                      ],
+                                    ),
+                                    Column(
+                                      children: <Widget>[
+                                        Checkbox(
+                                          value: addOnCheckBoxValue,
+                                          onChanged: (bool value) {
+                                            setState(() {
+                                              addOnCheckBoxValue = value;
+                                            });
+                                          },
+                                        ),
+                                        Text('add-on'),
                                       ],
                                     ),
                                   ],
@@ -212,114 +426,9 @@ class _AddFoodItemState extends State<AddItem> {
                             ),
                           ],
                         ),
-                        optionsCheckBoxValue && choicesCheckBoxValue == true
 
-                            ///// when both are true////////
-                            ? Column(
-                                children: <Widget>[
-                                  Choices(
-                                    foodChoiceController: foodChoiceController,
-                                    priceController: priceController,
-                                    foodChoiceFocus: foodChoiceFocus,
-                                    choices: choices,
-                                  ),
-                                  Options(
-                                    priceController: priceController,
-                                    foodOptionController: foodOptionController,
-                                    foodOptionFocus: foodOptionFocus,
-                                    options: options,
-                                  ),
-                                ],
-                              )
-                            : optionsCheckBoxValue ||
-                                    choicesCheckBoxValue == true
-                                ? optionsCheckBoxValue == true
-                                    ?
-                                    //////////for options///////////////////
-                                    Options(
-                                        priceController: priceController,
-                                        foodOptionController:
-                                            foodOptionController,
-                                        foodOptionFocus: foodOptionFocus,
-                                        options: options,
-                                      )
+                        _addItemLayout(),
 
-                                    //////for Choices/////////////////////////
-                                    : Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Expanded(
-                                            flex: 2,
-                                            child: Container(
-                                              padding: EdgeInsets.all(12),
-                                              child: TextFormField(
-                                                controller: priceController,
-                                                focusNode: priceFocus,
-                                                decoration: InputDecoration(
-                                                  labelText: "Price",
-                                                  fillColor: Colors.white,
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12.0),
-                                                  ),
-                                                  //fillColor: Colors.green
-                                                ),
-                                                keyboardType:
-                                                    TextInputType.text,
-                                                validator: (value) {
-                                                  if (value.isEmpty) {
-                                                    return 'Please enter Price';
-                                                  }
-                                                  return null;
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 3,
-                                            child: Choices(
-                                              foodChoiceController:
-                                                  foodChoiceController,
-                                              priceController: priceController,
-                                              foodChoiceFocus: foodChoiceFocus,
-                                              choices: choices,
-                                            ),
-                                          ),
-                                        ],
-                                      )
-
-                                //////////////////////////////// if no options and choices///////////////////////////
-                                : Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: Container(
-                                          padding: EdgeInsets.all(12),
-                                          child: TextFormField(
-                                            controller: priceController,
-                                            focusNode: priceFocus,
-                                            decoration: InputDecoration(
-                                              labelText: "Price",
-                                              fillColor: Colors.white,
-                                              border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0),
-                                              ),
-                                              //fillColor: Colors.green
-                                            ),
-                                            keyboardType: TextInputType.text,
-                                            validator: (value) {
-                                              if (value.isEmpty) {
-                                                return 'Please enter Price';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
                         FlatButton(
                           child: Text('confirm item'),
                           onPressed: () {
@@ -345,10 +454,14 @@ class _AddFoodItemState extends State<AddItem> {
                           itemBuilder: (context, index) {
                             return FlatButton(
                               child: ListTile(
-                                title:
-                                    Text(widget.category.foodList[index].name),
-                                subtitle: Text(widget
-                                    .category.foodList[index].description),
+                                title: Text(
+                                  widget.category.foodList[index].name,
+                                  style: kTitleStyle,
+                                ),
+                                subtitle: Text(
+                                  widget.category.foodList[index].description,
+                                  style: kSubTitleStyle,
+                                ),
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[

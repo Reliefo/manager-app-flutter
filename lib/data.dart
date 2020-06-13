@@ -1,3 +1,5 @@
+bool debug = true;
+
 class Restaurant {
   String oid;
   String name;
@@ -7,12 +9,13 @@ class Restaurant {
   List<Category> barMenu;
   List<Tables> tables;
   List<Staff> staff;
-  List<KitchenStaff> kitchenStaff;
+//  List<KitchenStaff> kitchenStaff;
   List<TableOrder> tableOrders;
   List<AssistanceRequest> assistanceRequests;
   List<String> homeScreenTags;
   List<String> navigateBetterTags;
   List<RestaurantOrderHistory> orderHistory;
+  List<Kitchen> kitchens;
 
   Restaurant({
     this.oid,
@@ -32,21 +35,33 @@ class Restaurant {
     if (json['_id']['\$oid'] != null) {
       oid = json['_id']['\$oid'];
     }
+
+    if (debug) {
+      print("Restaurant oid added.!");
+    }
 //    address = json['address'];
     if (json['name'] != null) {
       name = json['name'];
     }
-
+    if (debug) {
+      print("Restaurant Name added.!");
+    }
     if (json['restaurant_id'] != null) {
       restaurantId = json['restaurant_id'];
     }
-
+    if (debug) {
+      print("Restaurant id added.!");
+    }
     //todo: add restaurant address if present
     if (json['food_menu'].isNotEmpty) {
       foodMenu = new List<Category>();
       json['food_menu'].forEach((v) {
         foodMenu.add(new Category.fromJson(v));
       });
+    }
+
+    if (debug) {
+      print("Food menu added to restaurant object.!");
     }
 
 //    print(json['bar_menu']);
@@ -56,21 +71,27 @@ class Restaurant {
         barMenu.add(new Category.fromJson(v));
       });
     }
-
+    if (debug) {
+      print("Bar menu added to restaurant object.!");
+    }
     if (json['staff'].isNotEmpty) {
       staff = new List<Staff>();
       json['staff'].forEach((v) {
         staff.add(new Staff.fromJson(v));
       });
     }
-    print("not 9898 commmnjjjk");
-    if (json['kitchen_staff'].isNotEmpty) {
-      kitchenStaff = new List<KitchenStaff>();
-      json['kitchen_staff'].forEach((v) {
-        kitchenStaff.add(new KitchenStaff.fromJson(v));
-      });
+    if (debug) {
+      print("Staff added to restaurant object.!");
     }
-    print("not 345  commmnjjjk");
+//    if (json['kitchen_staff'].isNotEmpty) {
+//      kitchenStaff = new List<KitchenStaff>();
+//      json['kitchen_staff'].forEach((v) {
+//        kitchenStaff.add(new KitchenStaff.fromJson(v));
+//      });
+//    }
+//    if (debug) {
+//      print("Kitchen Staff added to restaurant object.!");
+//    }
     if (json['tables'].isNotEmpty) {
       tables = new List<Tables>();
       json['tables'].forEach((table) {
@@ -79,32 +100,36 @@ class Restaurant {
         );
       });
     }
-    print("not ghjkjhg  commmnjjjk");
+    if (debug) {
+      print("Tables added to restaurant object.!");
+    }
     if (json['table_orders'].isNotEmpty) {
       tableOrders = new List<TableOrder>();
       json['table_orders'].forEach((v) {
         tableOrders.add(new TableOrder.fromJson(v));
       });
     }
-    print("not  commmnjjjk");
+    if (debug) {
+      print("TableOrders added to restaurant object.!");
+    }
     if (json['assistance_reqs'].isNotEmpty) {
-      print("ass req");
-      print(json['assistance_reqs'].length);
       assistanceRequests = new List<AssistanceRequest>();
       json['assistance_reqs'].forEach((v) {
-        print('added');
-        print(v);
         assistanceRequests.add(new AssistanceRequest.fromJson(v));
       });
     }
-    print("not 8787878 commmnjjjk");
+    if (debug) {
+      print("assistanceRequests added to restaurant object.!");
+    }
     if (json['home_screen_tags'] != null) {
       homeScreenTags = new List<String>();
       json['home_screen_tags'].forEach((v) {
         homeScreenTags.add(v);
       });
     }
-
+    if (debug) {
+      print("Home Screen Tags added to restaurant object.!");
+    }
     if (json['navigate_better_tags'] != null) {
       navigateBetterTags = new List<String>();
       json['navigate_better_tags'].forEach((v) {
@@ -112,11 +137,27 @@ class Restaurant {
       });
     }
 
+    if (debug) {
+      print("Navigate Better Tags added to restaurant object.!");
+    }
+
     if (json['order_history'].isNotEmpty) {
       orderHistory = new List<RestaurantOrderHistory>();
       json['order_history'].forEach((v) {
         orderHistory.add(new RestaurantOrderHistory.fromJson(v));
       });
+    }
+    if (debug) {
+      print("Order History added to restaurant object.!");
+    }
+    if (json['kitchens'].isNotEmpty) {
+      kitchens = new List<Kitchen>();
+      json['kitchens'].forEach((v) {
+        kitchens.add(new Kitchen.fromJson(v));
+      });
+    }
+    if (debug) {
+      print("Kitchen rooms added to restaurant object.!");
     }
   }
   addTableDetails(data) {
@@ -138,13 +179,20 @@ class Restaurant {
     });
   }
 
-  addKitchenStaffDetails(data) {
-    if (this.kitchenStaff == null) {
-      this.kitchenStaff = new List<KitchenStaff>();
+//  addKitchenStaffDetails(data) {
+//    if (this.kitchenStaff == null) {
+//      this.kitchenStaff = new List<KitchenStaff>();
+//    }
+//    data.forEach((v) {
+//      this.kitchenStaff.add(new KitchenStaff.addConfig(v));
+//    });
+//  }
+
+  addKitchenRooms(data) {
+    if (this.kitchens == null) {
+      this.kitchens = new List<Kitchen>();
     }
-    data.forEach((v) {
-      this.kitchenStaff.add(new KitchenStaff.addConfig(v));
-    });
+    this.kitchens.add(new Kitchen.addConfig(data));
   }
 
   addFoodMenuCategory(category) {
@@ -167,8 +215,7 @@ class Tables {
   String name;
   String seats;
   List<Staff> staff;
-  List<String> users = []; //todo: add scanned user details to table object
-
+  List<Users> users = [];
   List<TableOrder> tableOrders;
 //  List<AssistanceRequest> tableAssistanceRequest;
 
@@ -186,10 +233,6 @@ class Tables {
     this.staff,
     this.users,
     this.tableOrders,
-//    this.tableAssistanceRequest,
-//    this.tableQueuedOrders,
-//    this.tableCookingOrders,
-//    this.tableCompletedOrders,
     this.queueCount,
     this.cookingCount,
     this.completedCount,
@@ -276,13 +319,21 @@ class Tables {
     }
 
     if (json['users'].isNotEmpty) {
-      users = new List<String>();
+      users = new List<Users>();
       json['users'].forEach((v) {
-//        print("users id");
-//        print(v['_id']['\$oid']);
-        users.add(v['_id']['\$oid']);
-//        print("users id added");
+        users.add(new Users.fromJson(v));
       });
+
+//      users = new List<Map<String, dynamic>>();
+//      json['users'].forEach((v) {
+//        users.add({v['_id']['\$oid']: v['name']});
+
+//        users.add({
+//          "id": v['_id']['\$oid'],
+//          "name": v['name'],
+//        });
+//        print("users id added");
+
     }
 
     if (json['table_orders'].isNotEmpty) {
@@ -340,21 +391,16 @@ class Tables {
   }
 }
 
-class Staff {
+class Users {
   String oid;
   String name;
-  //todo: update assistance history and order history
-  List<AssistanceRequest> assistanceHistory;
-  List<StaffOrderHistory> orderHistory;
 
-  Staff({
-    this.name,
+  Users({
     this.oid,
-    this.assistanceHistory,
-    this.orderHistory,
+    this.name,
   });
 
-  Staff.fromJson(Map<String, dynamic> json) {
+  Users.fromJson(Map<String, dynamic> json) {
     if (json['_id']['\$oid'] != null) {
       oid = json['_id']['\$oid'];
     }
@@ -362,25 +408,74 @@ class Staff {
     if (json['name'] != null) {
       name = json['name'];
     }
+  }
+}
 
-//    if (json['assistance_history'].isNotEmpty) {
+class Staff {
+  String oid;
+  String name;
+  //todo: update assistance history and order history
+//  List<AssistanceRequest> assistanceHistory;
+  List<StaffOrderHistory> orderHistory;
+  List requestHistory = [];
+
+  Staff({
+    this.name,
+    this.oid,
+//    this.assistanceHistory,
+    this.orderHistory,
+    this.requestHistory,
+  });
+
+  Staff.fromJson(Map<String, dynamic> json) {
+//    print("inside staff");
+//    print(json.keys.toList());
+    if (json['_id']['\$oid'] != null) {
+      oid = json['_id']['\$oid'];
+    }
+
+    if (json['name'] != null) {
+      name = json['name'];
+    }
+//    print("before adding staff assistance");
+
+    if (json['requests_history'] != null &&
+        json['requests_history'].isNotEmpty) {
+      json['requests_history'].forEach((v) {
+        if (v['request_type'] == "pickup_request") {
+          requestHistory.add(StaffOrderHistory.fromJson(v));
+
+//          print("added to order history");
+        }
+        if (v['request_type'] == "assistance_request") {
+          requestHistory.add(AssistanceRequest.fromJson(v));
+//          print("added to assistance history");
+        }
+      });
+    }
+//    if (json['assistance_history'] != null &&
+//        json['assistance_history'].isNotEmpty) {
+//      print("before adding staff assistancefdfdfd");
+//
+//      print(json['assistance_history']);
 //      //todo:check
 //      assistanceHistory = new List<AssistanceRequest>();
 //      json['assistance_history'].forEach((v) {
 //        assistanceHistory.add(new AssistanceRequest.fromJson(v));
 //      });
 //    }
-    print("before adding staff history");
-    if (json['order_history'] != null) {
-      //todo:check
-      print("before adding staff historyfdfdfd");
-      orderHistory = new List<StaffOrderHistory>();
-      json['order_history'].forEach((v) {
-        print(v);
-        orderHistory.add(new StaffOrderHistory.fromJson(v));
-      });
-    }
-    print("after adding staff history");
+//    print("after adding staff assistance");
+
+//    if (json['order_history'] != null &&
+//        json['assistance_history'].isNotEmpty) {
+//      //todo:check
+//
+//      orderHistory = new List<StaffOrderHistory>();
+//      json['order_history'].forEach((v) {
+//        print(v);
+//        orderHistory.add(new StaffOrderHistory.fromJson(v));
+//      });
+//    }
   }
 
   addStaff(staff) {
@@ -480,11 +575,9 @@ class StaffOrderHistory {
 class KitchenStaff {
   String oid;
   String name;
+  String kitchen;
 
-  KitchenStaff({
-    this.name,
-    this.oid,
-  });
+  KitchenStaff({this.name, this.oid, this.kitchen});
   KitchenStaff.fromJson(Map<String, dynamic> json) {
     if (json['_id']['\$oid'] != null) {
       oid = json['_id']['\$oid'];
@@ -492,6 +585,10 @@ class KitchenStaff {
 
     if (json['name'] != null) {
       name = json['name'];
+    }
+
+    if (json['kitchen'] != null) {
+      kitchen = json['kitchen'];
     }
   }
 
@@ -536,8 +633,9 @@ class Category {
   Category.addConfig(category) {
     oid = category['category_id'];
     name = category['name'];
-    description = category['description'];
-
+    if (category['description'] != null) {
+      description = category['description'];
+    }
     print('added to category');
   }
 
@@ -650,6 +748,7 @@ class MenuFoodItem {
 
 class FoodOption {
   List<Map<String, dynamic>> options;
+  List<Map<String, dynamic>> addOns;
   List<String> choices;
 
   FoodOption({
@@ -658,21 +757,20 @@ class FoodOption {
   });
 
   FoodOption.fromJson(Map<String, dynamic> json) {
-//    print("while adding food iption");
-//    print(json['options']);
     if (json['options'] != null) {
       options = new List<Map<String, dynamic>>();
       json['options'].forEach((option) {
-//        print("here");
-//        print(option["option_name"]);
-//        print(option["option_price"]);
         options.add(option);
-
-//        print("added");
       });
       //Todo: check
     }
-
+    if (json['add_ons'] != null) {
+      addOns = new List<Map<String, dynamic>>();
+      json['add_ons'].forEach((addOn) {
+        addOns.add(addOn);
+      });
+      //Todo: check
+    }
     if (json['choices'] != null) {
       choices = new List<String>();
       json['choices'].forEach((v) {
@@ -688,6 +786,7 @@ class TableOrder {
   String tableId;
   List<Order> orders;
   String status = 'queued';
+  bool personalOrder = false;
 
   DateTime timeStamp;
 
@@ -698,6 +797,7 @@ class TableOrder {
     this.orders,
     this.status,
     this.timeStamp,
+    this.personalOrder,
   });
 
   TableOrder.fromJson(Map<String, dynamic> json) {
@@ -713,17 +813,15 @@ class TableOrder {
       tableId = json['table_id'];
     }
 
-//    if (json['table_id'] != null) {
-//      tableId = json['table_id'];
-//    }
-
     if (json['orders'] != null) {
       orders = new List<Order>();
       json['orders'].forEach((v) {
         orders.add(new Order.fromJson(v));
       });
     }
-
+    if (json['personal_order'] != null) {
+      personalOrder = json['personal_order'];
+    }
     if (json['timestamp'] != null) {
       timeStamp = DateTime.parse(json['timestamp']);
     }
@@ -737,6 +835,7 @@ class TableOrder {
     tableId = json['table_id'];
     status = json['status'];
     timeStamp = json['timestamp'];
+    personalOrder = json['personalOrder'];
   }
 
   addFirstOrder(Order order) {
@@ -769,13 +868,14 @@ class TableOrder {
     data['table_id'] = this.tableId;
     data['status'] = this.status;
     data['timestamp'] = this.timeStamp;
+    data['personalOrder'] = this.personalOrder;
     return data;
   }
 }
 
 class Order {
   String oId;
-  String placedBy;
+  Map<String, dynamic> placedBy;
   List<FoodItem> foodList;
   String status;
 
@@ -791,8 +891,13 @@ class Order {
       oId = json['_id']['\$oid'];
     }
 
-    if (json['placed_by']['\$oid'] != null) {
-      placedBy = json['placed_by']['\$oid'];
+    if (json['placed_by'] != null) {
+//      print("inside orders");
+//      print(json['placed_by']);
+      placedBy = {
+        "id": json['placed_by']['id'],
+        "name": json['placed_by']['name']
+      };
     }
 
     if (json['food_list'] != null) {
@@ -802,9 +907,9 @@ class Order {
       });
     }
 
-    if (json['status'] != null) {
-      placedBy = json['placed_by']['\$oid'];
-    }
+//    if (json['status'] != null) {
+//      placedBy = json['placed_by']['\$oid'];
+//    }
   }
 
   Order.fromJsonNew(Map<String, dynamic> json) {
@@ -963,14 +1068,14 @@ class AssistanceRequest {
     if (json['timestamp'] != null) {
       timeStamp = DateTime.parse(json['timestamp']);
     }
-    print("while adding");
+//    print("while adding");
     if (json['accepted_by'].isNotEmpty) {
       acceptedBy = {
         "staff_name": json['accepted_by']['staff_name'],
         "staff_id": json['accepted_by']['staff_id']
       };
     }
-    print("while adding 1");
+//    print("while adding 1");
     if (json['user_id'] != null) {
       userId = json['user_id'];
     }
@@ -1025,6 +1130,8 @@ class RestaurantOrderHistory {
   DateTime timeStamp;
   String tableId;
   String table;
+  Bill bill;
+  String pdf;
 
   RestaurantOrderHistory({
     this.oid,
@@ -1035,55 +1142,175 @@ class RestaurantOrderHistory {
     this.timeStamp,
     this.tableId,
     this.table,
+    this.bill,
+    this.pdf,
   });
 
   RestaurantOrderHistory.fromJson(Map<String, dynamic> json) {
     print("order history");
+    print(json.keys.toList());
+//
+    print(json['bill_structure']);
+    print(json['timestamp']);
+    print(json['pdf']);
 
     if (json['_id']['\$oid'] != null) {
       oid = json['_id']['\$oid'];
     }
 
-//    print("here 1");
+    if (debug) {
+      print(" oid added to RestaurantOrderHistory.!");
+    }
+
     if (json['table_orders'] != null) {
       tableOrder = new List<TableOrder>();
       json['table_orders'].forEach((v) {
         tableOrder.add(TableOrder.fromJson(v));
       });
     }
-//    print("here 2");
+    if (debug) {
+      print(" table order added to RestaurantOrderHistory.!");
+    }
+
     if (json['personal_orders'] != null) {
       personalOrder = new List<TableOrder>();
       json['personal_orders'].forEach((v) {
         personalOrder.add(TableOrder.fromJson(v));
       });
     }
-//    print("here 3");
+    if (debug) {
+      print(" personalOrder added to RestaurantOrderHistory.!");
+    }
     if (json['users'] != null) {
       users = new List<Map<String, String>>();
       json['users'].forEach((user) {
-//        users.add(jsonDecode(user));
         users.add({"name": user["name"], "id": user["user_id"]});
       });
     }
-//    print("here 4");
+    if (debug) {
+      print(" users added to RestaurantOrderHistory.!");
+    }
     if (json['assistance_reqs'] != null) {
       assistanceReq = new List<AssistanceRequest>();
       json['assistance_reqs'].forEach((v) {
         assistanceReq.add(AssistanceRequest.fromJson(v));
       });
     }
-//    print("order history hwew");
+    if (debug) {
+      print(" assistanceReq added to RestaurantOrderHistory.!");
+    }
     if (json['timestamp'] != null) {
       timeStamp = DateTime.parse(json['timestamp']);
     }
-//    print("here 5");
+    if (debug) {
+      print(" timeStamp added to RestaurantOrderHistory.!");
+    }
     if (json['table_id'] != null) {
       tableId = json['table_id'];
+    }
+    if (debug) {
+      print(" tableId added to RestaurantOrderHistory.!");
     }
     if (json['table'] != null) {
       table = json['table'];
     }
-//    print("here 6");
+    if (debug) {
+      print(" table added to RestaurantOrderHistory.!");
+    }
+    if (json['bill_structure'] != null) {
+      bill = Bill.fromJson(json['bill_structure']);
+    }
+    if (debug) {
+      print(" bill added to RestaurantOrderHistory.!");
+    }
+    if (json['pdf'] != null) {
+      pdf = json['pdf'];
+    }
+    if (debug) {
+      print(" pdf added to RestaurantOrderHistory.!");
+    }
+  }
+}
+
+class Bill {
+  double preTaxAmount;
+  double totalTax;
+  double totalAmount;
+
+  Bill({
+    this.preTaxAmount,
+    this.totalTax,
+    this.totalAmount,
+  });
+//  {Pre-Tax Amount: 870.0, Total Tax: 8.5, Total Amount: 943.95}
+  Bill.fromJson(Map<String, dynamic> json) {
+    print(json['Pre-Tax Amount'].runtimeType);
+    print(json['Taxes'].runtimeType);
+    print(json['Total Amount'].runtimeType);
+
+    if (json['Pre-Tax Amount'] != null) {
+      if (json['Pre-Tax Amount'].runtimeType == int) {
+        preTaxAmount = json['Pre-Tax Amount'].toDouble();
+      } else
+        preTaxAmount = json['Pre-Tax Amount'];
+    }
+
+    if (json['Taxes'] != null) {
+      totalTax = json['Taxes'];
+    }
+
+    if (json['Total Amount'] != null) {
+      totalAmount = json['Total Amount'];
+    }
+  }
+}
+
+class Kitchen {
+  String oid;
+  String name;
+  List<Category> categoriesList;
+  List<KitchenStaff> kitchenStaffList;
+
+  Kitchen({
+    this.oid,
+    this.name,
+    this.categoriesList,
+    this.kitchenStaffList,
+  });
+
+  Kitchen.fromJson(Map<String, dynamic> json) {
+    print('kitchen json');
+    print(json.keys.toList());
+
+    if (json['_id']['\$oid'] != null) {
+      oid = json['_id']['\$oid'];
+    }
+
+    if (json['name'] != null) {
+      name = json['name'];
+    }
+    print("here45");
+    if (json['categories'] != null) {
+      categoriesList = new List<Category>();
+      json['categories'].forEach((v) {
+        categoriesList.add(Category.addConfig(v));
+      });
+    }
+    print("her22e45");
+
+    if (json['kitchen_staff'] != null) {
+      kitchenStaffList = new List<KitchenStaff>();
+      json['kitchen_staff'].forEach((v) {
+        kitchenStaffList.add(KitchenStaff.fromJson(v));
+      });
+    }
+  }
+
+  Kitchen.addConfig(kitchen) {
+    print("config kitchen");
+    print(kitchen);
+    print(kitchen['kitchen_id']);
+    oid = kitchen['kitchen_id'];
+    name = kitchen['name'];
   }
 }

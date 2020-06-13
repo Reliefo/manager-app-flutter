@@ -26,6 +26,7 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
   List<MenuFoodItem> selectedTagItems = [];
 
   getTagItems(selectedTag, restaurantData) {
+    print("get tags called");
     setState(() {
 //      barItems.clear();
 //      foodItems.clear();
@@ -263,19 +264,6 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
                           title: selectedTag != null
                               ? Text('Add New Item to $selectedTag')
                               : Text('Select Tag to Add Items'),
-                          onTap: () {
-                            showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (BuildContext context) {
-                                // return object of type Dialog
-                                return AddFoodItemToTags(
-                                  selectedTag: selectedTag,
-//                                  restaurant: widget.restaurant,
-                                );
-                              },
-                            );
-                          },
                         ),
                       ),
                       Expanded(
@@ -315,8 +303,10 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
                                     ),
                                     radioItem == "barMenu"
                                         ? AddBarItemToTags(
+//                                            getTagItems: getTagItems,
                                             selectedTag: selectedTag)
                                         : AddFoodItemToTags(
+                                            getTagItems: getTagItems,
                                             selectedTag: selectedTag),
                                   ],
                                 ),

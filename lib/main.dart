@@ -17,12 +17,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-//  String refreshUrl = "http://192.168.0.9:5050/refresh";
   bool authentication = false;
   bool showLoading = true;
   String accessToken;
   String restaurantId;
   String objectId;
+  String managerName;
   Future<Map<String, dynamic>> _getSavedData() async {
     print("getData");
 
@@ -31,11 +31,12 @@ class _MyAppState extends State<MyApp> {
     final restaurantId = credentials.getString('restaurantId');
     final objectId = credentials.getString('objectId');
     final refreshToken = credentials.getString('refreshToken');
+    final managerName = credentials.getString('managerName');
 
     Map<String, dynamic> savedData = {
       "restaurantId": restaurantId,
       "staffId": objectId,
-//      "jwt": jwt,
+      "managerName": managerName,
       "refreshToken": refreshToken
     };
 
@@ -67,6 +68,7 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       restaurantId = savedData["restaurantId"];
       objectId = savedData["objectId"];
+      managerName = savedData["managerName"];
     });
 
     Map<String, String> headers = {
@@ -116,7 +118,7 @@ class _MyAppState extends State<MyApp> {
         : authentication == true
             ? SocketConnection(
                 jwt: accessToken,
-//      objectId: objectId,
+                managerName: managerName,
                 restaurantId: restaurantId,
               )
             : LoginPage();

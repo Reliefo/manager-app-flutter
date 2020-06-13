@@ -1,6 +1,6 @@
+import 'package:date_format/date_format.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:manager_app/Home/assistanceReqBuilder.dart';
 import 'package:manager_app/constants.dart';
 import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
@@ -9,8 +9,8 @@ import 'package:provider/provider.dart';
 class SinglePerson extends StatelessWidget {
   final Staff staff;
 
-  final List<AssistanceRequest> personRequest = [];
-  final List<StaffOrderHistory> personOrders = [];
+  final List personRequest = [];
+
   final List<String> allottedTables = [];
 
   SinglePerson({
@@ -20,35 +20,43 @@ class SinglePerson extends StatelessWidget {
   final startTime = '4:20 PM';
 
   getPersonRequest(restaurantData) {
-    if (restaurantData.restaurant.assistanceRequests != null) {
-      restaurantData.restaurant.assistanceRequests.forEach((request) {
-        if (request.acceptedBy == staff.name) {
-          personRequest.add(request);
-        }
-      });
-    }
-
     if (restaurantData.restaurant.staff != null) {
       restaurantData.restaurant.staff.forEach((restStaff) {
         if (restStaff.oid == staff.oid) {
-          if (restStaff.orderHistory != null) {
-            restStaff.orderHistory.forEach((order) {
-              personOrders.add(order);
+          if (restStaff.requestHistory != null) {
+            restStaff.requestHistory.forEach((request) {
+              print("wewewe  $request");
+              personRequest.add(request);
             });
           }
         }
       });
     }
+//    if (restaurantData.restaurant.staff != null) {
+//      restaurantData.restaurant.staff.forEach((restStaff) {
+//        if (restStaff.oid == staff.oid) {
+//          if (restStaff.orderHistory != null) {
+//            restStaff.orderHistory.forEach((order) {
+//              personOrders.add(order);
+//            });
+//          }
+//        }
+//      });
+//    }
   }
 
   getAllottedTables(restaurantData) {
-    restaurantData.restaurant.tables.forEach((table) {
-      table.staff.forEach((tableStaff) {
-        if (tableStaff.oid == staff.oid) {
-          allottedTables.add(table.name);
+    if (restaurantData.restaurant.tables != null) {
+      restaurantData.restaurant.tables.forEach((table) {
+        if (table.staff != null) {
+          table.staff.forEach((tableStaff) {
+            if (tableStaff.oid == staff.oid) {
+              allottedTables.add(table.name);
+            }
+          });
         }
       });
-    });
+    }
   }
 
   @override
@@ -150,20 +158,150 @@ class SinglePerson extends StatelessWidget {
                         margin: EdgeInsets.symmetric(horizontal: 2),
                         padding: EdgeInsets.all(8),
                         color: Colors.grey[50],
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              child: Text(
-                                'Assistance',
-                                style: homePageS1,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                child: Text(
+                                  'Assistance',
+                                  style: homePageS1,
+                                ),
                               ),
-                            ),
-                            Expanded(
-                              child: AssistanceRequestBuilder(
-                                requestList: personRequest,
+                              ListView.builder(
+                                itemCount: personRequest.length,
+                                shrinkWrap: true,
+                                primary: false,
+                                itemBuilder: (context, index) {
+                                  return personRequest[index].runtimeType ==
+                                          StaffOrderHistory
+                                      ? Container(
+                                          decoration: BoxDecoration(
+                                            color: kLightThemeColor,
+
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(
+                                                    15.0)), // set rounded corner radius
+                                          ),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 18.0, vertical: 14),
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 18.0, vertical: 4),
+                                          child: Column(
+                                            children: <Widget>[
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: <Widget>[
+                                                  Text(
+                                                    'Table : ${personRequest[index].table}' ??
+                                                        " ",
+                                                    style: kTitleStyle,
+                                                    textAlign: TextAlign.left,
+                                                  ),
+                                                  Text(
+                                                    '${formatDate(
+                                                          (personRequest[index]
+                                                              .timestamp),
+                                                          [HH, ':', nn],
+                                                        )}' ??
+                                                        " ",
+                                                    style: kTitleStyle,
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: 8),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: <Widget>[
+                                                  Flexible(
+                                                    child: Text(
+                                                      "Item : ${personRequest[index].food}" ??
+                                                          " ",
+//                                  style: homePageS2,
+                                                    ),
+                                                  ),
+                                                  Flexible(
+                                                    child: Text(
+                                                      "Served to : ${personRequest[index].user}",
+//                                  style: homePageS2,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      : Container(
+                                          decoration: BoxDecoration(
+                                            color: kLightThemeColor,
+
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(
+                                                    15.0)), // set rounded corner radius
+                                          ),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 18.0, vertical: 14),
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 18.0, vertical: 4),
+                                          child: Column(
+                                            children: <Widget>[
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: <Widget>[
+                                                  Text(
+                                                    'Table : ${personRequest[index].table}' ??
+                                                        " ",
+                                                    style: kTitleStyle,
+                                                    textAlign: TextAlign.left,
+                                                  ),
+                                                  Text(
+                                                    '${formatDate(
+                                                          (personRequest[index]
+                                                              .timeStamp),
+                                                          [HH, ':', nn],
+                                                        )}' ??
+                                                        " ",
+                                                    style: kTitleStyle,
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: 8),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: <Widget>[
+                                                  Flexible(
+                                                    child: Text(
+                                                      "Assistance : ${personRequest[index].assistanceType}" ??
+                                                          " ",
+//                                  style: homePageS2,
+                                                    ),
+                                                  ),
+                                                  Flexible(
+                                                    child: Text(
+                                                      personRequest[index]
+                                                                  .acceptedBy ==
+                                                              null
+                                                          ? "Pending"
+                                                          : "Accepted by ${personRequest[index].acceptedBy['staff_name']}",
+//                                  style: homePageS2,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                },
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),

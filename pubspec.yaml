@@ -1,6 +1,6 @@
 name: manager_app
 description: LiQR's Manager application.
-version: 0.0.3+4
+version: 0.0.8+9
 
 environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
@@ -10,6 +10,7 @@ dependencies:
     sdk: flutter
   provider: ^4.0.5+1
   shared_preferences: ^0.5.7+1
+  flutter_plugin_pdf_viewer: ^1.0.7
 
 
 dev_dependencies:

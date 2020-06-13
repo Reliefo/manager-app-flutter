@@ -16,6 +16,7 @@ class AssistanceRequestBuilder extends StatelessWidget {
     return ListView.builder(
       itemCount: requestList.length,
       shrinkWrap: true,
+      primary: false,
       itemBuilder: (context, index) {
         return Container(
           decoration: BoxDecoration(

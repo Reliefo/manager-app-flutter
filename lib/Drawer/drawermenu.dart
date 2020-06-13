@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:manager_app/Drawer/Dashboard/dashboard.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configure.dart';
 import 'package:manager_app/Drawer/orderHistory/orderHistory.dart';
 import 'package:manager_app/authentication/loginPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerMenu extends StatelessWidget {
+  final String restaurantName, managerName;
+
+  DrawerMenu({
+    this.restaurantName,
+    this.managerName,
+  });
   clearData() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.clear();
@@ -15,7 +22,12 @@ class DrawerMenu extends StatelessWidget {
     return ListView(
       children: <Widget>[
         DrawerHeader(
-          child: Container(),
+          child: Column(
+            children: <Widget>[
+              restaurantName != null ? Text(restaurantName) : Container(),
+              Text(managerName),
+            ],
+          ),
         ),
 
         FlatButton(
@@ -48,15 +60,29 @@ class DrawerMenu extends StatelessWidget {
           },
         ),
         Divider(),
-        ///////////////////
 
+        FlatButton(
+          child: Center(
+            child: Text('Dashboard'),
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Dashboard(),
+              ),
+            );
+          },
+        ),
+        Divider(),
+        ///////////////////
         FlatButton(
           child: Center(
             child: Text('Logout'),
           ),
           onPressed: () {
             clearData();
-
+            Navigator.pop(context);
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -65,12 +91,12 @@ class DrawerMenu extends StatelessWidget {
             );
           },
         ),
-        FlatButton(
-          child: Text('get'),
-          onPressed: () {
-//            getRest();
-          },
-        ),
+//        FlatButton(
+//          child: Text('get'),
+//          onPressed: () {
+////            getRest();
+//          },
+//        ),
       ],
     );
   }

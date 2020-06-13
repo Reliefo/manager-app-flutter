@@ -12,7 +12,10 @@ class Completed extends StatelessWidget {
     return orderData.completedOrders.length > 0
         ? Flexible(
             fit: FlexFit.loose,
-            child: OrderItemBuilder(orderList: orderData.completedOrders),
+            child: OrderItemBuilder(
+              reverseOrder: true,
+              orderList: orderData.completedOrders,
+            ),
           )
         : Flexible(
             fit: FlexFit.loose,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager_app/Drawer/configureRestaurant/addFoodItem/addItem/addItem.dart';
+import 'package:manager_app/constants.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
 
@@ -48,7 +49,7 @@ class _AddMenuState extends State<AddBarMenu> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.grey,
+          backgroundColor: kThemeColor,
           title: Text('Add Bar Menu'),
         ),
         body: Container(
@@ -118,7 +119,7 @@ class _AddMenuState extends State<AddBarMenu> {
                     Container(
                       padding: EdgeInsets.all(8),
                       child: RaisedButton(
-                        color: Colors.grey,
+                        color: kThemeColor,
                         child: Text('Add'),
                         onPressed: () {
                           _addCategory(restaurantData);
@@ -135,10 +136,15 @@ class _AddMenuState extends State<AddBarMenu> {
                           itemBuilder: (BuildContext context, index) {
                             return FlatButton(
                               child: ListTile(
-                                title: Text(restaurantData
-                                    .restaurant.barMenu[index].name),
-                                subtitle: Text(restaurantData
-                                    .restaurant.barMenu[index].description),
+                                title: Text(
+                                  restaurantData.restaurant.barMenu[index].name,
+                                  style: kTitleStyle,
+                                ),
+                                subtitle: Text(
+                                  restaurantData
+                                      .restaurant.barMenu[index].description,
+                                  style: kSubTitleStyle,
+                                ),
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
@@ -192,9 +198,7 @@ class _AddMenuState extends State<AddBarMenu> {
                                                         "Category : ",
                                                         textAlign:
                                                             TextAlign.center,
-                                                        style: TextStyle(
-                                                          fontSize: 16.0,
-                                                        ),
+                                                        style: kTitleStyle,
                                                       ),
                                                       SizedBox(width: 20),
                                                       Container(
@@ -217,9 +221,7 @@ class _AddMenuState extends State<AddBarMenu> {
                                                         "Description : ",
                                                         textAlign:
                                                             TextAlign.center,
-                                                        style: TextStyle(
-                                                          fontSize: 16.0,
-                                                        ),
+                                                        style: kTitleStyle,
                                                       ),
                                                       SizedBox(width: 20),
                                                       Container(
@@ -241,6 +243,8 @@ class _AddMenuState extends State<AddBarMenu> {
                                                         child: Text(
                                                           "Cancel",
                                                           style: TextStyle(
+                                                              fontFamily:
+                                                                  "Poppins",
                                                               color:
                                                                   Colors.red),
                                                         ),
@@ -253,6 +257,8 @@ class _AddMenuState extends State<AddBarMenu> {
                                                         child: Text(
                                                           "Done",
                                                           style: TextStyle(
+                                                              fontFamily:
+                                                                  "Poppins",
                                                               color:
                                                                   Colors.green),
                                                         ),
@@ -302,10 +308,24 @@ class _AddMenuState extends State<AddBarMenu> {
                                               title: Text(
                                                   "Remove ${restaurantData.restaurant.barMenu[index].name} Category ?"),
                                               content: new Text(
-                                                  "this will delete all items in this category"),
+                                                "This action will delete all items in this category",
+                                                style: kSubTitleStyle,
+                                              ),
                                               actions: <Widget>[
+                                                // usually buttons at the bottom of the dialog
                                                 FlatButton(
-                                                  child: new Text("Delete"),
+                                                  child: Text("Close"),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                                FlatButton(
+                                                  child: new Text(
+                                                    "Delete",
+                                                    style: TextStyle(
+                                                        fontFamily: "Poppins",
+                                                        color: Colors.red),
+                                                  ),
                                                   onPressed: () {
                                                     restaurantData
                                                         .sendConfiguredDataToBackend(
@@ -315,13 +335,6 @@ class _AddMenuState extends State<AddBarMenu> {
                                                                 .oid,
                                                             "delete_bar_category");
 
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                                // usually buttons at the bottom of the dialog
-                                                FlatButton(
-                                                  child: Text("Close"),
-                                                  onPressed: () {
                                                     Navigator.of(context).pop();
                                                   },
                                                 ),

@@ -30,6 +30,7 @@ class Queued extends StatelessWidget {
                   fit: FlexFit.loose,
                   child: SingleChildScrollView(
                     child: OrderItemBuilder(
+                      reverseOrder: false,
                       orderList: orderData.queueOrders,
                     ),
                   ))

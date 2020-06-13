@@ -36,6 +36,15 @@ const kSubTitleStyle = TextStyle(
   fontFamily: 'Poppins',
   fontWeight: FontWeight.w500,
 );
+
+const kDashBoardLargeStyle = TextStyle(
+  fontSize: 30.0,
+  color: Colors.black,
+//  fontFamily: 'Poppins',
+  fontWeight: FontWeight.w600,
+  letterSpacing: 2.0,
+);
+
 const homePageS1 = TextStyle(
   fontSize: 20.0,
   color: Colors.black,

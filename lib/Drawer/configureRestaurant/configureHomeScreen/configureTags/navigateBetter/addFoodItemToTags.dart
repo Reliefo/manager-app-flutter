@@ -6,12 +6,12 @@ import 'package:provider/provider.dart';
 class AddFoodItemToTags extends StatefulWidget {
   const AddFoodItemToTags({
     Key key,
-//    @required this.restaurant,
     @required this.selectedTag,
+    this.getTagItems,
   }) : super(key: key);
 
-//  final Restaurant restaurant;
   final String selectedTag;
+  final getTagItems;
 
   @override
   _AddFoodItemToTagsState createState() => _AddFoodItemToTagsState();
@@ -49,13 +49,6 @@ class _AddFoodItemToTagsState extends State<AddFoodItemToTags> {
     return Column(
       mainAxisSize: MainAxisSize.min, // To make the card compact
       children: <Widget>[
-//        Text(
-//          "Add item to: ${widget.selectedTag}",
-//          textAlign: TextAlign.center,
-//          style: TextStyle(
-//            fontSize: 16.0,
-//          ),
-//        ),
         DropdownButton(
           value: _selectedFoodCategory,
           items: restaurantData.restaurant.foodMenu != null
