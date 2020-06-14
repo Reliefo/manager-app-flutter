@@ -148,23 +148,6 @@ class _AddMenuState extends State<AddBarMenu> {
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
-//                                    FlatButton(
-//                                      child: Text('Add Drinks'),
-//                                      onPressed: () {
-//                                        Navigator.push(
-//                                          context,
-//                                          MaterialPageRoute(
-//                                            builder: (context) => AddItem(
-//                                              category: widget
-//                                                  .restaurant.barMenu[index],
-//                                              updateConfigDetailsToCloud: widget
-//                                                  .updateConfigDetailsToCloud,
-//                                              menuType: "bar",
-//                                            ),
-//                                          ),
-//                                        );
-//                                      },
-//                                    ),
                                     IconButton(
                                       icon: Icon(Icons.edit),
                                       onPressed: () {

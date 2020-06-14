@@ -255,6 +255,18 @@ class _SocketConnectionState extends State<SocketConnection> {
           });
         });
       }
+
+      if (decode["type"] == "decategory_kitchen") {
+        print(decode);
+        setState(() {
+          restaurant.kitchens.forEach((kitchen) {
+            if (kitchen.oid == decode["kitchen_id"]) {
+              kitchen.categoriesList.removeWhere(
+                  (element) => element.oid == decode["category_id"]);
+            }
+          });
+        });
+      }
       ////////////////////////////////    staff     ///////////////////
       if (decode["type"] == "add_staff") {
         restaurant.addStaffDetails(decode['staff']);
@@ -380,6 +392,10 @@ class _SocketConnectionState extends State<SocketConnection> {
       }
 
       if (decode["type"] == "edit_food_item") {
+        print("edit food items");
+
+        print(decode);
+
         if (decode["category_type"] == "food") {
           restaurant.foodMenu.forEach((category) {
             category.foodList.forEach((foodItem) {

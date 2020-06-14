@@ -722,24 +722,50 @@ class MenuFoodItem {
   }
 
   addEdited(edited) {
-    this.oid = edited['food_id'];
-    this.name = edited['name'];
-    this.description = edited['description'];
-    this.price = edited['price'];
+    if (edited['food_id'] != null) {
+      this.oid = edited['food_id'];
+    }
+    if (edited['name'] != null) {
+      this.name = edited['name'];
+    }
+
+    if (edited['description'] != null) {
+      this.description = edited['description'];
+    }
+    if (edited['price'] != null) {
+      this.price = edited['price'];
+    }
     print('added edited here');
+
     if (edited["food_options"] != null) {
       print('added edited here3');
+
       if (edited["food_options"]["options"] != null) {
-        this.foodOption.options.clear();
-        edited["food_options"]["options"].forEach((option) {
-          this.foodOption.options.add(option);
-        });
+        print("uii");
+
+        print("uii122");
+        if (edited["food_options"]["options"].length > 0) {
+          this.foodOption.options = new List<Map<String, dynamic>>();
+          edited["food_options"]["options"].forEach((option) {
+            this.foodOption.options.add(option);
+          });
+        } else {
+          print("hjk");
+          this.foodOption.options.clear();
+        }
       }
+
+      print("cming herewqeeqe");
       if (edited["food_options"]["choices"] != null) {
-        this.foodOption.choices.clear();
-        edited["food_options"]["choices"].forEach((choice) {
-          this.foodOption.choices.add(choice);
-        });
+        if (edited["food_options"]["choices"].length > 0) {
+          this.foodOption.choices = new List<String>();
+          edited["food_options"]["choices"].forEach((choice) {
+            this.foodOption.choices.add(choice);
+          });
+        } else {
+          print("ch here");
+          this.foodOption.choices.clear();
+        }
       }
     }
     print('added edited here45');
@@ -747,9 +773,9 @@ class MenuFoodItem {
 }
 
 class FoodOption {
-  List<Map<String, dynamic>> options;
-  List<Map<String, dynamic>> addOns;
-  List<String> choices;
+  List<Map<String, dynamic>> options = [];
+  List<Map<String, dynamic>> addOns = [];
+  List<String> choices = [];
 
   FoodOption({
     this.options,

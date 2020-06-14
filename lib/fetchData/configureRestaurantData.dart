@@ -186,12 +186,15 @@ class RestaurantData extends ChangeNotifier {
 //  }
 
 //Todo: will be fetched using providers
-  sendConfiguredDataToBackend(localData, String type) {
+  sendConfiguredDataToBackend(localData, type) {
 //    print(type);
 //    print(localData);
     var encode;
     String restaurantId = restaurant.restaurantId;
 ////////////////////////////////    table      ///////////////////
+//    var request_type = type.split()[1]
+//    configuringTables(localData, request_type)
+
     if (type == "add_tables") {
       encode = jsonEncode(
           {"restaurant_id": restaurantId, "type": type, "tables": localData});
@@ -295,6 +298,12 @@ class RestaurantData extends ChangeNotifier {
       encode = jsonEncode(localData);
     }
 
+    if (type == "decategory_kitchen") {
+      localData['restaurant_id'] = restaurantId;
+      localData['type'] = type;
+      encode = jsonEncode(localData);
+    }
+
 ////////////////////////////////////////   menu         /////////////////////
     if (type == "add_food_category") {
       encode = jsonEncode(
@@ -362,27 +371,28 @@ class RestaurantData extends ChangeNotifier {
     }
 
     if (type == "edit_food_item") {
-      if (localData['food_dict']["food_options"]['options'].length == 0)
-        localData['food_dict']["food_options"].remove('options');
-      else {
-        List pricesList = [];
-
-        localData['food_dict']["food_options"]['options'].forEach((option) {
-          pricesList.add(option["option_price"]);
-        });
-        localData['food_dict']['price'] = pricesList.join('/');
+      if (localData['editing_fields']['food_options'] != null) {
+        if (localData['editing_fields']['food_options']['options'] != null) {
+          List pricesList = [];
+          localData['editing_fields']['food_options']['options']
+              ?.forEach((optionsPair) {
+            pricesList.add(optionsPair['option_price']);
+          });
+          encode = jsonEncode({
+            "restaurant_id": restaurantId,
+            "type": type,
+            "food_id": localData["food_id"],
+            "category_type": localData["category_type"],
+            "editing_fields": {
+              "price": pricesList.join('/'),
+              "food_options": localData['editing_fields']['food_options'],
+            },
+          });
+        }
+      } else {
+        localData["type"] = type;
+        encode = jsonEncode(localData);
       }
-      if (localData['food_dict']["food_options"]['choices'].length == 0)
-        localData['food_dict']["food_options"].remove('choices');
-      if (localData['food_dict']["food_options"].length == 0)
-        localData['food_dict'].remove('food_options');
-      encode = jsonEncode({
-        "restaurant_id": restaurantId,
-        "type": type,
-        "category_type": localData["category_type"],
-        "food_id": localData['food_id'],
-        "editing_fields": localData['food_dict'],
-      });
     }
 
     if (type == "delete_food_item") {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager_app/constants.dart';
 import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
@@ -31,8 +32,8 @@ class _AssignCategoryState extends State<AssignCategory> {
       availableCategoriesValues["${category.oid}"] = false;
     });
 
-    restaurantData.restaurant.kitchens.forEach((kitchen) {
-      kitchen.categoriesList.forEach((category) {
+    restaurantData.restaurant.kitchens?.forEach((kitchen) {
+      kitchen.categoriesList?.forEach((category) {
         setState(() {
           availableCategories
               .removeWhere((selected) => selected.oid == category.oid);
@@ -74,14 +75,36 @@ class _AssignCategoryState extends State<AssignCategory> {
               },
             ),
           ),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: widget.kitchen.categoriesList.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(widget.kitchen.categoriesList[index].name),
-              );
-            },
+          Expanded(
+            child: widget.kitchen.categoriesList != null
+                ? ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: widget.kitchen.categoriesList.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(widget.kitchen.categoriesList[index].name),
+                        trailing: IconButton(
+                          icon: Icon(Icons.cancel),
+                          onPressed: () {
+                            restaurantData.sendConfiguredDataToBackend(
+                              {
+                                "kitchen_id": widget.kitchen.oid,
+                                "category_id":
+                                    widget.kitchen.categoriesList[index].oid
+                              },
+                              "decategory_kitchen",
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  )
+                : Center(
+                    child: Text(
+                      "No Category Assigned.!",
+                      style: kHeaderStyleSmall,
+                    ),
+                  ),
           )
         ],
       ),
@@ -172,11 +195,12 @@ class _CategoryPopUpState extends State<CategoryPopUp> {
                 ),
                 onPressed: () {
                   selectedCategory();
-
-                  restaurantData.sendConfiguredDataToBackend(
-                    {"kitchen_id": widget.kitchenId, "categories": selected},
-                    "category_kitchen",
-                  );
+                  if (selected.isNotEmpty) {
+                    restaurantData.sendConfiguredDataToBackend(
+                      {"kitchen_id": widget.kitchenId, "categories": selected},
+                      "category_kitchen",
+                    );
+                  }
 
                   Navigator.of(context).pop(); // To close the dialog
                 },

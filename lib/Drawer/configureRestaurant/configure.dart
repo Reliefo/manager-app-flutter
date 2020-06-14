@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:manager_app/Drawer/configureRestaurant/Kitchen/addKitchen.dart';
-import 'package:manager_app/Drawer/configureRestaurant/Kitchen/addKitchenStaff.dart';
 import 'package:manager_app/Drawer/configureRestaurant/addBarMenu.dart';
 import 'package:manager_app/Drawer/configureRestaurant/addFoodMenu.dart';
 import 'package:manager_app/Drawer/configureRestaurant/addStaff.dart';
@@ -81,11 +80,7 @@ class Configure extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => AddStaff(
-//                                  updateConfigDetailsToCloud:
-//                                      updateConfigDetailsToCloud,
-//                                  restaurant: restaurant,
-                                    ),
+                                builder: (context) => AddStaff(),
                               ),
                             );
                           },
@@ -112,11 +107,7 @@ class Configure extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => AssignStaff(
-//                                  updateConfigDetailsToCloud:
-//                                      updateConfigDetailsToCloud,
-//                                  restaurant: restaurant,
-                                    ),
+                                builder: (context) => AssignStaff(),
                               ),
                             );
                           },
@@ -127,186 +118,153 @@ class Configure extends StatelessWidget {
                 ]),
               ),
               Expanded(
-                child: Row(children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.all(25),
-                      child: Card(
-                        color: Color(0xffE5EDF1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        child: FlatButton(
-                          child: Center(
-                            child: Text(
-                              'Food Menu',
-                              style: kHeaderStyleSmall,
-                            ),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(25),
+                        child: Card(
+                          color: Color(0xffE5EDF1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddFoodMenu(
-//                                  updateConfigDetailsToCloud:
-//                                      updateConfigDetailsToCloud,
-//                                  restaurant: restaurant,
-                                    ),
+                          child: FlatButton(
+                            child: Center(
+                              child: Text(
+                                'Food Menu',
+                                style: kHeaderStyleSmall,
                               ),
-                            );
-                          },
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddFoodMenu(),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.all(25),
-                      child: Card(
-                        color: Color(0xffE5EDF1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        child: FlatButton(
-                          child: Center(
-                            child: Text(
-                              'Bar Menu',
-                              style: kHeaderStyleSmall,
-                            ),
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(25),
+                        child: Card(
+                          color: Color(0xffE5EDF1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddBarMenu(
-//                                  updateConfigDetailsToCloud:
-//                                      updateConfigDetailsToCloud,
-//                                  restaurant: restaurant,
-                                    ),
+                          child: FlatButton(
+                            child: Center(
+                              child: Text(
+                                'Bar Menu',
+                                style: kHeaderStyleSmall,
                               ),
-                            );
-                          },
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddBarMenu(),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.all(25),
-                      child: Card(
-                        color: Color(0xffE5EDF1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        child: FlatButton(
-                          child: Center(
-                            child: Text(
-                              'Home Screen',
-                              style: kHeaderStyleSmall,
-                            ),
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(25),
+                        child: Card(
+                          color: Color(0xffE5EDF1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ConfigureHomeScreen(
-//                                  restaurant: restaurant,
-                                    ),
+                          child: FlatButton(
+                            child: Center(
+                              child: Text(
+                                'Home Screen',
+                                style: kHeaderStyleSmall,
                               ),
-                            );
-                          },
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ConfigureHomeScreen(
+//
+                                      ),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ]),
+                  ],
+                ),
               ),
               Expanded(
-                child: Row(children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.all(25),
-                      child: Card(
-                        color: Color(0xffE5EDF1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        child: FlatButton(
-                          child: Center(
-                            child: Text(
-                              'Add Kitchen',
-                              style: kHeaderStyleSmall,
-                            ),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(25),
+                        child: Card(
+                          color: Color(0xffE5EDF1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddKitchen(),
+                          child: FlatButton(
+                            child: Center(
+                              child: Text(
+                                'Add Kitchen',
+                                style: kHeaderStyleSmall,
                               ),
-                            );
-                          },
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddKitchen(),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.all(25),
-                      child: Card(
-                        color: Color(0xffE5EDF1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        child: FlatButton(
-                          child: Center(
-                            child: Text(
-                              'Kitchen Staff',
-                              style: kHeaderStyleSmall,
-                            ),
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(25),
+                        child: Card(
+                          color: Color(0xffE5EDF1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddKitchenStaff(),
+                          child: FlatButton(
+                            child: Center(
+                              child: Text(
+                                'Taxes',
+                                style: kHeaderStyleSmall,
                               ),
-                            );
-                          },
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SetTaxes(),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),
-                  ),
-
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.all(25),
-                      child: Card(
-                        color: Color(0xffE5EDF1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        child: FlatButton(
-                          child: Center(
-                            child: Text(
-                              'Taxes',
-                              style: kHeaderStyleSmall,
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SetTaxes(),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-//                  Expanded(
-//                    child: Container(
+                    Expanded(
+                      child: Container(
 //                      padding: EdgeInsets.all(25),
 //                      child: Card(
 //                        color: Color(0xffE5EDF1),
@@ -316,7 +274,7 @@ class Configure extends StatelessWidget {
 //                        child: FlatButton(
 //                          child: Center(
 //                            child: Text(
-//                              'testing',
+//                              'Kitchen Staff',
 //                              style: kHeaderStyleSmall,
 //                            ),
 //                          ),
@@ -324,15 +282,16 @@ class Configure extends StatelessWidget {
 //                            Navigator.push(
 //                              context,
 //                              MaterialPageRoute(
-//                                builder: (context) => TestScreen(),
+//                                builder: (context) => AddKitchenStaff(),
 //                              ),
 //                            );
 //                          },
 //                        ),
 //                      ),
-//                    ),
-//                  ),
-                ]),
+                          ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
