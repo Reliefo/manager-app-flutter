@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager_app/Drawer/configureRestaurant/Inventory/Inventory.dart';
 import 'package:manager_app/Drawer/configureRestaurant/Kitchen/addKitchen.dart';
 import 'package:manager_app/Drawer/configureRestaurant/addBarMenu.dart';
 import 'package:manager_app/Drawer/configureRestaurant/addFoodMenu.dart';
@@ -265,30 +266,30 @@ class Configure extends StatelessWidget {
                     ),
                     Expanded(
                       child: Container(
-//                      padding: EdgeInsets.all(25),
-//                      child: Card(
-//                        color: Color(0xffE5EDF1),
-//                        shape: RoundedRectangleBorder(
-//                          borderRadius: BorderRadius.circular(20.0),
-//                        ),
-//                        child: FlatButton(
-//                          child: Center(
-//                            child: Text(
-//                              'Kitchen Staff',
-//                              style: kHeaderStyleSmall,
-//                            ),
-//                          ),
-//                          onPressed: () {
-//                            Navigator.push(
-//                              context,
-//                              MaterialPageRoute(
-//                                builder: (context) => AddKitchenStaff(),
-//                              ),
-//                            );
-//                          },
-//                        ),
-//                      ),
+                        padding: EdgeInsets.all(25),
+                        child: Card(
+                          color: Color(0xffE5EDF1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
+                          child: FlatButton(
+                            child: Center(
+                              child: Text(
+                                'Inventory',
+                                style: kHeaderStyleSmall,
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Inventory(),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),

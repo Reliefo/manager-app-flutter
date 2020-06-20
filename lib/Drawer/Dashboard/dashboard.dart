@@ -1,7 +1,7 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:manager_app/Drawer/Dashboard/barGraph.dart';
-import 'package:manager_app/Drawer/Dashboard/salesDetails.dart';
+import 'package:manager_app/Drawer/orderHistory/salesDetails.dart';
 import 'package:manager_app/constants.dart';
 import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
@@ -202,10 +202,10 @@ class _DashboardState extends State<Dashboard> {
     } else if (fromDate.isBefore(uptoDate)) {
       setState(() {
         customPeriodSales = calculateSales(fromDate, uptoDate);
+        customPeriodHistory = getRestaurantOrderHistory(fromDate, uptoDate);
       });
 
-      return Expanded(
-          child: SingleChildScrollView(
+      return SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -249,9 +249,22 @@ class _DashboardState extends State<Dashboard> {
                 ],
               ),
             ),
+            RaisedButton(
+              child: Text("View Details"),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SalesDetails(
+                      salesHistory: customPeriodHistory,
+                    ),
+                  ),
+                );
+              },
+            ),
           ],
         ),
-      ));
+      );
     }
   }
 

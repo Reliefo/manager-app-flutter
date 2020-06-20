@@ -465,6 +465,18 @@ class _AddFoodItemState extends State<AddItem> {
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: widget.category.foodList[index]
+                                                    .visibility ==
+                                                true
+                                            ? Colors.green
+                                            : Colors.red,
+                                      ),
+                                      height: 16,
+                                      width: 16,
+                                    ),
                                     IconButton(
                                       icon: Icon(Icons.cancel),
                                       onPressed: () {
@@ -481,16 +493,15 @@ class _AddFoodItemState extends State<AddItem> {
                               ),
                               onPressed: () {
                                 //////////////////////////////// view item ///////////////
-                                showDialog(
-//                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return ViewItem(
-                                        menuType: widget.menuType,
-                                        foodItem:
-                                            widget.category.foodList[index],
-                                      );
-                                    });
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ViewItem(
+                                      menuType: widget.menuType,
+                                      foodItem: widget.category.foodList[index],
+                                    ),
+                                  ),
+                                );
                               },
                             );
                           },

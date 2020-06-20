@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager_app/Drawer/configureRestaurant/registerStaff.dart';
+import 'package:manager_app/constants.dart';
 import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
@@ -92,7 +93,9 @@ class _AddDataState extends State<AddKitchenStaff> {
                     itemBuilder: (context, index) {
                       return ListTile(
                         title: Text(
-                            'Name : ${widget.kitchen.kitchenStaffList[index].name}'),
+                          'Name : ${widget.kitchen.kitchenStaffList[index].name}',
+                          style: kTitleStyle,
+                        ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[

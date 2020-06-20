@@ -668,6 +668,7 @@ class MenuFoodItem {
   String name;
   String description;
   String price;
+  bool visibility;
   List<String> tags;
   FoodOption foodOption;
 
@@ -678,9 +679,11 @@ class MenuFoodItem {
     this.price,
     this.tags,
     this.foodOption,
+    this.visibility,
   });
 
   MenuFoodItem.fromJson(Map<String, dynamic> json) {
+    print(json);
     if (json['_id']['\$oid'] != null) {
       oid = json['_id']['\$oid'];
     }
@@ -695,6 +698,10 @@ class MenuFoodItem {
 
     if (json['price'] != null) {
       price = json['price'];
+    }
+
+    if (json['visibility'] != null) {
+      visibility = json['visibility'];
     }
 
     if (json['tags'] != null) {

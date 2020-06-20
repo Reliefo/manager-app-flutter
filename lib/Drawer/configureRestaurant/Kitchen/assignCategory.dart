@@ -22,12 +22,12 @@ class _AssignCategoryState extends State<AssignCategory> {
     availableCategories.clear();
     availableCategoriesValues.clear();
 
-    restaurantData.restaurant.foodMenu.forEach((category) {
+    restaurantData.restaurant.foodMenu?.forEach((category) {
       availableCategories.add(category);
       availableCategoriesValues["${category.oid}"] = false;
     });
 
-    restaurantData.restaurant.barMenu.forEach((category) {
+    restaurantData.restaurant.barMenu?.forEach((category) {
       availableCategories.add(category);
       availableCategoriesValues["${category.oid}"] = false;
     });
@@ -57,7 +57,10 @@ class _AssignCategoryState extends State<AssignCategory> {
           Container(
             padding: EdgeInsets.symmetric(vertical: 10),
             child: ListTile(
-              title: Text('Assign New Category to kitchen'),
+              title: Text(
+                'Assign New Category to kitchen',
+                style: kHeaderStyleSmall,
+              ),
               trailing: Icon(Icons.add),
               onTap: () {
                 showDialog(
@@ -82,7 +85,10 @@ class _AssignCategoryState extends State<AssignCategory> {
                     itemCount: widget.kitchen.categoriesList.length,
                     itemBuilder: (context, index) {
                       return ListTile(
-                        title: Text(widget.kitchen.categoriesList[index].name),
+                        title: Text(
+                          widget.kitchen.categoriesList[index].name,
+                          style: kTitleStyle,
+                        ),
                         trailing: IconButton(
                           icon: Icon(Icons.cancel),
                           onPressed: () {
@@ -147,7 +153,10 @@ class _CategoryPopUpState extends State<CategoryPopUp> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
-      title: Text("Select Category"),
+      title: Text(
+        "Select Category",
+        style: kHeaderStyleSmall,
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min, // To make the card compact
         children: <Widget>[
@@ -162,9 +171,7 @@ class _CategoryPopUpState extends State<CategoryPopUp> {
                       title: Text(
                         widget.availableCategories[index].name,
                         textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontSize: 16.0,
-                        ),
+                        style: kTitleStyle,
                       ),
                       value: widget.availableCategoriesValues[
                           "${widget.availableCategories[index].oid}"],

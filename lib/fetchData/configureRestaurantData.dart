@@ -196,8 +196,11 @@ class RestaurantData extends ChangeNotifier {
 //    configuringTables(localData, request_type)
 
     if (type == "add_tables") {
-      encode = jsonEncode(
-          {"restaurant_id": restaurantId, "type": type, "tables": localData});
+      encode = jsonEncode({
+        "restaurant_id": restaurantId,
+        "type": type,
+        "tables": localData,
+      });
     }
 
     if (type == "edit_tables") {
@@ -210,14 +213,20 @@ class RestaurantData extends ChangeNotifier {
     }
 
     if (type == "delete_tables") {
-      encode = jsonEncode(
-          {"restaurant_id": restaurantId, "type": type, "table_id": localData});
+      encode = jsonEncode({
+        "restaurant_id": restaurantId,
+        "type": type,
+        "table_id": localData,
+      });
     }
 
 ///////////////////////////////////////////////staff//////////////////////////////////
     if (type == "add_staff") {
-      encode = jsonEncode(
-          {"restaurant_id": restaurantId, "type": type, "staff": localData});
+      encode = jsonEncode({
+        "restaurant_id": restaurantId,
+        "type": type,
+        "staff": localData,
+      });
     }
 
     if (type == "edit_staff") {
@@ -230,8 +239,11 @@ class RestaurantData extends ChangeNotifier {
     }
 
     if (type == "delete_staff") {
-      encode = jsonEncode(
-          {"restaurant_id": restaurantId, "type": type, "staff_id": localData});
+      encode = jsonEncode({
+        "restaurant_id": restaurantId,
+        "type": type,
+        "staff_id": localData,
+      });
     }
 
     if (type == "assign_staff") {
@@ -328,8 +340,11 @@ class RestaurantData extends ChangeNotifier {
     }
 
     if (type == "add_bar_category") {
-      encode = jsonEncode(
-          {"restaurant_id": restaurantId, "type": type, "category": localData});
+      encode = jsonEncode({
+        "restaurant_id": restaurantId,
+        "type": type,
+        "category": localData,
+      });
     }
 
     if (type == "edit_bar_category") {
@@ -364,7 +379,7 @@ class RestaurantData extends ChangeNotifier {
         localData['food_dict']["food_options"].remove('choices');
       if (localData['food_dict']["food_options"].length == 0)
         localData['food_dict'].remove('food_options');
-
+      localData['restaurant_id'] = restaurantId;
       localData['food_dict']['restaurant_id'] = restaurantId;
       localData['type'] = type;
       encode = jsonEncode(localData);
@@ -391,6 +406,7 @@ class RestaurantData extends ChangeNotifier {
         }
       } else {
         localData["type"] = type;
+        localData['restaurant_id'] = restaurantId;
         encode = jsonEncode(localData);
       }
     }
@@ -404,6 +420,12 @@ class RestaurantData extends ChangeNotifier {
       });
     }
 
+    if (type == "visibility_food_item") {
+      localData['restaurant_id'] = restaurantId;
+      localData['type'] = type;
+      encode = jsonEncode(localData);
+    }
+/////////////////////////////////////////////////////////
     if (type == "add_home_screen_tags") {
       localData['restaurant_id'] = restaurantId;
       localData['type'] = type;

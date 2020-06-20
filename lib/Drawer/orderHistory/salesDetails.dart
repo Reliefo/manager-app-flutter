@@ -18,8 +18,8 @@ class SalesDetails extends StatefulWidget {
 class _SalesDetailsState extends State<SalesDetails> {
   PDFDocument doc;
 
+  bool _isLoading = true;
   int _selectedIndex;
-
   RestaurantOrderHistory selectedOrder;
 
   _onSelected(int index) {
@@ -30,8 +30,14 @@ class _SalesDetailsState extends State<SalesDetails> {
     });
   }
 
-  void loadFromUrl() async {
-    doc = await PDFDocument.fromURL(selectedOrder.pdf.toString());
+  void _loadFromUrl() async {
+    setState(() {
+      _isLoading = true;
+    });
+    doc = await PDFDocument.fromURL(selectedOrder.pdf);
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -39,6 +45,7 @@ class _SalesDetailsState extends State<SalesDetails> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          title: Text("Order History"),
           backgroundColor: kThemeColor,
         ),
         body: Container(
@@ -53,8 +60,6 @@ class _SalesDetailsState extends State<SalesDetails> {
                         child: Column(
                           children: <Widget>[
                             Container(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 20, horizontal: 10),
                               child: Text(
                                 "Orders",
                                 style: kHeaderStyleSmall,
@@ -77,51 +82,50 @@ class _SalesDetailsState extends State<SalesDetails> {
                                             ? Colors.black12
                                             : Colors.transparent,
                                         child: ListTile(
-                                          title: Column(
+                                          title: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
                                             children: <Widget>[
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: <Widget>[
-                                                  Expanded(
-                                                    child: Text(
-                                                      widget.salesHistory[index]
-                                                          .table,
-                                                      textAlign: TextAlign.left,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: Text(
-                                                      formatDate(
-                                                            (widget
-                                                                .salesHistory[
-                                                                    index]
-                                                                .timeStamp),
-                                                            [HH, ':', nn],
-                                                          ) ??
-                                                          " ",
-                                                      textAlign: TextAlign.left,
-                                                    ),
-                                                  ),
-                                                ],
+                                              Expanded(
+                                                child: Text(
+                                                  formatDate(
+                                                        (widget
+                                                            .salesHistory[index]
+                                                            .timeStamp),
+                                                        [
+                                                          d,
+                                                          '/',
+                                                          M,
+                                                          '/',
+                                                          yy,
+                                                          '  ',
+                                                          HH,
+                                                          ':',
+                                                          nn
+                                                        ],
+                                                      ) ??
+                                                      "",
+                                                  textAlign: TextAlign.left,
+                                                ),
                                               ),
-                                              Row(
-                                                children: <Widget>[
-                                                  Expanded(
-                                                    child: Text(
-                                                      "₹ ${widget.salesHistory[index].bill.totalAmount.toString()}",
-                                                      textAlign:
-                                                          TextAlign.right,
-                                                    ),
-                                                  ),
-                                                ],
+                                              Expanded(
+                                                child: Text(
+                                                  widget.salesHistory[index]
+                                                      .table,
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Text(
+                                                  "₹ ${widget.salesHistory[index].bill.totalAmount.toString()}",
+                                                  textAlign: TextAlign.right,
+                                                ),
                                               ),
                                             ],
                                           ),
                                           onTap: () {
                                             _onSelected(index);
-                                            loadFromUrl();
+                                            _loadFromUrl();
                                           },
                                         ),
                                       );
@@ -143,10 +147,14 @@ class _SalesDetailsState extends State<SalesDetails> {
               Expanded(
                 flex: 3,
                 child: selectedOrder != null
-                    ? PDFViewer(
-                        showPicker: false,
-                        document: doc,
-                      )
+                    ? _isLoading
+                        ? Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : PDFViewer(
+                            showPicker: false,
+                            document: doc,
+                          )
                     : Center(
                         child: Text(
                           "Select the order\nTo view Bill Details ",

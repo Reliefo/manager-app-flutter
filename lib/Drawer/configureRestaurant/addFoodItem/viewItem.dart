@@ -1,3 +1,4 @@
+import 'package:custom_switch/custom_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:manager_app/constants.dart';
@@ -18,6 +19,7 @@ class ViewItem extends StatefulWidget {
 }
 
 class _ViewItemState extends State<ViewItem> {
+  bool switchStatus = true;
   List<String> editChoices = [];
   List<Map<String, dynamic>> editOptions = [];
   final itemNameEditController = TextEditingController();
@@ -46,6 +48,35 @@ class _ViewItemState extends State<ViewItem> {
     }
   }
 
+  Widget editPriceButton(restaurantData) {
+    print(widget.foodItem.foodOption);
+    if (widget.foodItem.foodOption != null) {
+      if (widget.foodItem.foodOption.options.isEmpty) {
+        return IconButton(
+          icon: Icon(Icons.edit),
+          onPressed: () {
+            editItemPrice(restaurantData);
+          },
+        );
+      } else
+        return Container(width: 0, height: 0);
+    } else
+      return IconButton(
+        icon: Icon(Icons.edit),
+        onPressed: () {
+          editItemPrice(restaurantData);
+        },
+      );
+  }
+
+  updateVisibilityToBackend(restaurantData) {
+    restaurantData.sendConfiguredDataToBackend({
+      "category_type": widget.menuType,
+      "food_id": widget.foodItem.oid,
+      "visibility": switchStatus,
+    }, "visibility_food_item");
+  }
+
   @override
   void initState() {
     addEditChoiceOption();
@@ -55,15 +86,9 @@ class _ViewItemState extends State<ViewItem> {
 
   @override
   Widget build(BuildContext context) {
+    RestaurantData restaurantData = Provider.of<RestaurantData>(context);
+
     addEditChoiceOption();
-
-    print("view item");
-//    print(widget.foodItem.foodOption.options);
-//    print(widget.foodItem.foodOption.choices);
-//    print(editOptions);
-//    print(editChoices);
-
-    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -82,10 +107,43 @@ class _ViewItemState extends State<ViewItem> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.3,
-                          height: MediaQuery.of(context).size.height * 0.3,
-                          color: Colors.blue,
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              height: MediaQuery.of(context).size.height * 0.3,
+                              color: Colors.blue,
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: <Widget>[
+                                  switchStatus == true
+                                      ? Text(
+                                          "This Item is visible in Menu",
+                                          textAlign: TextAlign.center,
+                                          style: kHeaderStyleSmall,
+                                        )
+                                      : Text(
+                                          "This Item is Not visible in Menu",
+                                          textAlign: TextAlign.center,
+                                          style: kHeaderStyleSmall,
+                                        ),
+                                  SizedBox(height: 12.0),
+                                  CustomSwitch(
+                                    activeColor: Colors.green,
+                                    value: widget.foodItem.visibility,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        switchStatus = value;
+                                      });
+                                      updateVisibilityToBackend(restaurantData);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                         Container(
                           padding: EdgeInsets.symmetric(
@@ -171,14 +229,7 @@ class _ViewItemState extends State<ViewItem> {
                                     style: kHeaderStyleSmall,
                                   ),
                                   SizedBox(width: 24),
-                                  widget.foodItem.foodOption.options.isEmpty
-                                      ? IconButton(
-                                          icon: Icon(Icons.edit),
-                                          onPressed: () {
-                                            editItemPrice(restaurantData);
-                                          },
-                                        )
-                                      : Container(),
+                                  editPriceButton(restaurantData),
                                 ],
                               ),
                               SizedBox(height: 12),

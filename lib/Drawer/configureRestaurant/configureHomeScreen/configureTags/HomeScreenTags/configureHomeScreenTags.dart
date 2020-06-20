@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureTags/addNewTag.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureTags/navigateBetter/addBarItemToTags.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureTags/navigateBetter/addFoodItemToTags.dart';
+import 'package:manager_app/constants.dart';
 import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
@@ -81,7 +82,7 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.grey,
+          backgroundColor: kThemeColor,
           title: Text('Configure Home Screen Tags'),
         ),
         body: Container(
@@ -89,7 +90,7 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
             children: <Widget>[
               Expanded(
                 child: Container(
-                  color: Colors.green,
+                  color: Colors.white,
                   child: Column(
                     children: <Widget>[
                       Container(
@@ -121,7 +122,7 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
                             return Container(
                               color: _selectedIndex != null &&
                                       _selectedIndex == index
-                                  ? Colors.tealAccent
+                                  ? Colors.black12
                                   : Colors.transparent,
                               child: ListTile(
                                 title: Text(restaurantData
@@ -217,7 +218,7 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
               ),
               Expanded(
                 child: Container(
-                  color: Colors.blue,
+                  color: Colors.white,
                   child: Column(
                     children: <Widget>[
                       Container(
@@ -252,9 +253,13 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
                   ),
                 ),
               ),
+              VerticalDivider(
+                thickness: 3,
+                indent: 12,
+              ),
               Expanded(
                 child: Container(
-                  color: Colors.yellow,
+                  color: Colors.white,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[

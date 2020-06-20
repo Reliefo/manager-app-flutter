@@ -32,8 +32,14 @@ class Assistance extends StatelessWidget {
                 )
 
               //todo: change it when you receive data
-              : Expanded(
-                  child: Text('say there is nothing'),
+              : Container(
+                  height: MediaQuery.of(context).size.height * 0.3,
+                  child: Center(
+                    child: Text(
+                      'No Pending Requests',
+                      style: kHeaderStyle,
+                    ),
+                  ),
                 ),
         ],
       ),

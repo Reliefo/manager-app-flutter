@@ -2,19 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureTags/addNewTag.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureTags/navigateBetter/addBarItemToTags.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureTags/navigateBetter/addFoodItemToTags.dart';
+import 'package:manager_app/constants.dart';
 import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
 
 class ConfigureNavigateBetterTags extends StatefulWidget {
-//  final Restaurant restaurant;
-//  final updateConfigDetailsToCloud;
-//
-//  ConfigureNavigateBetterTags({
-//    @required this.restaurant,
-//    this.updateConfigDetailsToCloud,
-//  });
-
   @override
   _ConfigureNavigateBetterTagsState createState() =>
       _ConfigureNavigateBetterTagsState();
@@ -41,8 +34,6 @@ class _ConfigureNavigateBetterTagsState
 
   getTagItems(selectedTag, restaurantData) {
     setState(() {
-//      barItems.clear();
-//      foodItems.clear();
       selectedTagItems.clear();
       if (restaurantData.restaurant.barMenu != null &&
           restaurantData.restaurant.barMenu.isNotEmpty) {
@@ -87,7 +78,7 @@ class _ConfigureNavigateBetterTagsState
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.grey,
+          backgroundColor: kThemeColor,
           title: Text('Configure Navigate Better'),
         ),
         body: Container(
@@ -95,7 +86,7 @@ class _ConfigureNavigateBetterTagsState
             children: <Widget>[
               Expanded(
                 child: Container(
-                  color: Colors.green,
+                  color: Colors.white,
                   child: Column(
                     children: <Widget>[
                       Container(
@@ -129,7 +120,7 @@ class _ConfigureNavigateBetterTagsState
                             return Container(
                               color: _selectedIndex != null &&
                                       _selectedIndex == index
-                                  ? Colors.tealAccent
+                                  ? Colors.black12
                                   : Colors.transparent,
                               child: ListTile(
                                 title: Text(restaurantData
@@ -225,7 +216,7 @@ class _ConfigureNavigateBetterTagsState
               ),
               Expanded(
                 child: Container(
-                  color: Colors.blue,
+                  color: Colors.white,
                   child: Column(
                     children: <Widget>[
                       Container(
@@ -260,9 +251,13 @@ class _ConfigureNavigateBetterTagsState
                   ),
                 ),
               ),
+              VerticalDivider(
+                thickness: 3,
+                indent: 12,
+              ),
               Expanded(
                 child: Container(
-                  color: Colors.yellow,
+                  color: Colors.white,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[

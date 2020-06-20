@@ -134,10 +134,12 @@ class _SocketConnectionState extends State<SocketConnection> {
       }
 
       var decoded = jsonDecode(data);
-      if (debug) {
-        print("Restaurant is here");
-      }
-//      print("here:  ${decoded["navigate_better_tags"].length}");
+
+      print("fetch restaurant");
+
+      print(decoded["home_screen_tags"]);
+//      print(decoded["order_history"][0].keys.toList());
+//      print(decoded.keys.toList());
 
       restaurant = Restaurant.fromJson(decoded);
     });
@@ -238,14 +240,14 @@ class _SocketConnectionState extends State<SocketConnection> {
         setState(() {
           restaurant.kitchens.forEach((kitchen) {
             if (kitchen.oid == decode["kitchen_id"]) {
-              decode["categories"].forEach((assignedCategory) {
-                restaurant.barMenu.forEach((category) {
+              decode["categories"]?.forEach((assignedCategory) {
+                restaurant.barMenu?.forEach((category) {
                   if (category.oid == assignedCategory) {
                     kitchen.categoriesList.add(category);
                   }
                 });
 
-                restaurant.foodMenu.forEach((category) {
+                restaurant.foodMenu?.forEach((category) {
                   if (category.oid == assignedCategory) {
                     kitchen.categoriesList.add(category);
                   }
@@ -351,15 +353,17 @@ class _SocketConnectionState extends State<SocketConnection> {
       }
 
       if (decode["type"] == "delete_food_category") {
-        restaurant.foodMenu
-            .removeWhere((category) => category.oid == decode["category_id"]);
+        setState(() {
+          restaurant.foodMenu?.removeWhere(
+              (category) => category.oid == decode["category_id"]);
+        });
       }
       if (decode["type"] == "add_bar_category") {
         restaurant.addBarMenuCategory(decode["category"]);
       }
 
       if (decode["type"] == "edit_bar_category") {
-        restaurant.barMenu.forEach((category) {
+        restaurant.barMenu?.forEach((category) {
           if (category.oid == decode["category_id"]) {
             category.name = decode["editing_fields"]["name"];
 
@@ -369,23 +373,33 @@ class _SocketConnectionState extends State<SocketConnection> {
       }
 
       if (decode["type"] == "delete_bar_category") {
-        restaurant.barMenu
-            .removeWhere((category) => category.oid == decode["category_id"]);
+        setState(() {
+          restaurant.barMenu?.removeWhere(
+              (category) => category.oid == decode["category_id"]);
+        });
       }
 
       if (decode["type"] == "add_food_item") {
+        print(decode);
         if (decode["category_type"] == "food") {
-          restaurant.foodMenu.forEach((category) {
+          restaurant.foodMenu?.forEach((category) {
             if (category.oid == decode["category_id"]) {
               print("${category.name} matched");
-              category.addFoodItem(decode["food_dict"]);
+              MenuFoodItem newFoodItem =
+                  MenuFoodItem.fromJson(decode["food_obj"]);
+
+              category.foodList.add(newFoodItem);
             }
           });
         } else if (decode["category_type"] == "bar") {
-          restaurant.barMenu.forEach((category) {
+          restaurant.barMenu?.forEach((category) {
             if (category.oid == decode["category_id"]) {
               print("${category.name} matched");
-              category.addFoodItem(decode["food_dict"]);
+
+              MenuFoodItem newFoodItem =
+                  MenuFoodItem.fromJson(decode["food_obj"]);
+
+              category.foodList.add(newFoodItem);
             }
           });
         }
@@ -418,14 +432,43 @@ class _SocketConnectionState extends State<SocketConnection> {
       }
 
       if (decode["type"] == "delete_food_item") {
-        restaurant.foodMenu.forEach((category) {
-          category.foodList
-              .removeWhere((food) => food.oid == decode["food_id"]);
+        setState(() {
+          restaurant.foodMenu?.forEach((category) {
+            category?.foodList
+                ?.removeWhere((food) => food.oid == decode["food_id"]);
+          });
         });
-        restaurant.barMenu.forEach((category) {
-          category.foodList
-              .removeWhere((food) => food.oid == decode["food_id"]);
+
+        setState(() {
+          restaurant.barMenu?.forEach((category) {
+            category?.foodList
+                ?.removeWhere((food) => food.oid == decode["food_id"]);
+          });
         });
+      }
+
+      if (decode["type"] == "visibility_food_item") {
+        if (decode["category_type"] == "food") {
+          restaurant.foodMenu?.forEach((category) {
+            category?.foodList?.forEach((foodItem) {
+              if (foodItem.oid == decode["food_id"]) {
+                setState(() {
+                  foodItem.visibility = decode["visibility"];
+                });
+              }
+            });
+          });
+        } else if (decode["category_type"] == "bar") {
+          restaurant.barMenu?.forEach((category) {
+            category?.foodList?.forEach((foodItem) {
+              if (foodItem.oid == decode["food_id"]) {
+                setState(() {
+                  foodItem.visibility = decode["visibility"];
+                });
+              }
+            });
+          });
+        }
       }
 /////////////////////////////////       tags     //////////////////
 
@@ -831,6 +874,7 @@ class _SocketConnectionState extends State<SocketConnection> {
   @override
   Widget build(BuildContext context) {
     print("hereeeeww");
+    print(widget.restaurantId);
 
     return TabContainerBottom(
       managerName: widget.managerName,

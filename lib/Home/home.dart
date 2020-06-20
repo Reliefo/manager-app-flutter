@@ -56,9 +56,17 @@ class HomePage extends StatelessWidget {
                                   : Flexible(
                                       fit: FlexFit.loose,
                                       child: Container(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.3,
                                         padding:
                                             EdgeInsets.symmetric(vertical: 12),
-                                        child: Text('No Orders'),
+                                        child: Center(
+                                          child: Text(
+                                            'No Orders',
+                                            style: kHeaderStyle,
+                                          ),
+                                        ),
                                       ),
                                     ),
                               ///////////////////////////////////////completed/////////////////////////////////
@@ -83,9 +91,17 @@ class HomePage extends StatelessWidget {
                                   : Flexible(
                                       fit: FlexFit.loose,
                                       child: Container(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.3,
                                         padding:
                                             EdgeInsets.symmetric(vertical: 12),
-                                        child: Text('No Orders'),
+                                        child: Center(
+                                          child: Text(
+                                            'No Orders',
+                                            style: kHeaderStyle,
+                                          ),
+                                        ),
                                       ),
                                     ),
                             ],

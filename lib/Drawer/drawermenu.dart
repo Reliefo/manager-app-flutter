@@ -3,6 +3,7 @@ import 'package:manager_app/Drawer/Dashboard/dashboard.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configure.dart';
 import 'package:manager_app/Drawer/orderHistory/orderHistory.dart';
 import 'package:manager_app/authentication/loginPage.dart';
+import 'package:manager_app/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerMenu extends StatelessWidget {
@@ -24,15 +25,31 @@ class DrawerMenu extends StatelessWidget {
         DrawerHeader(
           child: Column(
             children: <Widget>[
-              restaurantName != null ? Text(restaurantName) : Container(),
-              Text(managerName),
+              restaurantName != null
+                  ? Text(
+                      restaurantName,
+                      style: kHeaderStyleSmall,
+                      textAlign: TextAlign.left,
+                    )
+                  : Container(),
+              Text(
+                managerName,
+                style: kTitleStyle,
+                textAlign: TextAlign.left,
+              ),
             ],
           ),
         ),
 
         FlatButton(
-          child: Center(
-            child: Text('configure restaurant'),
+          child: Row(
+            children: <Widget>[
+              Text(
+                'Configure Restaurant',
+                style: kHeaderStyleSmall,
+                textAlign: TextAlign.left,
+              ),
+            ],
           ),
           onPressed: () {
             Navigator.push(
@@ -47,8 +64,14 @@ class DrawerMenu extends StatelessWidget {
         Divider(),
 
         FlatButton(
-          child: Center(
-            child: Text('Order History'),
+          child: Row(
+            children: <Widget>[
+              Text(
+                'Order History',
+                style: kHeaderStyleSmall,
+                textAlign: TextAlign.left,
+              ),
+            ],
           ),
           onPressed: () {
             Navigator.push(
@@ -62,8 +85,14 @@ class DrawerMenu extends StatelessWidget {
         Divider(),
 
         FlatButton(
-          child: Center(
-            child: Text('Dashboard'),
+          child: Row(
+            children: <Widget>[
+              Text(
+                'Dashboard',
+                style: kHeaderStyleSmall,
+                textAlign: TextAlign.left,
+              ),
+            ],
           ),
           onPressed: () {
             Navigator.push(
@@ -77,26 +106,25 @@ class DrawerMenu extends StatelessWidget {
         Divider(),
         ///////////////////
         FlatButton(
-          child: Center(
-            child: Text('Logout'),
+          child: Row(
+            children: <Widget>[
+              Text(
+                'Logout',
+                style: kHeaderStyleSmall,
+                textAlign: TextAlign.left,
+              ),
+            ],
           ),
           onPressed: () {
             clearData();
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => LoginPage(),
-              ),
-            );
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LoginPage(),
+                ),
+                (route) => false);
           },
         ),
-//        FlatButton(
-//          child: Text('get'),
-//          onPressed: () {
-////            getRest();
-//          },
-//        ),
       ],
     );
   }

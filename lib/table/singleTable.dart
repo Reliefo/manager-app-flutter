@@ -127,18 +127,23 @@ class SingleTable extends StatelessWidget {
                       ),
                     ),
                     Expanded(
-                      child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: RaisedButton(
-                            onPressed: () {
-                              requestBilling(context);
-                            },
-                            child: Text(
-                              "Bill",
-                              style: homePageS1,
-                              textAlign: TextAlign.right,
-                            ),
-                          )),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Container(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: RaisedButton(
+                                onPressed: () {
+                                  requestBilling(context);
+                                },
+                                child: Text(
+                                  "Bill",
+                                  style: homePageS1,
+                                  textAlign: TextAlign.right,
+                                ),
+                              )),
+                        ],
+                      ),
                     ),
                   ],
                 ),
