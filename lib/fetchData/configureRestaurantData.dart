@@ -1,18 +1,19 @@
 import 'dart:convert';
+import 'dart:math';
 
-import 'package:adhara_socket_io/adhara_socket_io.dart';
 import 'package:flutter/material.dart';
 import 'package:manager_app/data.dart';
 
 class RestaurantData extends ChangeNotifier {
   final Restaurant restaurant;
   final Map<String, dynamic> registeredUser;
-
-  final Map<String, SocketIO> sockets;
+  final jsSocket;
+//  final Map<String, SocketIO> sockets;
   RestaurantData({
     this.restaurant,
     this.registeredUser,
-    this.sockets,
+//    this.sockets,
+    this.jsSocket,
   });
 
 //  fetchRestaurant(data) {
@@ -365,45 +366,84 @@ class RestaurantData extends ChangeNotifier {
     }
 
     if (type == "add_food_item") {
-      if (localData['food_dict']["food_options"]['options'].length == 0)
-        localData['food_dict']["food_options"].remove('options');
-      else {
-        List pricesList = [];
-
-        localData['food_dict']["food_options"]['options'].forEach((option) {
-          pricesList.add(option["option_price"]);
-        });
-        localData['food_dict']['price'] = pricesList.join('/');
-      }
-      if (localData['food_dict']["food_options"]['choices'].length == 0)
-        localData['food_dict']["food_options"].remove('choices');
-      if (localData['food_dict']["food_options"].length == 0)
-        localData['food_dict'].remove('food_options');
+      localData["type"] = type;
       localData['restaurant_id'] = restaurantId;
-      localData['food_dict']['restaurant_id'] = restaurantId;
-      localData['type'] = type;
       encode = jsonEncode(localData);
     }
 
+//    if (type == "add_food_item") {
+//      if (localData['food_dict']["food_options"]['options'].length == 0)
+//        localData['food_dict']["food_options"].remove('options');
+//      else {
+//        List pricesList = [];
+//
+//        localData['food_dict']["food_options"]['options'].forEach((option) {
+//          pricesList.add(option["option_price"]);
+//        });
+//        localData['food_dict']['price'] = pricesList.join('/');
+//      }
+//      if (localData['food_dict']["food_options"]['choices'].length == 0)
+//        localData['food_dict']["food_options"].remove('choices');
+//      if (localData['food_dict']["food_options"].length == 0)
+//        localData['food_dict'].remove('food_options');
+//      localData['restaurant_id'] = restaurantId;
+//      localData['food_dict']['restaurant_id'] = restaurantId;
+//      localData['type'] = type;
+//      encode = jsonEncode(localData);
+//    }
+
+//    if (type == "edit_food_item") {
+//      if (localData['editing_fields']['customization'] != null) {
+//        if (localData['editing_fields']['food_options']['options'] != null) {
+//          List pricesList = [];
+//          localData['editing_fields']['food_options']['options']
+//              ?.forEach((optionsPair) {
+//            pricesList.add(optionsPair['option_price']);
+//          });
+//          encode = jsonEncode({
+//            "restaurant_id": restaurantId,
+//            "type": type,
+//            "food_id": localData["food_id"],
+//            "category_type": localData["category_type"],
+//            "editing_fields": {
+//              "price": pricesList.join('/'),
+//              "food_options": localData['editing_fields']['food_options'],
+//            },
+//          });
+//        }
+//      } else {
+//        localData["type"] = type;
+//        localData['restaurant_id'] = restaurantId;
+//        encode = jsonEncode(localData);
+//      }
+//    }
     if (type == "edit_food_item") {
-      if (localData['editing_fields']['food_options'] != null) {
-        if (localData['editing_fields']['food_options']['options'] != null) {
-          List pricesList = [];
-          localData['editing_fields']['food_options']['options']
-              ?.forEach((optionsPair) {
-            pricesList.add(optionsPair['option_price']);
-          });
-          encode = jsonEncode({
-            "restaurant_id": restaurantId,
-            "type": type,
-            "food_id": localData["food_id"],
-            "category_type": localData["category_type"],
-            "editing_fields": {
-              "price": pricesList.join('/'),
-              "food_options": localData['editing_fields']['food_options'],
-            },
-          });
-        }
+      if (localData['editing_fields']['customization'] != null) {
+        int price = 0;
+        List<int> priceList = [];
+        localData['editing_fields']['customization'].forEach((customization) {
+          print(customization);
+          if (customization['customization_type'] == "options") {
+            print("will add price");
+            customization['list_of_options'].forEach((option) {
+              priceList.add(int.parse(option['option_price']));
+            });
+
+            price = price + priceList.reduce(min);
+          }
+        });
+        print("price:  ");
+        print(price);
+        encode = jsonEncode({
+          "restaurant_id": restaurantId,
+          "type": type,
+          "category_type": localData["category_type"],
+          "food_id": localData["food_id"],
+          "editing_fields": {
+            "price": price,
+            "customization": localData["editing_fields"]["customization"],
+          },
+        });
       } else {
         localData["type"] = type;
         localData['restaurant_id'] = restaurantId;
@@ -423,6 +463,21 @@ class RestaurantData extends ChangeNotifier {
     if (type == "visibility_food_item") {
       localData['restaurant_id'] = restaurantId;
       localData['type'] = type;
+      encode = jsonEncode(localData);
+    }
+    /////////////////////////////////add -ons///////////////////
+
+    if (type == "add_add_ons") {
+      localData['restaurant_id'] = restaurantId;
+      localData['type'] = type;
+
+      encode = jsonEncode(localData);
+    }
+
+    if (type == "delete_add_ons") {
+      localData['restaurant_id'] = restaurantId;
+      localData['type'] = type;
+
       encode = jsonEncode(localData);
     }
 /////////////////////////////////////////////////////////
@@ -467,7 +522,7 @@ class RestaurantData extends ChangeNotifier {
 
     print(encode);
     //todo: get sockets from socket connection
-    sockets['working'].emit('configuring_restaurant', [encode]);
+    jsSocket.socketEmit('configuring_restaurant', encode);
     print('uploded to cloud');
   }
 
@@ -476,7 +531,7 @@ class RestaurantData extends ChangeNotifier {
     print("test sending");
     encode = jsonEncode(data);
     print(encode);
-    sockets['working'].emit('register_your_people', [encode]);
+    jsSocket.socketEmit('register_your_people', encode);
   }
 
   billTheTable(data) {
@@ -484,6 +539,6 @@ class RestaurantData extends ChangeNotifier {
     print("test sending");
     encode = jsonEncode(data);
     print(encode);
-    sockets['working'].emit('bill_the_table', [encode]);
+    jsSocket.socketEmit('bill_the_table', encode);
   }
 }

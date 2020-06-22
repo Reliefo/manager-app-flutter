@@ -1,4 +1,4 @@
-bool debug = true;
+bool debug = false;
 
 class Restaurant {
   String oid;
@@ -7,9 +7,9 @@ class Restaurant {
   String address;
   List<Category> foodMenu;
   List<Category> barMenu;
+  List<MenuFoodItem> addOnsMenu;
   List<Tables> tables;
   List<Staff> staff;
-//  List<KitchenStaff> kitchenStaff;
   List<TableOrder> tableOrders;
   List<AssistanceRequest> assistanceRequests;
   List<String> homeScreenTags;
@@ -53,10 +53,23 @@ class Restaurant {
       print("Restaurant id added.!");
     }
     //todo: add restaurant address if present
+
+    if (json['add_ons'].isNotEmpty) {
+      addOnsMenu = new List<MenuFoodItem>();
+      json['add_ons'].forEach((v) {
+        addOnsMenu.add(new MenuFoodItem.fromJsonForAddon(v));
+      });
+    }
+    if (debug) {
+      print("addons added to restaurant object.!");
+    }
+
     if (json['food_menu'].isNotEmpty) {
       foodMenu = new List<Category>();
       json['food_menu'].forEach((v) {
-        foodMenu.add(new Category.fromJson(v));
+        foodMenu.add(
+          new Category.fromJson(v, addOnsMenu),
+        );
       });
     }
 
@@ -64,11 +77,10 @@ class Restaurant {
       print("Food menu added to restaurant object.!");
     }
 
-//    print(json['bar_menu']);
     if (json['bar_menu'].isNotEmpty) {
       barMenu = new List<Category>();
       json['bar_menu'].forEach((v) {
-        barMenu.add(new Category.fromJson(v));
+        barMenu.add(new Category.fromJson(v, addOnsMenu));
       });
     }
     if (debug) {
@@ -83,15 +95,7 @@ class Restaurant {
     if (debug) {
       print("Staff added to restaurant object.!");
     }
-//    if (json['kitchen_staff'].isNotEmpty) {
-//      kitchenStaff = new List<KitchenStaff>();
-//      json['kitchen_staff'].forEach((v) {
-//        kitchenStaff.add(new KitchenStaff.fromJson(v));
-//      });
-//    }
-//    if (debug) {
-//      print("Kitchen Staff added to restaurant object.!");
-//    }
+
     if (json['tables'].isNotEmpty) {
       tables = new List<Tables>();
       json['tables'].forEach((table) {
@@ -611,7 +615,7 @@ class Category {
     this.foodList,
   });
 
-  Category.fromJson(Map<String, dynamic> json) {
+  Category.fromJson(Map<String, dynamic> json, addOnsMenu) {
     if (json['_id']['\$oid'] != null) {
       oid = json['_id']['\$oid'];
     }
@@ -626,7 +630,7 @@ class Category {
     if (json['food_list'] != null) {
       foodList = new List<MenuFoodItem>();
       json['food_list'].forEach((v) {
-        foodList.add(new MenuFoodItem.fromJson(v));
+        foodList.add(new MenuFoodItem.fromJson(v, addOnsMenu));
       });
     }
   }
@@ -639,13 +643,13 @@ class Category {
     print('added to category');
   }
 
-  addFoodItem(foodItem) {
-    if (this.foodList == null) {
-      this.foodList = new List<MenuFoodItem>();
-    }
-
-    this.foodList.add(MenuFoodItem.addFood(foodItem));
-  }
+//  addFoodItem(foodItem) {
+//    if (this.foodList == null) {
+//      this.foodList = new List<MenuFoodItem>();
+//    }
+//
+//    this.foodList.add(MenuFoodItem.addFood(foodItem));
+//  }
 
 //
 //      food_dict: {name: new food, description: tyukk, price: 45p, food_options: {options: {},
@@ -670,7 +674,7 @@ class MenuFoodItem {
   String price;
   bool visibility;
   List<String> tags;
-  FoodOption foodOption;
+  List<Customization> customizations;
 
   MenuFoodItem({
     this.oid,
@@ -678,11 +682,11 @@ class MenuFoodItem {
     this.description,
     this.price,
     this.tags,
-    this.foodOption,
+    this.customizations,
     this.visibility,
   });
 
-  MenuFoodItem.fromJson(Map<String, dynamic> json) {
+  MenuFoodItem.fromJson(Map<String, dynamic> json, addOnsMenu) {
     print(json);
     if (json['_id']['\$oid'] != null) {
       oid = json['_id']['\$oid'];
@@ -705,30 +709,51 @@ class MenuFoodItem {
     }
 
     if (json['tags'] != null) {
-//      print("inside add tags");
       tags = new List<String>();
       json['tags'].forEach((v) {
         tags.add(v);
       });
     }
 
-    if (json['food_options'] != null) {
-      foodOption = new FoodOption.fromJson(json['food_options']);
+    if (json['customization'] != null && json['customization'].isNotEmpty) {
+      customizations = new List<Customization>();
+      json['customization']?.forEach((v) {
+        customizations.add(new Customization.fromJson(v, addOnsMenu));
+      });
     }
   }
 
-  MenuFoodItem.addFood(food) {
-    this.oid = food['food_id'];
-    this.name = food['name'];
-    this.description = food['description'];
-    this.price = food['price'];
-    if (food['food_options'] != null) {
-      this.foodOption = new FoodOption.fromJson(food['food_options']);
-      print('food item added');
+  MenuFoodItem.fromJsonForAddon(Map<String, dynamic> json) {
+    print(json);
+    if (json['_id']['\$oid'] != null) {
+      oid = json['_id']['\$oid'];
+    }
+
+    if (json['name'] != null) {
+      name = json['name'];
+    }
+
+    if (json['description'] != null) {
+      description = json['description'];
+    }
+
+    if (json['price'] != null) {
+      price = json['price'];
+    }
+
+    if (json['visibility'] != null) {
+      visibility = json['visibility'];
+    }
+
+    if (json['tags'] != null) {
+      tags = new List<String>();
+      json['tags'].forEach((v) {
+        tags.add(v);
+      });
     }
   }
 
-  addEdited(edited) {
+  addEdited(edited, addOnsMenu) {
     if (edited['food_id'] != null) {
       this.oid = edited['food_id'];
     }
@@ -744,72 +769,148 @@ class MenuFoodItem {
     }
     print('added edited here');
 
-    if (edited["food_options"] != null) {
-      print('added edited here3');
+    if (edited['customization'] != null) {
+      this.customizations = new List<Customization>();
 
-      if (edited["food_options"]["options"] != null) {
-        print("uii");
-
-        print("uii122");
-        if (edited["food_options"]["options"].length > 0) {
-          this.foodOption.options = new List<Map<String, dynamic>>();
-          edited["food_options"]["options"].forEach((option) {
-            this.foodOption.options.add(option);
-          });
-        } else {
-          print("hjk");
-          this.foodOption.options.clear();
-        }
-      }
-
-      print("cming herewqeeqe");
-      if (edited["food_options"]["choices"] != null) {
-        if (edited["food_options"]["choices"].length > 0) {
-          this.foodOption.choices = new List<String>();
-          edited["food_options"]["choices"].forEach((choice) {
-            this.foodOption.choices.add(choice);
-          });
-        } else {
-          print("ch here");
-          this.foodOption.choices.clear();
-        }
-      }
+      edited['customization']?.forEach((v) {
+        this.customizations.add(new Customization.fromJson(v, addOnsMenu));
+      });
     }
+
     print('added edited here45');
   }
+
+  addEditedAddon(edited) {
+    if (edited['food_id'] != null) {
+      this.oid = edited['food_id'];
+    }
+    if (edited['name'] != null) {
+      this.name = edited['name'];
+    }
+
+    if (edited['description'] != null) {
+      this.description = edited['description'];
+    }
+    if (edited['price'] != null) {
+      this.price = edited['price'];
+    }
+    print('added edited here');
+  }
 }
+//{_id: {$oid: 5eecae8b4cd8e08657db05bb}, name: Tomato Cucumber Grill,
+//description: Served with Potato Crisps & Salad, price: 155/130, tags: [],
+//customization: [{name: How HUNGRY are you?, customization_type: options,
+//less_more: 0, that_number: 2, list_of_options: [{option_name: VERY HUNGRY 3 SLICE S/W, option_price: 155},
+//{option_name: VERY HUNGRY 2 SLICE S/W, option_price: 130}]},
+//{name: Add Ons, customization_type: add_ons, less_more: 1, that_number: 0,
+//list_of_options: [5eedec5a4cd8e08657db05c2, 5eedf5be3b2f1de91f6edb7f]},
+//{name: Choice of Herb, customization_type: choices, less_more: 0, that_number: 1,
+//list_of_options: [Regular Wheat Bread, Brown Wheat Bread]}], restaurant_id: BNGKOR004,
+//ingredients: [], visibility: true}
 
-class FoodOption {
-  List<Map<String, dynamic>> options = [];
-  List<Map<String, dynamic>> addOns = [];
-  List<String> choices = [];
+bool customizationDebug = true;
 
-  FoodOption({
+class Customization {
+  String name;
+  String customizationType;
+  int lessMore;
+  int thatNumber;
+  List<Map<String, dynamic>> options;
+  List<String> choices;
+  List<MenuFoodItem> addOns;
+
+  Customization({
+    this.name,
+    this.customizationType,
+    this.lessMore,
+    this.thatNumber,
     this.options,
     this.choices,
+    this.addOns,
   });
 
-  FoodOption.fromJson(Map<String, dynamic> json) {
-    if (json['options'] != null) {
+  Customization.fromJson(
+      Map<String, dynamic> json, List<MenuFoodItem> addOnsMenu) {
+    if (json['name'] != null) {
+      name = json['name'];
+    }
+    if (customizationDebug) {
+      print("name added to customization ");
+    }
+    if (json['customization_type'] != null) {
+      customizationType = json['customization_type'];
+    }
+    if (customizationDebug) {
+      print("customization type added to customization ");
+    }
+    if (json['less_more'] != null) {
+      lessMore = json['less_more'];
+    }
+    if (customizationDebug) {
+      print("less_more added to customization ");
+    }
+    if (json['that_number'] != null) {
+      thatNumber = json['that_number'];
+    }
+    if (customizationDebug) {
+      print("that_number added to customization ");
+    }
+    if (json['customization_type'] == 'options') {
       options = new List<Map<String, dynamic>>();
-      json['options'].forEach((option) {
+      json['list_of_options']?.forEach((option) {
         options.add(option);
       });
-      //Todo: check
     }
-    if (json['add_ons'] != null) {
-      addOns = new List<Map<String, dynamic>>();
-      json['add_ons'].forEach((addOn) {
-        addOns.add(addOn);
-      });
-      //Todo: check
+    if (customizationDebug) {
+      print("options added to customization ");
     }
-    if (json['choices'] != null) {
+
+    if (json['customization_type'] == 'choices') {
       choices = new List<String>();
-      json['choices'].forEach((v) {
+      json['list_of_options']?.forEach((v) {
         choices.add(v);
       });
     }
+    if (customizationDebug) {
+      print("choices added to customization ");
+    }
+    if (json['customization_type'] == 'add_ons') {
+      addOns = new List<MenuFoodItem>();
+      json['list_of_options']?.forEach((addOn) {
+        addOnsMenu.forEach((item) {
+          if (item.oid == addOn) {
+            addOns.add(item);
+          }
+        });
+      });
+    }
+    if (customizationDebug) {
+      print("add_ons added to customization ");
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['name'] = this.name;
+    data['customization_type'] = this.customizationType;
+    data['less_more'] = this.lessMore;
+    data['that_number'] = this.thatNumber;
+
+    if (this.customizationType == 'options') {
+      data['list_of_options'] = this.options;
+    }
+
+    if (this.customizationType == 'choices') {
+      data['list_of_options'] = this.choices;
+    }
+    if (this.customizationType == 'add_ons') {
+      data['list_of_options'] = new List<String>();
+      this.addOns.forEach((v) {
+        data['list_of_options'].add(v.oid);
+      });
+    }
+
+    return data;
   }
 }
 
@@ -980,7 +1081,7 @@ class FoodItem {
   String instructions;
   int quantity;
   String status;
-  FoodOption foodOption;
+  Customization foodOption;
 
   FoodItem({
     this.foodId,
@@ -1021,9 +1122,9 @@ class FoodItem {
       status = json['status'];
     }
 
-    if (json['food_options'] != null) {
-      foodOption = new FoodOption.fromJson(json['food_options']);
-    }
+//    if (json['food_options'] != null) {
+//      foodOption = new Customization.fromJson(json['food_options']);
+//    }
   }
 
   Map<String, dynamic> toJson() {

@@ -42,7 +42,6 @@ class TableView extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           color: getColour(index, restaurantData),
-//                          border: Border.all(width: 3.0, color: kThemeColor),
                           borderRadius: BorderRadius.all(
                             Radius.circular(15.0),
                           ),

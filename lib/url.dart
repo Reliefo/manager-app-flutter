@@ -8,5 +8,5 @@
 
 String loginUrl = "https://liqr.cc/login";
 String refreshUrl = "https://liqr.cc/refresh";
-String uri = "https://liqr.cc/";
+String uri = "https://liqr.cc/reliefo";
 String passChangeUrl = "https://liqr.cc/change_password";

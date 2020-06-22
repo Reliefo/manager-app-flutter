@@ -6,6 +6,9 @@ import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
 
+import 'addOnPopup.dart';
+import 'newCustomization.dart';
+
 class ViewItem extends StatefulWidget {
   final menuType;
   final MenuFoodItem foodItem;
@@ -20,8 +23,12 @@ class ViewItem extends StatefulWidget {
 
 class _ViewItemState extends State<ViewItem> {
   bool switchStatus = true;
-  List<String> editChoices = [];
-  List<Map<String, dynamic>> editOptions = [];
+
+  List<Customization> editCustomizations = [];
+  List<Customization> newCustomizations = [];
+  List<Map<String, dynamic>> dataToBackend = [];
+  List<MenuFoodItem> availableAddOns = [];
+  Map<String, bool> availableAddOnsValues = {};
   final itemNameEditController = TextEditingController();
   final descriptionEditController = TextEditingController();
   final priceEditController = TextEditingController();
@@ -31,27 +38,58 @@ class _ViewItemState extends State<ViewItem> {
 
   addEditChoiceOption() {
     print("addEditChoiceOption called");
-    editChoices.clear();
-    editOptions.clear();
+
+    editCustomizations.clear();
     print("lists cleared");
-    if (widget.foodItem.foodOption != null) {
-      if (widget.foodItem.foodOption.options != null) {
-        widget.foodItem.foodOption.options.forEach((option) {
-          editOptions.add(option);
-        });
-      }
-      if (widget.foodItem.foodOption.choices != null) {
-        widget.foodItem.foodOption.choices.forEach((choice) {
-          editChoices.add(choice);
-        });
-      }
+
+    if (widget.foodItem.customizations != null) {
+      widget.foodItem.customizations.forEach((customization) {
+        editCustomizations.add(customization);
+      });
+    }
+
+    if (newCustomizations.isNotEmpty) {
+      print("adding new customizations");
+      editCustomizations.addAll(newCustomizations);
+      print("added new customizations");
     }
   }
 
+  sendAdonsData(restaurantData) {
+    customizationToMap();
+
+    restaurantData.sendConfiguredDataToBackend({
+      "food_id": widget.foodItem.oid,
+      "category_type": widget.menuType,
+      "editing_fields": {"customization": dataToBackend}
+    }, "edit_food_item");
+    newCustomizations.clear();
+  }
+
+  getAvailableAddOns(restaurantData) {
+    availableAddOns.clear();
+    availableAddOnsValues.clear();
+    restaurantData.restaurant.addOnsMenu?.forEach((addOn) {
+      availableAddOns.add(addOn);
+      availableAddOnsValues["${addOn.oid}"] = false;
+    });
+    editCustomizations?.forEach((customization) {
+      print(customization.customizationType);
+      if (customization.customizationType == "add_ons") {
+        customization.addOns.forEach((addOn) {
+          setState(() {
+            availableAddOns.removeWhere((element) => addOn.oid == element.oid);
+            availableAddOnsValues.remove(addOn.oid);
+          });
+        });
+      }
+    });
+  }
+
   Widget editPriceButton(restaurantData) {
-    print(widget.foodItem.foodOption);
-    if (widget.foodItem.foodOption != null) {
-      if (widget.foodItem.foodOption.options.isEmpty) {
+//    print(widget.foodItem.foodOption);
+    if (editCustomizations != null) {
+      if (editCustomizations.isEmpty) {
         return IconButton(
           icon: Icon(Icons.edit),
           onPressed: () {
@@ -77,6 +115,329 @@ class _ViewItemState extends State<ViewItem> {
     }, "visibility_food_item");
   }
 
+  Widget getLayout(restaurantData, Customization customization) {
+    if (customization.customizationType == "options") {
+      return uiForOptions(
+          restaurantData, customization.options, customization.name);
+    }
+
+    if (customization.customizationType == "choices") {
+      return uiForChoices(
+          restaurantData, customization.choices, customization.name);
+    }
+    if (customization.customizationType == "add_ons") {
+      return uiForAddOns(
+          restaurantData, customization.addOns, customization.name);
+    }
+  }
+
+  Widget uiForOptions(restaurantData, options, name) {
+    return options != null
+        ? Column(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      name,
+                      style: kHeaderStyle,
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () {
+                        addNewFoodOptions(restaurantData, options);
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.remove),
+                      onPressed: () {
+                        var toRemove;
+                        editCustomizations.forEach((custm) {
+                          if (custm.options == options) {
+                            setState(() {
+                              toRemove = custm;
+                            });
+                          }
+                        });
+                        editCustomizations.remove(toRemove);
+
+                        customizationToMap();
+                        restaurantData.sendConfiguredDataToBackend({
+                          "food_id": widget.foodItem.oid,
+                          "category_type": widget.menuType,
+                          "editing_fields": {"customization": dataToBackend}
+                        }, "edit_food_item");
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              ListView.builder(
+                  primary: false,
+                  shrinkWrap: true,
+                  itemCount: options.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(
+                        options[index]["option_name"],
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 16.0,
+                        ),
+                      ),
+                      subtitle: Text(
+                        "Price :  ${options[index]["option_price"]} ",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () {
+                              editFoodItemOptions(
+                                  restaurantData, options[index]);
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.cancel),
+                            onPressed: () {
+                              setState(() {
+                                options.removeAt(index);
+                              });
+
+                              customizationToMap();
+
+                              restaurantData.sendConfiguredDataToBackend({
+                                "food_id": widget.foodItem.oid,
+                                "category_type": widget.menuType,
+                                "editing_fields": {
+                                  "customization": dataToBackend
+                                }
+                              }, "edit_food_item");
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+            ],
+          )
+        : Container(height: 0, width: 0);
+  }
+
+  Widget uiForChoices(restaurantData, choices, name) {
+    return choices != null
+        ? Column(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      name,
+                      style: kHeaderStyle,
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () {
+                        addNewFoodChoices(restaurantData, choices);
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.remove),
+                      onPressed: () {
+                        var toRemove;
+                        editCustomizations.forEach((custm) {
+                          if (custm.choices == choices) {
+                            setState(() {
+                              toRemove = custm;
+                            });
+                          }
+                        });
+                        editCustomizations.remove(toRemove);
+
+                        customizationToMap();
+                        restaurantData.sendConfiguredDataToBackend({
+                          "food_id": widget.foodItem.oid,
+                          "category_type": widget.menuType,
+                          "editing_fields": {"customization": dataToBackend}
+                        }, "edit_food_item");
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              ListView.builder(
+                  primary: false,
+                  shrinkWrap: true,
+                  itemCount: choices.length,
+                  itemBuilder: (context, index2) {
+                    return ListTile(
+                      title: Text(
+                        choices[index2],
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () {
+                              editFoodItemChoices(
+                                  restaurantData, choices[index2]);
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.cancel),
+                            onPressed: () {
+                              setState(() {
+                                choices.removeAt(index2);
+                              });
+
+                              customizationToMap();
+
+                              restaurantData.sendConfiguredDataToBackend({
+                                "food_id": widget.foodItem.oid,
+                                "category_type": widget.menuType,
+                                "editing_fields": {
+                                  "customization": dataToBackend
+                                }
+                              }, "edit_food_item");
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+            ],
+          )
+        : Container(height: 0, width: 0);
+  }
+
+  Widget uiForAddOns(restaurantData, addOns, name) {
+    return Column(
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: <Widget>[
+              Text(
+                name,
+                style: kHeaderStyle,
+              ),
+              SizedBox(
+                width: 20,
+              ),
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (BuildContext context) {
+                      // return object of type Dialog
+                      return AddOnPopup(
+                        sendAdonsData: sendAdonsData,
+                        addOns: addOns,
+                        availableAddOns: availableAddOns,
+                        availableAddOnsValues: availableAddOnsValues,
+                      );
+                    },
+                  );
+                },
+              ),
+              IconButton(
+                icon: Icon(Icons.remove),
+                onPressed: () {
+                  var toRemove;
+                  editCustomizations.forEach((custm) {
+                    if (custm.addOns == addOns) {
+                      setState(() {
+                        toRemove = custm;
+                      });
+                    }
+                  });
+                  editCustomizations.remove(toRemove);
+
+                  customizationToMap();
+                  restaurantData.sendConfiguredDataToBackend({
+                    "food_id": widget.foodItem.oid,
+                    "category_type": widget.menuType,
+                    "editing_fields": {"customization": dataToBackend}
+                  }, "edit_food_item");
+                },
+              ),
+            ],
+          ),
+        ),
+        addOns != null
+            ? ListView.builder(
+                primary: false,
+                shrinkWrap: true,
+                itemCount: addOns.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(
+                      addOns[index].name,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 16.0,
+                      ),
+                    ),
+                    subtitle: Text(
+                      "Price :  ${addOns[index].price} ",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.cancel),
+                      onPressed: () {
+                        setState(() {
+                          addOns.removeAt(index);
+                        });
+                        customizationToMap();
+                        restaurantData.sendConfiguredDataToBackend({
+                          "food_id": widget.foodItem.oid,
+                          "category_type": widget.menuType,
+                          "editing_fields": {"customization": dataToBackend}
+                        }, "edit_food_item");
+                      },
+                    ),
+                  );
+                })
+            : Container(height: 0, width: 0),
+      ],
+    );
+  }
+
+  customizationToMap() {
+    dataToBackend.clear();
+    editCustomizations.forEach((cust) {
+      dataToBackend.add(cust.toJson());
+    });
+  }
+
   @override
   void initState() {
     addEditChoiceOption();
@@ -88,7 +449,13 @@ class _ViewItemState extends State<ViewItem> {
   Widget build(BuildContext context) {
     RestaurantData restaurantData = Provider.of<RestaurantData>(context);
 
+    print("comming here");
+
     addEditChoiceOption();
+    getAvailableAddOns(restaurantData);
+
+    print(editCustomizations);
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -205,7 +572,7 @@ class _ViewItemState extends State<ViewItem> {
                               ),
                               SizedBox(height: 12),
                               Text(
-                                widget.foodItem.description,
+                                widget.foodItem.description ?? "",
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                   fontSize: 16.0,
@@ -234,7 +601,7 @@ class _ViewItemState extends State<ViewItem> {
                               ),
                               SizedBox(height: 12),
                               Text(
-                                widget.foodItem.price,
+                                widget.foodItem.price ?? "",
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                   fontSize: 16.0,
@@ -252,174 +619,42 @@ class _ViewItemState extends State<ViewItem> {
               VerticalDivider(),
               Expanded(
                 child: SingleChildScrollView(
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        ///////////////////////////////////////////////////////////////////// for options///////////////////////////
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
-                          child: Row(
-                            children: <Widget>[
-                              Text(
-                                "Options",
-                                style: kHeaderStyle,
-                              ),
-                              SizedBox(
-                                width: 20,
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.add),
-                                onPressed: () {
-                                  addNewFoodOptions(restaurantData);
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        widget.foodItem.foodOption != null
-                            ? ListView.builder(
-                                primary: false,
-                                shrinkWrap: true,
-                                itemCount: widget.foodItem.foodOption.options !=
-                                        null
-                                    ? widget.foodItem.foodOption.options.length
-                                    : 0,
-                                itemBuilder: (context, index2) {
-                                  return ListTile(
-                                    title: Text(
-                                      widget.foodItem.foodOption.options[index2]
-                                          ["option_name"],
-                                      textAlign: TextAlign.left,
-                                      style: TextStyle(
-                                        fontFamily: 'Poppins',
-                                        fontSize: 16.0,
-                                      ),
+                  child: Column(
+                    children: <Widget>[
+                      RaisedButton(
+                        child: Text("Add New customization + "),
+                        onPressed: () {
+                          showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (BuildContext context) {
+                              // return object of type Dialog
+                              return NewCustomization(
+                                newCustomizations: newCustomizations,
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      editCustomizations != null
+                          ? ListView.builder(
+                              primary: false,
+                              shrinkWrap: true,
+                              itemCount: editCustomizations.length,
+                              itemBuilder: (context, index) {
+                                return Column(
+                                  children: <Widget>[
+                                    getLayout(
+                                      restaurantData,
+                                      editCustomizations[index],
                                     ),
-                                    subtitle: Text(
-                                      "Price :  ${widget.foodItem.foodOption.options[index2]["option_price"]} ",
-                                      textAlign: TextAlign.left,
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontFamily: 'Poppins',
-                                      ),
-                                    ),
-                                    trailing: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        IconButton(
-                                          icon: Icon(Icons.edit),
-                                          onPressed: () {
-                                            editFoodItemOptions(
-                                                restaurantData, index2);
-                                          },
-                                        ),
-                                        IconButton(
-                                          icon: Icon(Icons.cancel),
-                                          onPressed: () {
-                                            setState(() {
-                                              editOptions.removeAt(index2);
-                                            });
-
-                                            restaurantData
-                                                .sendConfiguredDataToBackend({
-                                              "food_id": widget.foodItem.oid,
-                                              "category_type": widget.menuType,
-                                              "editing_fields": {
-                                                "food_options": {
-                                                  "options": editOptions,
-                                                  "choices": editChoices
-                                                }
-                                              }
-                                            }, "edit_food_item");
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                })
-                            : Container(height: 0, width: 0),
-
-                        ///////////////////////////////////////////////////////////////for Choices////////////////////////////
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
-                          child: Row(
-                            children: <Widget>[
-                              Text(
-                                "Choices",
-                                style: kHeaderStyle,
-                              ),
-                              SizedBox(
-                                width: 20,
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.add),
-                                onPressed: () {
-                                  addNewFoodChoices(restaurantData);
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        widget.foodItem.foodOption != null
-                            ? ListView.builder(
-                                primary: false,
-                                shrinkWrap: true,
-                                itemCount: widget.foodItem.foodOption.choices !=
-                                        null
-                                    ? widget.foodItem.foodOption.choices.length
-                                    : 0,
-                                itemBuilder: (context, index2) {
-                                  return ListTile(
-                                    title: Text(
-                                      "choice :${widget.foodItem.foodOption.choices[index2]} ",
-                                      textAlign: TextAlign.left,
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontFamily: 'Poppins',
-                                      ),
-                                    ),
-                                    trailing: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        IconButton(
-                                          icon: Icon(Icons.edit),
-                                          onPressed: () {
-                                            editFoodItemChoices(
-                                                restaurantData, index2);
-                                          },
-                                        ),
-                                        IconButton(
-                                          icon: Icon(Icons.cancel),
-                                          onPressed: () {
-                                            setState(() {
-                                              editChoices.removeAt(index2);
-                                            });
-
-                                            restaurantData
-                                                .sendConfiguredDataToBackend({
-                                              "food_id": widget.foodItem.oid,
-                                              "category_type": widget.menuType,
-                                              "editing_fields": {
-                                                "food_options": {
-                                                  "options": editOptions,
-                                                  "choices": editChoices
-                                                }
-                                              }
-                                            }, "edit_food_item");
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                })
-                            : Text(""),
-                      ],
-                    ),
+                                  ],
+                                );
+                              })
+                          : Container(
+                              child: Text("no customization"),
+                            ),
+                    ],
                   ),
                 ),
               ),
@@ -658,10 +893,10 @@ class _ViewItemState extends State<ViewItem> {
     );
   }
 
-  Widget editFoodItemOptions(restaurantData, index) {
-    foodOptionEditController.text = editOptions[index]["option_name"];
+  Widget editFoodItemOptions(restaurantData, option) {
+    foodOptionEditController.text = option["option_name"];
 
-    foodOptionPriceEditController.text = editOptions[index]["option_price"];
+    foodOptionPriceEditController.text = option["option_price"];
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -674,18 +909,30 @@ class _ViewItemState extends State<ViewItem> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Container(
-                    width: 200,
-                    child: TextField(
-                      controller: foodOptionEditController,
-                      autofocus: true,
-                    ),
+                  Row(
+                    children: <Widget>[
+                      Text("Name : "),
+                      SizedBox(width: 8),
+                      Container(
+                        width: 200,
+                        child: TextField(
+                          controller: foodOptionEditController,
+                          autofocus: true,
+                        ),
+                      ),
+                    ],
                   ),
-                  Container(
-                    width: 200,
-                    child: TextField(
-                      controller: foodOptionPriceEditController,
-                    ),
+                  Row(
+                    children: <Widget>[
+                      Text("Price : "),
+                      SizedBox(width: 8),
+                      Container(
+                        width: 200,
+                        child: TextField(
+                          controller: foodOptionPriceEditController,
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 24.0),
                   Row(
@@ -703,31 +950,25 @@ class _ViewItemState extends State<ViewItem> {
                       FlatButton(
                         onPressed: () {
                           setState(() {
-                            editOptions[index]["option_name"] =
+                            option["option_name"] =
                                 foodOptionEditController.text;
 
-                            editOptions[index]["option_price"] =
+                            option["option_price"] =
                                 foodOptionPriceEditController.text;
                           });
+
+                          customizationToMap();
 
                           if (foodOptionEditController.text.isNotEmpty &&
                               foodOptionPriceEditController.text.isNotEmpty) {
                             restaurantData.sendConfiguredDataToBackend({
                               "food_id": widget.foodItem.oid,
                               "category_type": widget.menuType,
-                              "editing_fields": {
-                                "food_options": {
-                                  "options": editOptions,
-                                  "choices": editChoices
-                                }
-                              }
+                              "editing_fields": {"customization": dataToBackend}
                             }, "edit_food_item");
 
                             foodOptionEditController.clear();
                             foodOptionPriceEditController.clear();
-
-//                            editOptions.clear();
-//                            editChoices.clear();
                           }
 
                           Navigator.of(context).pop(); // To close the dialog
@@ -746,7 +987,9 @@ class _ViewItemState extends State<ViewItem> {
         });
   }
 
-  Widget addNewFoodOptions(restaurantData) {
+  Widget addNewFoodOptions(restaurantData, options) {
+    foodOptionEditController.clear();
+    foodOptionPriceEditController.clear();
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -759,18 +1002,30 @@ class _ViewItemState extends State<ViewItem> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Container(
-                    width: 200,
-                    child: TextField(
-                      controller: foodOptionEditController,
-                      autofocus: true,
-                    ),
+                  Row(
+                    children: <Widget>[
+                      Text("Name : "),
+                      SizedBox(width: 8),
+                      Container(
+                        width: 200,
+                        child: TextField(
+                          controller: foodOptionEditController,
+                          autofocus: true,
+                        ),
+                      ),
+                    ],
                   ),
-                  Container(
-                    width: 200,
-                    child: TextField(
-                      controller: foodOptionPriceEditController,
-                    ),
+                  Row(
+                    children: <Widget>[
+                      Text("Price : "),
+                      SizedBox(width: 8),
+                      Container(
+                        width: 200,
+                        child: TextField(
+                          controller: foodOptionPriceEditController,
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 24.0),
                   Row(
@@ -788,30 +1043,23 @@ class _ViewItemState extends State<ViewItem> {
                       FlatButton(
                         onPressed: () {
                           setState(() {
-                            editOptions.add({
+                            options.add({
                               "option_name": foodOptionEditController.text,
                               "option_price": foodOptionPriceEditController.text
                             });
                           });
 
+                          customizationToMap();
+
                           if (foodOptionEditController.text.isNotEmpty &&
                               foodOptionPriceEditController.text.isNotEmpty) {
                             restaurantData.sendConfiguredDataToBackend({
                               "food_id": widget.foodItem.oid,
                               "category_type": widget.menuType,
-                              "editing_fields": {
-                                "food_options": {
-                                  "options": editOptions,
-                                  "choices": editChoices
-                                }
-                              }
+                              "editing_fields": {"customization": dataToBackend}
                             }, "edit_food_item");
-//                            editOptions.clear();
-//                            editChoices.clear();
+                            newCustomizations.clear();
                           }
-
-                          foodOptionEditController.clear();
-                          foodOptionPriceEditController.clear();
 
                           Navigator.of(context).pop(); // To close the dialog
                         },
@@ -829,8 +1077,8 @@ class _ViewItemState extends State<ViewItem> {
         });
   }
 
-  Widget editFoodItemChoices(restaurantData, index) {
-    foodChoiceEditController.text = editChoices[index];
+  Widget editFoodItemChoices(restaurantData, choice) {
+    foodChoiceEditController.text = choice;
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -843,12 +1091,18 @@ class _ViewItemState extends State<ViewItem> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Container(
-                    width: 200,
-                    child: TextField(
-                      controller: foodChoiceEditController,
-                      autofocus: true,
-                    ),
+                  Row(
+                    children: <Widget>[
+                      Text("Name : "),
+                      SizedBox(width: 8),
+                      Container(
+                        width: 200,
+                        child: TextField(
+                          controller: foodChoiceEditController,
+                          autofocus: true,
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 24.0),
                   Row(
@@ -866,19 +1120,16 @@ class _ViewItemState extends State<ViewItem> {
                       FlatButton(
                         onPressed: () {
                           setState(() {
-                            editChoices[index] = foodChoiceEditController.text;
+                            choice = foodChoiceEditController.text;
                           });
+
+                          customizationToMap();
 
                           if (foodChoiceEditController.text.isNotEmpty) {
                             restaurantData.sendConfiguredDataToBackend({
                               "food_id": widget.foodItem.oid,
                               "category_type": widget.menuType,
-                              "editing_fields": {
-                                "food_options": {
-                                  "options": editOptions,
-                                  "choices": editChoices
-                                }
-                              }
+                              "editing_fields": {"customization": dataToBackend}
                             }, "edit_food_item");
 
                             foodChoiceEditController.clear();
@@ -903,7 +1154,8 @@ class _ViewItemState extends State<ViewItem> {
         });
   }
 
-  Widget addNewFoodChoices(restaurantData) {
+  Widget addNewFoodChoices(restaurantData, choices) {
+    foodChoiceEditController.clear();
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -916,12 +1168,18 @@ class _ViewItemState extends State<ViewItem> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Container(
-                    width: 200,
-                    child: TextField(
-                      controller: foodChoiceEditController,
-                      autofocus: true,
-                    ),
+                  Row(
+                    children: <Widget>[
+                      Text("Name : "),
+                      SizedBox(width: 8),
+                      Container(
+                        width: 200,
+                        child: TextField(
+                          controller: foodChoiceEditController,
+                          autofocus: true,
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 24.0),
                   Row(
@@ -939,24 +1197,16 @@ class _ViewItemState extends State<ViewItem> {
                       FlatButton(
                         onPressed: () {
                           setState(() {
-                            editChoices.add(foodChoiceEditController.text);
+                            choices.add(foodChoiceEditController.text);
                           });
-
+                          customizationToMap();
                           if (foodChoiceEditController.text.isNotEmpty) {
                             restaurantData.sendConfiguredDataToBackend({
                               "food_id": widget.foodItem.oid,
                               "category_type": widget.menuType,
-                              "editing_fields": {
-                                "food_options": {
-                                  "options": editOptions,
-                                  "choices": editChoices
-                                }
-                              }
+                              "editing_fields": {"customization": dataToBackend}
                             }, "edit_food_item");
-
-                            foodChoiceEditController.clear();
-//                            editChoices.clear();
-//                            editOptions.clear();
+                            newCustomizations.clear();
                           }
 
                           Navigator.of(context).pop(); // To close the dialog

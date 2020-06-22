@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:manager_app/Drawer/configureRestaurant/Inventory/Inventory.dart';
 import 'package:manager_app/Drawer/configureRestaurant/Kitchen/addKitchen.dart';
 import 'package:manager_app/Drawer/configureRestaurant/addBarMenu.dart';
 import 'package:manager_app/Drawer/configureRestaurant/addFoodMenu.dart';
+import 'package:manager_app/Drawer/configureRestaurant/addOns.dart';
 import 'package:manager_app/Drawer/configureRestaurant/addStaff.dart';
 import 'package:manager_app/Drawer/configureRestaurant/assignStaff.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureHomeScreen.dart';
@@ -272,10 +272,11 @@ class Configure extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20.0),
                           ),
+
                           child: FlatButton(
                             child: Center(
                               child: Text(
-                                'Inventory',
+                                'Add Ons',
                                 style: kHeaderStyleSmall,
                               ),
                             ),
@@ -283,11 +284,30 @@ class Configure extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => Inventory(),
+                                  builder: (context) => AddOnsMenu(),
                                 ),
                               );
                             },
                           ),
+//                          child: FlatButton(
+//                            child: Center(
+//                              child: Text(
+//                                'Inventory',
+//                                style: kHeaderStyleSmall,
+//                              ),
+//                            ),
+//                            onPressed: () {
+//
+//
+//
+//                              Navigator.push(
+//                                context,
+//                                MaterialPageRoute(
+//                                  builder: (context) => Inventory(),
+//                                ),
+//                              );
+//                            },
+//                          ),
                         ),
                       ),
                     ),

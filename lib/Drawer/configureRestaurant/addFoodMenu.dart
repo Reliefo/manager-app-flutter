@@ -1,18 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:manager_app/Drawer/configureRestaurant/addFoodItem/addItem/addItem.dart';
+import 'package:manager_app/Drawer/configureRestaurant/addFoodItem/addItem/naddItem.dart';
 import 'package:manager_app/constants.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
 
 class AddFoodMenu extends StatefulWidget {
-//  final Restaurant restaurant;
-//  final updateConfigDetailsToCloud;
-//
-//  AddFoodMenu({
-//    this.restaurant,
-//    this.updateConfigDetailsToCloud,
-//  });
-
   @override
   _AddFoodMenuState createState() => _AddFoodMenuState();
 }
@@ -166,23 +158,7 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
-//                                  FlatButton(
-//                                    child: Text('Add Food'),
-//                                    onPressed: () {
-//                                      Navigator.push(
-//                                        context,
-//                                        MaterialPageRoute(
-//                                          builder: (context) => AddItem(
-//                                            category: widget
-//                                                .restaurant.foodMenu[index],
-//                                            updateConfigDetailsToCloud: widget
-//                                                .updateConfigDetailsToCloud,
-//                                            menuType: "food",
-//                                          ),
-//                                        ),
-//                                      );
-//                                    },
-//                                  ),
+//
                                     IconButton(
                                       icon: Icon(Icons.edit),
                                       onPressed: () {
@@ -370,7 +346,7 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => AddItem(
+                                    builder: (context) => NAddItem(
                                       category: restaurantData
                                           .restaurant.foodMenu[index],
                                       menuType: "food",

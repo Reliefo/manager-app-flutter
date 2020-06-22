@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:manager_app/Drawer/configureRestaurant/addFoodItem/addItem/addItem.dart';
+import 'package:manager_app/Drawer/configureRestaurant/addFoodItem/addItem/naddItem.dart';
 import 'package:manager_app/constants.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
@@ -334,7 +334,7 @@ class _AddMenuState extends State<AddBarMenu> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => AddItem(
+                                    builder: (context) => NAddItem(
                                       category: restaurantData
                                           .restaurant.barMenu[index],
                                       menuType: "bar",
