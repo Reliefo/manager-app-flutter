@@ -7,9 +7,11 @@ class AddBarItemToTags extends StatefulWidget {
   const AddBarItemToTags({
     Key key,
     @required this.selectedTag,
+    this.getTagItems,
   }) : super(key: key);
 
   final String selectedTag;
+  final Function getTagItems;
 
   @override
   _AddBarItemToTagsState createState() => _AddBarItemToTagsState();
@@ -47,56 +49,51 @@ class _AddBarItemToTagsState extends State<AddBarItemToTags> {
     return Column(
       mainAxisSize: MainAxisSize.min, // To make the card compact
       children: <Widget>[
-//        Text(
-//          "Add item to: ${widget.selectedTag}",
-//          textAlign: TextAlign.center,
-//          style: TextStyle(
-//            fontSize: 16.0,
-//          ),
-//        ),
-        DropdownButton(
-          value: _selectedBarCategory,
-          items: restaurantData.restaurant.barMenu != null
-              ? restaurantData.restaurant.barMenu.map((category) {
-                  return DropdownMenuItem(
-                    value: category,
-                    child: Text(category.name),
-                  );
-                }).toList()
-              : [],
-          hint: Text('Select Bar Category'),
-          isExpanded: true,
-          onChanged: (selected) {
-            setState(() {
-              print(selected);
-              _selectedBarCategory = selected;
-            });
-            getItems();
-          },
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: DropdownButton(
+            value: _selectedBarCategory,
+            items: restaurantData.restaurant.barMenu != null
+                ? restaurantData.restaurant.barMenu.map((category) {
+                    return DropdownMenuItem(
+                      value: category,
+                      child: Text(category.name),
+                    );
+                  }).toList()
+                : [],
+            hint: Text('Select Bar Category'),
+            isExpanded: true,
+            onChanged: (selected) {
+              setState(() {
+                print(selected);
+                _selectedBarCategory = selected;
+              });
+              getItems();
+            },
+          ),
         ),
         SizedBox(height: 20.0),
-        DropdownButton(
-          value: _selectedBarItem,
-          items:
-
-//            _selectedBarCategory != null
-//                ? _selectedBarCategory.foodList
-              displayItems != null
-                  ? displayItems.map((item) {
-                      return DropdownMenuItem(
-                        value: item,
-                        child: Text(item.name),
-                      );
-                    }).toList()
-                  : [],
-          hint: Text('Select Bar Item'),
-          isExpanded: true,
-          onChanged: (selected) {
-            setState(() {
-              print(selected);
-              _selectedBarItem = selected;
-            });
-          },
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: DropdownButton(
+            value: _selectedBarItem,
+            items: displayItems != null
+                ? displayItems.map((item) {
+                    return DropdownMenuItem(
+                      value: item,
+                      child: Text(item.name),
+                    );
+                  }).toList()
+                : [],
+            hint: Text('Select Bar Item'),
+            isExpanded: true,
+            onChanged: (selected) {
+              setState(() {
+                print(selected);
+                _selectedBarItem = selected;
+              });
+            },
+          ),
         ),
         SizedBox(height: 24.0),
         Row(
@@ -112,7 +109,7 @@ class _AddBarItemToTagsState extends State<AddBarItemToTags> {
                   "food_id": _selectedBarItem.oid,
                   "tag_name": widget.selectedTag,
                 }, "attach_home_screen_tags");
-
+                widget.getTagItems(widget.selectedTag, restaurantData);
                 setState(() {
                   _selectedBarCategory = null;
                   _selectedBarItem = null;

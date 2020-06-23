@@ -57,8 +57,8 @@ class OnOffer extends StatelessWidget {
                               SliverGridDelegateWithMaxCrossAxisExtent(
                             mainAxisSpacing: 4.0,
                             crossAxisSpacing: 4.0,
-                            childAspectRatio: 1,
-                            maxCrossAxisExtent: 240,
+                            childAspectRatio: 1.5,
+                            maxCrossAxisExtent: 260,
                           ),
                           itemBuilder: (BuildContext context, index) {
                             return Container(

@@ -18,7 +18,7 @@ class KitchenDetails extends StatelessWidget {
           title: Text(kitchen.name),
         ),
         body: Container(
-          color: Color(0xffE5EDF1),
+//          color: Color(0xffE5EDF1),
           child: Row(
             children: <Widget>[
               Expanded(

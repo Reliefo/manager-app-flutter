@@ -653,16 +653,16 @@ class _SocketConnectionState extends State<SocketConnection> {
         }
       }
       if (decode["type"] == "attach_home_screen_tags") {
-        restaurant.foodMenu.forEach((category) {
-          category.foodList.forEach((foodItem) {
+        restaurant.foodMenu?.forEach((category) {
+          category?.foodList?.forEach((foodItem) {
             if (foodItem.oid == decode["food_id"]) {
               foodItem.tags.add(decode["tag_name"]);
             }
           });
         });
 
-        restaurant.barMenu.forEach((category) {
-          category.foodList.forEach((barItem) {
+        restaurant.barMenu?.forEach((category) {
+          category?.foodList?.forEach((barItem) {
             if (barItem.oid == decode["food_id"]) {
               barItem.tags.add(decode["tag_name"]);
             }
@@ -671,16 +671,16 @@ class _SocketConnectionState extends State<SocketConnection> {
       }
 
       if (decode["type"] == "remove_home_screen_tags") {
-        restaurant.foodMenu.forEach((category) {
-          category.foodList.forEach((foodItem) {
+        restaurant.foodMenu?.forEach((category) {
+          category?.foodList?.forEach((foodItem) {
             if (foodItem.oid == decode["food_id"]) {
               foodItem.tags.removeWhere((tag) => tag == decode["tag_name"]);
             }
           });
         });
 
-        restaurant.barMenu.forEach((category) {
-          category.foodList.forEach((barItem) {
+        restaurant.barMenu?.forEach((category) {
+          category?.foodList?.forEach((barItem) {
             if (barItem.oid == decode["food_id"]) {
 //              print(barItem.tags);
               barItem.tags.removeWhere((tag) => tag == decode["tag_name"]);

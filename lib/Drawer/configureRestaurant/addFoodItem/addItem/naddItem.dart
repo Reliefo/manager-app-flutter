@@ -132,7 +132,7 @@ class _NAddItemState extends State<NAddItem> {
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                     mainAxisSpacing: 4.0,
                     crossAxisSpacing: 4.0,
-                    childAspectRatio: 1,
+                    childAspectRatio: (3 / 2),
                     maxCrossAxisExtent: 300,
                   ),
                   itemBuilder: (context, index) {

@@ -61,7 +61,11 @@ class _AssignCategoryState extends State<AssignCategory> {
                 'Assign New Category to kitchen',
                 style: kHeaderStyleSmall,
               ),
-              trailing: Icon(Icons.add),
+              trailing: Icon(
+                Icons.add,
+                color: Colors.black,
+                size: 30,
+              ),
               onTap: () {
                 showDialog(
                   barrierDismissible: false,
@@ -78,29 +82,49 @@ class _AssignCategoryState extends State<AssignCategory> {
               },
             ),
           ),
+          Divider(
+            thickness: 2,
+          ),
           Expanded(
             child: widget.kitchen.categoriesList != null
-                ? ListView.builder(
+                ? GridView.builder(
                     shrinkWrap: true,
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                      mainAxisSpacing: 4.0,
+                      crossAxisSpacing: 4.0,
+                      childAspectRatio: (6 / 2),
+                      maxCrossAxisExtent: 350,
+                    ),
                     itemCount: widget.kitchen.categoriesList.length,
                     itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(
-                          widget.kitchen.categoriesList[index].name,
-                          style: kTitleStyle,
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black12,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
                         ),
-                        trailing: IconButton(
-                          icon: Icon(Icons.cancel),
-                          onPressed: () {
-                            restaurantData.sendConfiguredDataToBackend(
-                              {
-                                "kitchen_id": widget.kitchen.oid,
-                                "category_id":
-                                    widget.kitchen.categoriesList[index].oid
+                        margin: EdgeInsets.all(4),
+                        child: Center(
+                          child: ListTile(
+                            title: Text(
+                              widget.kitchen.categoriesList[index].name,
+                              style: kTitleStyle,
+                            ),
+                            trailing: IconButton(
+                              icon: Icon(Icons.cancel),
+                              onPressed: () {
+                                restaurantData.sendConfiguredDataToBackend(
+                                  {
+                                    "kitchen_id": widget.kitchen.oid,
+                                    "category_id":
+                                        widget.kitchen.categoriesList[index].oid
+                                  },
+                                  "decategory_kitchen",
+                                );
                               },
-                              "decategory_kitchen",
-                            );
-                          },
+                            ),
+                          ),
                         ),
                       );
                     },

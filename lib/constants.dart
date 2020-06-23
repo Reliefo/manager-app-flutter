@@ -45,6 +45,20 @@ const kDashBoardLargeStyle = TextStyle(
   letterSpacing: 2.0,
 );
 
+const kRedButtonStyle = TextStyle(
+  color: Colors.red,
+  fontFamily: "Poppins",
+);
+const kGreenButtonStyle = TextStyle(
+  color: Colors.green,
+  fontFamily: "Poppins",
+);
+
+const kBlueButtonStyle = TextStyle(
+  color: Colors.blue,
+  fontFamily: "Poppins",
+);
+
 const homePageS1 = TextStyle(
   fontSize: 20.0,
   color: Colors.black,

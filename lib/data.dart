@@ -1,4 +1,17 @@
 bool debug = false;
+bool tablesDebug = false;
+bool staffDebug = false;
+bool staffOrderHistoryDebug = false;
+bool kitchenStaffDebug = false;
+bool categoryDebug = false;
+bool menuFoodItemDebug = false;
+bool customizationDebug = false;
+bool tableOrdersDebug = false;
+bool orderDebug = false;
+bool foodItemDebug = false;
+bool assistanceRequestsDebug = false;
+bool restaurantOrderHistoryDebug = false;
+bool kitchenDebug = false;
 
 class Restaurant {
   String oid;
@@ -808,8 +821,6 @@ class MenuFoodItem {
 //list_of_options: [Regular Wheat Bread, Brown Wheat Bread]}], restaurant_id: BNGKOR004,
 //ingredients: [], visibility: true}
 
-bool customizationDebug = true;
-
 class Customization {
   String name;
   String customizationType;
@@ -834,33 +845,42 @@ class Customization {
     if (json['name'] != null) {
       name = json['name'];
     }
+
     if (customizationDebug) {
       print("name added to customization ");
     }
+
     if (json['customization_type'] != null) {
       customizationType = json['customization_type'];
     }
+
     if (customizationDebug) {
       print("customization type added to customization ");
     }
+
     if (json['less_more'] != null) {
       lessMore = json['less_more'];
     }
+
     if (customizationDebug) {
       print("less_more added to customization ");
     }
+
     if (json['that_number'] != null) {
       thatNumber = json['that_number'];
     }
+
     if (customizationDebug) {
       print("that_number added to customization ");
     }
+
     if (json['customization_type'] == 'options') {
       options = new List<Map<String, dynamic>>();
       json['list_of_options']?.forEach((option) {
         options.add(option);
       });
     }
+
     if (customizationDebug) {
       print("options added to customization ");
     }
@@ -871,9 +891,11 @@ class Customization {
         choices.add(v);
       });
     }
+
     if (customizationDebug) {
       print("choices added to customization ");
     }
+
     if (json['customization_type'] == 'add_ons') {
       addOns = new List<MenuFoodItem>();
       json['list_of_options']?.forEach((addOn) {
@@ -1026,8 +1048,6 @@ class Order {
     }
 
     if (json['placed_by'] != null) {
-//      print("inside orders");
-//      print(json['placed_by']);
       placedBy = {
         "id": json['placed_by']['id'],
         "name": json['placed_by']['name']
