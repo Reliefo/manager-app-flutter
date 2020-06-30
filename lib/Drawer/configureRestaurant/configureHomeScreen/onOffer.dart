@@ -8,36 +8,36 @@ class OnOffer extends StatelessWidget {
   final List<MenuFoodItem> onOfferBar = [];
   final List<MenuFoodItem> onOfferFood = [];
 //  [Most Popular, Chef's Special, Daily Special, On Offer]
-  getOnOffer(restaurantData) {
-    restaurantData.restaurant.barMenu?.forEach((category) {
-      category?.foodList?.forEach((food) {
-        if (food.tags.isNotEmpty) {
-          food.tags.forEach((tag) {
-            if (tag == "On Offer") {
-              onOfferBar.add(food);
-            }
-          });
-        }
-      });
-    });
-
-    restaurantData.restaurant.foodMenu?.forEach((category) {
-      category?.foodList?.forEach((food) {
-        if (food.tags.isNotEmpty) {
-          food.tags.forEach((tag) {
-            if (tag == "On Offer") {
-              onOfferFood.add(food);
-            }
-          });
-        }
-      });
-    });
-  }
+//  getOnOffer(restaurantData) {
+//    restaurantData.restaurant.barMenu?.forEach((category) {
+//      category?.foodList?.forEach((food) {
+//        if (food.tags.isNotEmpty) {
+//          food.tags.forEach((tag) {
+//            if (tag == "On Offer") {
+//              onOfferBar.add(food);
+//            }
+//          });
+//        }
+//      });
+//    });
+//
+//    restaurantData.restaurant.foodMenu?.forEach((category) {
+//      category?.foodList?.forEach((food) {
+//        if (food.tags.isNotEmpty) {
+//          food.tags.forEach((tag) {
+//            if (tag == "On Offer") {
+//              onOfferFood.add(food);
+//            }
+//          });
+//        }
+//      });
+//    });
+//  }
 
   @override
   Widget build(BuildContext context) {
     final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
-    getOnOffer(restaurantData);
+//    getOnOffer(restaurantData);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -45,14 +45,17 @@ class OnOffer extends StatelessWidget {
           backgroundColor: kThemeColor,
         ),
         body: Container(
-          child: onOfferFood.isNotEmpty || onOfferBar.isNotEmpty
+          child: restaurantData.restaurant.homeScreenTags[2] != null &&
+                  restaurantData
+                      .restaurant.homeScreenTags[2].foodList.isNotEmpty
               ? SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
                       GridView.builder(
                           shrinkWrap: true,
                           primary: false,
-                          itemCount: onOfferFood.length,
+                          itemCount: restaurantData
+                              .restaurant.homeScreenTags[2].foodList.length,
                           gridDelegate:
                               SliverGridDelegateWithMaxCrossAxisExtent(
                             mainAxisSpacing: 4.0,
@@ -74,43 +77,44 @@ class OnOffer extends StatelessWidget {
                               ),
                               child: Center(
                                 child: Text(
-                                  onOfferFood[index].name,
+                                  restaurantData.restaurant.homeScreenTags[2]
+                                      .foodList[index].name,
                                   style: kTitleStyle,
                                 ),
                               ),
                             );
                           }),
-                      GridView.builder(
-                          primary: false,
-                          shrinkWrap: true,
-                          itemCount: onOfferBar.length,
-                          gridDelegate:
-                              SliverGridDelegateWithMaxCrossAxisExtent(
-                            mainAxisSpacing: 4.0,
-                            crossAxisSpacing: 4.0,
-                            childAspectRatio: 1,
-                            maxCrossAxisExtent: 240,
-                          ),
-                          itemBuilder: (BuildContext context, index) {
-                            return Container(
-                              margin: EdgeInsets.all(4),
-                              padding: EdgeInsets.symmetric(vertical: 10),
-                              decoration: BoxDecoration(
-//                                color: getColour(index, restaurantData),
-                                border:
-                                    Border.all(width: 3.0, color: kThemeColor),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(15.0),
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  onOfferBar[index].name,
-                                  style: kTitleStyle,
-                                ),
-                              ),
-                            );
-                          }),
+//                      GridView.builder(
+//                          primary: false,
+//                          shrinkWrap: true,
+//                          itemCount: onOfferBar.length,
+//                          gridDelegate:
+//                              SliverGridDelegateWithMaxCrossAxisExtent(
+//                            mainAxisSpacing: 4.0,
+//                            crossAxisSpacing: 4.0,
+//                            childAspectRatio: 1,
+//                            maxCrossAxisExtent: 240,
+//                          ),
+//                          itemBuilder: (BuildContext context, index) {
+//                            return Container(
+//                              margin: EdgeInsets.all(4),
+//                              padding: EdgeInsets.symmetric(vertical: 10),
+//                              decoration: BoxDecoration(
+////                                color: getColour(index, restaurantData),
+//                                border:
+//                                    Border.all(width: 3.0, color: kThemeColor),
+//                                borderRadius: BorderRadius.all(
+//                                  Radius.circular(15.0),
+//                                ),
+//                              ),
+//                              child: Center(
+//                                child: Text(
+//                                  onOfferBar[index].name,
+//                                  style: kTitleStyle,
+//                                ),
+//                              ),
+//                            );
+//                          }),
                     ],
                   ),
                 )

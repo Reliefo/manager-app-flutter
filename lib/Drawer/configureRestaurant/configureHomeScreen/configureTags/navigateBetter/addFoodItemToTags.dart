@@ -6,11 +6,11 @@ import 'package:provider/provider.dart';
 class AddFoodItemToTags extends StatefulWidget {
   const AddFoodItemToTags({
     Key key,
-    @required this.selectedTag,
+    @required this.selectedTagId,
     this.getTagItems,
   }) : super(key: key);
 
-  final String selectedTag;
+  final String selectedTagId;
   final Function getTagItems;
 
   @override
@@ -19,44 +19,45 @@ class AddFoodItemToTags extends StatefulWidget {
 
 class _AddFoodItemToTagsState extends State<AddFoodItemToTags> {
   Category _selectedFoodCategory;
-
   MenuFoodItem _selectedFoodItem;
-
   List<MenuFoodItem> displayItems = [];
 
-  getItems() {
-    //print("get items");
+  getItems(restaurantData, {MenuFoodItem previouslySelected}) {
     List<MenuFoodItem> toDelete = [];
 
     displayItems.clear();
 
-    _selectedFoodCategory?.foodList?.forEach((foodItem) {
-      //print("get items 1");
+    if (previouslySelected != null) toDelete.add(previouslySelected);
 
-      displayItems.add(foodItem);
-      foodItem.tags?.forEach((tag) {
-        //print("get items 2");
+    displayItems = List.from(_selectedFoodCategory.foodList);
 
-        if (tag == widget.selectedTag) {
-          toDelete.add(foodItem);
-        }
-      });
+    restaurantData.restaurant.homeScreenTags?.forEach((tag) {
+      if (tag.oid == widget.selectedTagId) {
+        tag.foodList?.forEach((food) {
+          toDelete.add(food);
+        });
+      }
+    });
+
+    restaurantData.restaurant.navigateBetterTags?.forEach((tag) {
+      if (tag.oid == widget.selectedTagId) {
+        tag.foodList?.forEach((food) {
+          toDelete.add(food);
+        });
+      }
     });
 
     toDelete?.forEach((food) {
-      //print("get items 3");
-
       displayItems?.removeWhere((element) => element == food);
-      //print("get items 4");
     });
-    //print("get items ....");
   }
 
   @override
   Widget build(BuildContext context) {
     final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
+
     return Column(
-      mainAxisSize: MainAxisSize.min, // To make the card compact
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -77,8 +78,9 @@ class _AddFoodItemToTagsState extends State<AddFoodItemToTags> {
                 //print(selected);
 
                 _selectedFoodCategory = selected;
+                _selectedFoodItem = null;
               });
-              getItems();
+              getItems(restaurantData);
             },
           ),
         ),
@@ -102,7 +104,7 @@ class _AddFoodItemToTagsState extends State<AddFoodItemToTags> {
                 //print(selected);
                 _selectedFoodItem = selected;
               });
-              getItems();
+              getItems(restaurantData);
             },
           ),
         ),
@@ -118,13 +120,15 @@ class _AddFoodItemToTagsState extends State<AddFoodItemToTags> {
               onPressed: () {
                 restaurantData.sendConfiguredDataToBackend({
                   "food_id": _selectedFoodItem.oid,
-                  "tag_name": widget.selectedTag,
+                  "home_screen_lists_id": widget.selectedTagId,
                 }, "attach_home_screen_tags");
 
-                widget.getTagItems(widget.selectedTag, restaurantData);
+                widget.getTagItems(widget.selectedTagId, restaurantData);
 
                 setState(() {
-                  _selectedFoodCategory = null;
+//                  _selectedFoodCategory = null;
+                  getItems(restaurantData,
+                      previouslySelected: _selectedFoodItem);
                   _selectedFoodItem = null;
                 });
               },

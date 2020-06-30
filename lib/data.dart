@@ -10,6 +10,7 @@ bool tableOrdersDebug = false;
 bool orderDebug = false;
 bool foodItemDebug = false;
 bool assistanceRequestsDebug = false;
+bool tagsDebug = false;
 bool restaurantOrderHistoryDebug = false;
 bool kitchenDebug = false;
 
@@ -25,8 +26,8 @@ class Restaurant {
   List<Staff> staff;
   List<TableOrder> tableOrders;
   List<AssistanceRequest> assistanceRequests;
-  List<String> homeScreenTags;
-  List<String> navigateBetterTags;
+  List<Tags> homeScreenTags;
+  List<Tags> navigateBetterTags;
   List<RestaurantOrderHistory> orderHistory;
   List<Kitchen> kitchens;
 
@@ -138,19 +139,19 @@ class Restaurant {
     if (debug) {
       print("assistanceRequests added to restaurant object.!");
     }
-    if (json['home_screen_tags'] != null) {
-      homeScreenTags = new List<String>();
-      json['home_screen_tags'].forEach((v) {
-        homeScreenTags.add(v);
+    if (json['home_screen_lists'] != null) {
+      homeScreenTags = new List<Tags>();
+      json['home_screen_lists'].forEach((v) {
+        homeScreenTags.add(Tags.fromJson(v, this.foodMenu, this.barMenu));
       });
     }
     if (debug) {
       print("Home Screen Tags added to restaurant object.!");
     }
-    if (json['navigate_better_tags'] != null) {
-      navigateBetterTags = new List<String>();
-      json['navigate_better_tags'].forEach((v) {
-        navigateBetterTags.add(v);
+    if (json['navigate_better_lists'] != null) {
+      navigateBetterTags = new List<Tags>();
+      json['navigate_better_lists'].forEach((v) {
+        navigateBetterTags.add(Tags.fromJson(v, this.foodMenu, this.barMenu));
       });
     }
 
@@ -899,7 +900,7 @@ class Customization {
     if (json['customization_type'] == 'add_ons') {
       addOns = new List<MenuFoodItem>();
       json['list_of_options']?.forEach((addOn) {
-        addOnsMenu.forEach((item) {
+        addOnsMenu?.forEach((item) {
           if (item.oid == addOn) {
             addOns.add(item);
           }
@@ -1101,17 +1102,17 @@ class FoodItem {
   String instructions;
   int quantity;
   String status;
-  Customization foodOption;
+  List<String> customization;
 
-  FoodItem({
-    this.foodId,
-    this.name,
-    this.description,
-    this.price,
-    this.instructions,
-    this.quantity,
-    this.status,
-  });
+  FoodItem(
+      {this.foodId,
+      this.name,
+      this.description,
+      this.price,
+      this.instructions,
+      this.quantity,
+      this.status,
+      this.customization});
 
   FoodItem.fromJson(Map<String, dynamic> json) {
     if (json['food_id'] != null) {
@@ -1142,9 +1143,24 @@ class FoodItem {
       status = json['status'];
     }
 
-//    if (json['food_options'] != null) {
-//      foodOption = new Customization.fromJson(json['food_options']);
-//    }
+    if (json['customization'] != null) {
+      customization = new List<String>();
+      json['customization']?.forEach((custom) {
+        if (custom['customization_type'] == 'choices') {
+          custom['list_of_options']?.forEach((choice) {
+            customization.add(choice);
+          });
+        }
+        if (custom['customization_type'] == 'options') {
+          print("hey");
+        }
+        if (custom['customization_type'] == 'add_ons') {
+          custom['list_of_options']?.forEach((addOn) {
+            customization.add(addOn['name']);
+          });
+        }
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -1273,6 +1289,59 @@ class AssistanceRequest {
 //      timeStamp = DateTime.parse(json['timestamp']);
 //    }
 //  }
+}
+
+class Tags {
+  String oid;
+  String name;
+  List<MenuFoodItem> foodList;
+
+  Tags({
+    this.oid,
+    this.name,
+    this.foodList,
+  });
+
+  Tags.fromJson(Map<String, dynamic> json, List<Category> foodMenu,
+      List<Category> barMenu) {
+    if (json['_id']['\$oid'] != null) {
+      oid = json['_id']['\$oid'];
+    }
+
+    if (tagsDebug) {
+      print(" oid added to Tags.!");
+    }
+
+    if (json['name'] != null) {
+      name = json['name'];
+    }
+
+    if (tagsDebug) {
+      print(" name added to Tags.!");
+    }
+
+    if (json['food_list'] != null) {
+      foodList = new List<MenuFoodItem>();
+
+      json['food_list'].forEach((element) {
+        foodMenu?.forEach((category) {
+          category.foodList?.forEach((foodItem) {
+            if (foodItem.oid == element['\$oid']) {
+              foodList.add(foodItem);
+            }
+          });
+        });
+
+        barMenu?.forEach((category) {
+          category.foodList?.forEach((foodItem) {
+            if (foodItem.oid == element['\$oid']) {
+              foodList.add(foodItem);
+            }
+          });
+        });
+      });
+    }
+  }
 }
 
 class RestaurantOrderHistory {

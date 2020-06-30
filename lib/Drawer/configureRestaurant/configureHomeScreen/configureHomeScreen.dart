@@ -5,7 +5,6 @@ import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/MostP
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureTags/HomeScreenTags/configureHomeScreenTags.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureTags/navigateBetter/ConfigureNavigateBetterTags.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/onOffer.dart';
-import 'package:manager_app/Drawer/configureRestaurant/test.dart';
 import 'package:manager_app/constants.dart';
 
 class ConfigureHomeScreen extends StatelessWidget {
@@ -43,9 +42,7 @@ class ConfigureHomeScreen extends StatelessWidget {
                               MaterialPageRoute(
                                 builder: (context) =>
                                     ConfigureNavigateBetterTags(
-//                                  updateConfigDetailsToCloud:
-//                                      updateConfigDetailsToCloud,
-//                                  restaurant: restaurant,
+//
                                         ),
                               ),
                             );
@@ -199,88 +196,86 @@ class ConfigureHomeScreen extends StatelessWidget {
                 child: Row(children: <Widget>[
                   Expanded(
                     child: Container(
-                      padding: EdgeInsets.all(25),
-                      child: Card(
-                        color: Color(0xffE5EDF1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
+//                      padding: EdgeInsets.all(25),
+//                      child: Card(
+//                        color: Color(0xffE5EDF1),
+//                        shape: RoundedRectangleBorder(
+//                          borderRadius: BorderRadius.circular(20.0),
+//                        ),
+//                        child: FlatButton(
+//                          child: Center(
+//                            child: Text(
+//                              'Happy Hours',
+//                              style: kHeaderStyleSmall,
+//                            ),
+//                          ),
+//                          onPressed: () {
+////                            Navigator.push(
+////                              context,
+////                              MaterialPageRoute(
+////                                builder: (context) => ConfigureHomeScreen(
+////                                  restaurant: restaurant,
+////                                ),
+////                              ),
+////                            );
+//                          },
+//                        ),
+//                      ),
                         ),
-                        child: FlatButton(
-                          child: Center(
-                            child: Text(
-                              'Happy Hours',
-                              style: kHeaderStyleSmall,
-                            ),
-                          ),
-                          onPressed: () {
-//                            Navigator.push(
-//                              context,
-//                              MaterialPageRoute(
-//                                builder: (context) => ConfigureHomeScreen(
-//                                  restaurant: restaurant,
-//                                ),
-//                              ),
-//                            );
-                          },
-                        ),
-                      ),
-                    ),
                   ),
                   Expanded(
                     child: Container(
-                      padding: EdgeInsets.all(25),
-                      child: Card(
-                        color: Color(0xffE5EDF1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        child: FlatButton(
-                          child: Center(
-                            child: Text(
-                              'nothing',
-                              style: kHeaderStyleSmall,
-                            ),
-                          ),
-                          onPressed: () {
+//                      padding: EdgeInsets.all(25),
+//                      child: Card(
+//                        color: Color(0xffE5EDF1),
+//                        shape: RoundedRectangleBorder(
+//                          borderRadius: BorderRadius.circular(20.0),
+//                        ),
+//                        child: FlatButton(
+//                          child: Center(
+//                            child: Text(
+//                              'Image Test',
+//                              style: kHeaderStyleSmall,
+//                            ),
+//                          ),
+//                          onPressed: () {
 //                            Navigator.push(
 //                              context,
 //                              MaterialPageRoute(
-//                                builder: (context) => ConfigureHomeScreen(
-//                                  restaurant: restaurant,
-//                                ),
+//                                builder: (context) => SelectImage(),
 //                              ),
 //                            );
-                          },
+//                          },
+//                        ),
+//                      ),
                         ),
-                      ),
-                    ),
                   ),
                   Expanded(
                     child: Container(
-                      padding: EdgeInsets.all(25),
-                      child: Card(
-                        color: Color(0xffE5EDF1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
+//                      padding: EdgeInsets.all(25),
+//                      child: Card(
+//                        color: Color(0xffE5EDF1),
+//                        shape: RoundedRectangleBorder(
+//                          borderRadius: BorderRadius.circular(20.0),
+//                        ),
+//                        child: FlatButton(
+//                          child: Center(
+//                            child: Text(
+//                              'testing',
+//                              style: kHeaderStyleSmall,
+//                            ),
+//                          ),
+//                          onPressed: () {
+//                            Navigator.push(
+//                              context,
+//                              MaterialPageRoute(
+//                                builder: (context) => TestScreen(),
+//                              ),
+//                            );
+//                          },
+//                        ),
+//                      ),
                         ),
-                        child: FlatButton(
-                          child: Center(
-                            child: Text(
-                              'testing',
-                              style: kHeaderStyleSmall,
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => TestScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
                   ),
                 ]),
               ),

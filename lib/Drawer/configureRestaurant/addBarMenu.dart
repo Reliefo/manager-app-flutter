@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager_app/Drawer/configureRestaurant/addFoodItem/addItem/naddItem.dart';
+import 'package:manager_app/Drawer/configureRestaurant/reorderCategory.dart';
 import 'package:manager_app/constants.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
@@ -51,6 +52,24 @@ class _AddMenuState extends State<AddBarMenu> {
         appBar: AppBar(
           backgroundColor: kThemeColor,
           title: Text('Add Bar Menu'),
+          actions: <Widget>[
+            restaurantData.restaurant.barMenu != null &&
+                    restaurantData.restaurant.barMenu.isNotEmpty
+                ? FlatButton(
+                    child: Text('Re-Order'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ReorderCategory(
+                              itemList: restaurantData.restaurant.barMenu,
+                              configurationType: "reorder_bar_category"),
+                        ),
+                      );
+                    },
+                  )
+                : Container(width: 0, height: 0),
+          ],
         ),
         body: Container(
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 18),
@@ -138,7 +157,8 @@ class _AddMenuState extends State<AddBarMenu> {
                 ),
               ),
               Expanded(
-                child: restaurantData.restaurant.barMenu != null
+                child: restaurantData.restaurant.barMenu != null &&
+                        restaurantData.restaurant.barMenu.isNotEmpty
                     ? GridView.builder(
                         itemCount: restaurantData.restaurant.barMenu.length,
                         shrinkWrap: true,
@@ -378,12 +398,13 @@ class _AddMenuState extends State<AddBarMenu> {
                                                   ),
                                                   onPressed: () {
                                                     restaurantData
-                                                        .sendConfiguredDataToBackend(
-                                                            restaurantData
-                                                                .restaurant
-                                                                .barMenu[index]
-                                                                .oid,
-                                                            "delete_bar_category");
+                                                        .sendConfiguredDataToBackend({
+                                                      "category_id":
+                                                          restaurantData
+                                                              .restaurant
+                                                              .barMenu[index]
+                                                              .oid
+                                                    }, "delete_bar_category");
 
                                                     Navigator.of(context).pop();
                                                   },

@@ -6,11 +6,11 @@ import 'package:provider/provider.dart';
 class AddBarItemToTags extends StatefulWidget {
   const AddBarItemToTags({
     Key key,
-    @required this.selectedTag,
+    @required this.selectedTagId,
     this.getTagItems,
   }) : super(key: key);
 
-  final String selectedTag;
+  final String selectedTagId;
   final Function getTagItems;
 
   @override
@@ -22,20 +22,27 @@ class _AddBarItemToTagsState extends State<AddBarItemToTags> {
   MenuFoodItem _selectedBarItem;
   List<MenuFoodItem> displayItems = [];
 
-  getItems() {
+  getItems(restaurantData, {MenuFoodItem previouslySelected}) {
     List<MenuFoodItem> toDelete = [];
 
     displayItems.clear();
-
-    _selectedBarCategory.foodList.forEach((foodItem) {
-      displayItems.add(foodItem);
-      foodItem.tags.forEach((tag) {
-        if (tag == widget.selectedTag) {
-          toDelete.add(foodItem);
-        }
-      });
+    if (previouslySelected != null) toDelete.add(previouslySelected);
+    displayItems = List.from(_selectedBarCategory.foodList);
+    restaurantData.restaurant.homeScreenTags?.forEach((tag) {
+      if (tag.oid == widget.selectedTagId) {
+        tag.foodList?.forEach((food) {
+          toDelete.add(food);
+        });
+      }
     });
 
+    restaurantData.restaurant.navigateBetterTags?.forEach((tag) {
+      if (tag.oid == widget.selectedTagId) {
+        tag.foodList?.forEach((food) {
+          toDelete.add(food);
+        });
+      }
+    });
     toDelete.forEach((food) {
       displayItems.removeWhere((element) => element == food);
     });
@@ -65,10 +72,11 @@ class _AddBarItemToTagsState extends State<AddBarItemToTags> {
             isExpanded: true,
             onChanged: (selected) {
               setState(() {
-                print(selected);
+//                print(selected);
                 _selectedBarCategory = selected;
+                _selectedBarItem = null;
               });
-              getItems();
+              getItems(restaurantData);
             },
           ),
         ),
@@ -89,9 +97,10 @@ class _AddBarItemToTagsState extends State<AddBarItemToTags> {
             isExpanded: true,
             onChanged: (selected) {
               setState(() {
-                print(selected);
+//                print(selected);
                 _selectedBarItem = selected;
               });
+              getItems(restaurantData);
             },
           ),
         ),
@@ -107,11 +116,13 @@ class _AddBarItemToTagsState extends State<AddBarItemToTags> {
               onPressed: () {
                 restaurantData.sendConfiguredDataToBackend({
                   "food_id": _selectedBarItem.oid,
-                  "tag_name": widget.selectedTag,
+                  "home_screen_lists_id": widget.selectedTagId,
                 }, "attach_home_screen_tags");
-                widget.getTagItems(widget.selectedTag, restaurantData);
+                widget.getTagItems(widget.selectedTagId, restaurantData);
                 setState(() {
-                  _selectedBarCategory = null;
+//                  _selectedBarCategory = null;
+                  getItems(restaurantData,
+                      previouslySelected: _selectedBarItem);
                   _selectedBarItem = null;
                 });
               },

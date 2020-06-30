@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manager_app/Home/orderItemBuilder.dart';
 import 'package:manager_app/constants.dart';
+import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:manager_app/fetchData/fetchOrderData.dart';
 import 'package:provider/provider.dart';
 
@@ -11,6 +12,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final OrderData orderData = Provider.of<OrderData>(context);
+    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
     return SafeArea(
       child: Scaffold(
         body: Container(

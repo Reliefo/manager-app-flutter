@@ -64,8 +64,9 @@ class TabContainerBottom extends StatelessWidget {
           child: Scaffold(
             drawer: Drawer(
               child: DrawerMenu(
+                jsSocket: jsSocket,
                 managerName: managerName,
-                restaurantName: restaurant.name,
+                restaurant: restaurant,
               ),
             ),
             body: TabBarView(

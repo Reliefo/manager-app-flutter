@@ -45,14 +45,17 @@ class MostPopular extends StatelessWidget {
           backgroundColor: kThemeColor,
         ),
         body: Container(
-          child: mostPopularFood.isNotEmpty || mostPopularBar.isNotEmpty
+          child: restaurantData.restaurant.homeScreenTags[0] != null &&
+                  restaurantData
+                      .restaurant.homeScreenTags[0].foodList.isNotEmpty
               ? SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
                       GridView.builder(
                           shrinkWrap: true,
                           primary: false,
-                          itemCount: mostPopularFood.length,
+                          itemCount: restaurantData
+                              .restaurant.homeScreenTags[0].foodList.length,
                           gridDelegate:
                               SliverGridDelegateWithMaxCrossAxisExtent(
                             mainAxisSpacing: 4.0,
@@ -74,7 +77,8 @@ class MostPopular extends StatelessWidget {
                               ),
                               child: Center(
                                 child: Text(
-                                  mostPopularFood[index].name,
+                                  restaurantData.restaurant.homeScreenTags[0]
+                                      .foodList[index].name,
                                   style: kTitleStyle,
                                 ),
                               ),

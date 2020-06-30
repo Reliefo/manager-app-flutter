@@ -45,14 +45,17 @@ class DailySpecial extends StatelessWidget {
           backgroundColor: kThemeColor,
         ),
         body: Container(
-          child: dailySpecialFood.isNotEmpty || dailySpecialBar.isNotEmpty
+          child: restaurantData.restaurant.homeScreenTags[1] != null &&
+                  restaurantData
+                      .restaurant.homeScreenTags[1].foodList.isNotEmpty
               ? SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
                       GridView.builder(
                           shrinkWrap: true,
                           primary: false,
-                          itemCount: dailySpecialFood.length,
+                          itemCount: restaurantData
+                              .restaurant.homeScreenTags[1].foodList.length,
                           gridDelegate:
                               SliverGridDelegateWithMaxCrossAxisExtent(
                             mainAxisSpacing: 4.0,
@@ -74,7 +77,8 @@ class DailySpecial extends StatelessWidget {
                               ),
                               child: Center(
                                 child: Text(
-                                  dailySpecialFood[index].name,
+                                  restaurantData.restaurant.homeScreenTags[1]
+                                      .foodList[index].name,
                                   style: kTitleStyle,
                                 ),
                               ),

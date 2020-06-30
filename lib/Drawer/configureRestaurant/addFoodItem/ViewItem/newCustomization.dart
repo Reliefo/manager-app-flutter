@@ -16,11 +16,22 @@ class NewCustomization extends StatefulWidget {
 }
 
 class _NewCustomizationState extends State<NewCustomization> {
+/////////////////this less_more ///////
+
+  List<Map<String, dynamic>> availableVal = [
+    {"name": "Less than", "value": -1},
+    {"name": "Exactly", "value": 0},
+    {"name": "More than", "value": 1},
+  ];
+  Map<String, dynamic> selectedVal;
+
+  ///////////////////////////////////////
   final nameController = TextEditingController();
+  final thatNumberController = TextEditingController();
 
   String customizationType = 'add_ons';
 
-  String optional = 'yes';
+  String _addon = 'yes';
 
   Widget optionalLayout() {
     return Column(
@@ -28,7 +39,7 @@ class _NewCustomizationState extends State<NewCustomization> {
         Container(
           padding: EdgeInsets.symmetric(vertical: 16),
           child: Text(
-            "Is this Optional to select ?",
+            "Is this Add-On ?",
             style: kTitleStyle,
           ),
         ),
@@ -36,7 +47,7 @@ class _NewCustomizationState extends State<NewCustomization> {
           children: <Widget>[
             Expanded(
               child: RadioListTile(
-                groupValue: optional,
+                groupValue: _addon,
                 title: Text(
                   'Yes',
                   style: kTitleStyle,
@@ -44,7 +55,7 @@ class _NewCustomizationState extends State<NewCustomization> {
                 value: 'yes',
                 onChanged: (val) {
                   setState(() {
-                    optional = val;
+                    _addon = val;
                     customizationType = 'add_ons';
                   });
                 },
@@ -52,7 +63,7 @@ class _NewCustomizationState extends State<NewCustomization> {
             ),
             Expanded(
               child: RadioListTile(
-                groupValue: optional,
+                groupValue: _addon,
                 title: Text(
                   'No',
                   style: kTitleStyle,
@@ -60,7 +71,7 @@ class _NewCustomizationState extends State<NewCustomization> {
                 value: 'no',
                 onChanged: (val) {
                   setState(() {
-                    optional = val;
+                    _addon = val;
                   });
                 },
               ),
@@ -74,6 +85,7 @@ class _NewCustomizationState extends State<NewCustomization> {
   @override
   Widget build(BuildContext context) {
     RestaurantData restaurantData = Provider.of<RestaurantData>(context);
+
     return AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -95,13 +107,13 @@ class _NewCustomizationState extends State<NewCustomization> {
                   Expanded(
                     child: TextField(
                       controller: nameController,
-                      autofocus: true,
+//                      autofocus: true,
                     ),
                   ),
                 ],
               ),
               optionalLayout(),
-              optional == 'no'
+              _addon == 'no'
                   ? Container(
                       width: 350,
                       child: Column(
@@ -147,6 +159,42 @@ class _NewCustomizationState extends State<NewCustomization> {
                               ),
                             ],
                           ),
+
+                          /////////////////////////////////////////////////////////////////////////
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Container(
+                                  child: DropdownButton(
+                                    value: selectedVal,
+                                    items: availableVal.map((element) {
+                                      return DropdownMenuItem(
+                                        value: element,
+                                        child: Text(element['name']),
+                                      );
+                                    }).toList(),
+                                    hint: Text('Select'),
+                                    isExpanded: true,
+                                    onChanged: (selected) {
+                                      setState(() {
+                                        selectedVal = selected;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Container(
+                                  child: TextField(
+                                      controller: thatNumberController,
+                                      keyboardType: TextInputType.number
+
+//                                    autofocus: true,
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     )
@@ -171,19 +219,30 @@ class _NewCustomizationState extends State<NewCustomization> {
                     onPressed: () {
                       print(" selected customizationType :");
                       print(customizationType);
+                      var temp;
+                      if (customizationType == "add_ons") {
+                        temp = {
+                          "name": nameController.text,
+                          "customization_type": customizationType,
+                          "less_more": 1,
+                          "that_number": 0,
+                        };
+                      } else {
+                        temp = {
+                          "name": nameController.text,
+                          "customization_type": customizationType,
+                          "less_more": selectedVal['value'],
+                          "that_number": int.parse(thatNumberController.text),
+                        };
+                      }
 
-                      var temp = {
-                        "name": nameController.text,
-                        "customization_type": customizationType,
-                        "less_more": 0,
-                        "that_number": 2,
-                      };
-
-                      Customization newCustom = new Customization.fromJson(
-                          temp, restaurantData.restaurant.addOnsMenu);
-                      setState(() {
-                        widget.newCustomizations.add(newCustom);
-                      });
+                      if (nameController.text.isNotEmpty) {
+                        Customization newCustom = new Customization.fromJson(
+                            temp, restaurantData.restaurant.addOnsMenu);
+                        setState(() {
+                          widget.newCustomizations.add(newCustom);
+                        });
+                      }
 
                       Navigator.of(context).pop(); // To close the dialog
                     },

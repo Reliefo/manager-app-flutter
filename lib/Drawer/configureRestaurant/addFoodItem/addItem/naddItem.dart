@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager_app/Drawer/configureRestaurant/addFoodItem/ViewItem/viewItem.dart';
+import 'package:manager_app/Drawer/configureRestaurant/addFoodItem/addItem/reorderFoodItem.dart';
 import 'package:manager_app/constants.dart';
 import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
@@ -122,6 +123,26 @@ class _NAddItemState extends State<NAddItem> {
         appBar: AppBar(
           backgroundColor: kThemeColor,
           title: Text(widget.category.name ?? " "),
+          actions: <Widget>[
+            widget.category.foodList != null &&
+                    widget.category.foodList.isNotEmpty
+                ? FlatButton(
+                    child: Text('Re-Order'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ReorderFoodItem(
+                              menuType: widget.menuType,
+                              categoryId: widget.category.oid,
+                              itemList: widget.category.foodList,
+                              configurationType: "reorder_food_item"),
+                        ),
+                      );
+                    },
+                  )
+                : Container(width: 0, height: 0),
+          ],
         ),
         body: widget.category.foodList != null
             ? Padding(
@@ -189,6 +210,8 @@ class _NAddItemState extends State<NAddItem> {
                                 widget.category.foodList[index - 1]
                                         .description ??
                                     "",
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
                                 style: kSubTitleStyle,
                               ),
                             ),

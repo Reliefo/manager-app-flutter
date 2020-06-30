@@ -14,13 +14,19 @@ class ConfigureHomeScreenTags extends StatefulWidget {
 }
 
 class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
+  ////////////for reorder list
+  List<MenuFoodItem> newItemList = [];
+  List<String> idList = [];
+  Function sendConfiguredDataToBackend;
+  bool reorder = false;
+//////////////////////////////////////////
   final tagController = TextEditingController();
   List<MenuFoodItem> barItems = [];
 
   List<MenuFoodItem> foodItems = [];
   int _selectedIndex;
 
-  String selectedTag;
+  Tags selectedTag;
 
   String radioItem = 'foodMenu';
 
@@ -73,10 +79,132 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
     });
   }
 
+  setInitialSelected(restaurantData) {
+    if (restaurantData.restaurant.homeScreenTags != null &&
+        restaurantData.restaurant.homeScreenTags.isNotEmpty) {
+      if (_selectedIndex == null) {
+        setState(() {
+          _selectedIndex = 0;
+          selectedTag = restaurantData.restaurant.homeScreenTags[0];
+        });
+      }
+    }
+  }
+
+  Widget ReorderLayout(Tags selectedTag, restaurantData) {
+    if (newItemList.isEmpty) {
+      newItemList = List.from(selectedTag.foodList);
+    }
+
+    void _onReorder(int oldIndex, int newIndex) {
+      setState(
+        () {
+          if (newIndex > oldIndex) {
+            newIndex -= 1;
+          }
+          final MenuFoodItem changedItem = newItemList.removeAt(oldIndex);
+          newItemList.insert(newIndex, changedItem);
+        },
+      );
+    }
+
+    Widget itemView(index, item) {
+      return ListTile(
+        contentPadding: EdgeInsets.all(12),
+        key: Key(item.oid),
+        leading: Icon(Icons.drag_handle),
+        title: Text(index.toString() + " .  " + item.name, style: kTitleStyle),
+      );
+    }
+
+    Future<bool> _onBackPressed() {
+      return showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  title: new Text('Changes not saved'),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text('Do you want to Save the changes.?'),
+                      SizedBox(height: 24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          FlatButton(
+                            child: Text(
+                              "Don't Save",
+                              style: TextStyle(
+                                  fontFamily: "Poppins", color: Colors.red),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop(false);
+
+                              setState(() {
+                                reorder = false;
+                                newItemList.clear();
+                              }); // To close the dialog
+                            },
+                          ),
+                          FlatButton(
+                            child: Text(
+                              "Save Changes",
+                              style: TextStyle(
+                                  fontFamily: "Poppins", color: Colors.green),
+                            ),
+                            onPressed: () {
+                              newItemList.forEach((element) {
+                                idList.add(element.oid);
+                              });
+
+                              Map<String, dynamic> localData = {
+                                "home_screen_lists_id": selectedTag.oid,
+                                "food_id_list": idList
+                              };
+
+                              restaurantData.sendConfiguredDataToBackend(
+                                  localData, "reorder_home_screen_tags");
+                              Navigator.of(context).pop(false);
+                              setState(() {
+                                reorder = false;
+                                newItemList.clear();
+                                idList.clear();
+                              });
+                            },
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                );
+              }) ??
+          false;
+    }
+
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        body: Container(
+          child: ReorderableListView(
+            children: newItemList.map((item) {
+              var index = newItemList.indexOf(item);
+              return itemView(index + 1, item);
+            }).toList(),
+            onReorder: _onReorder,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
-    getTagItems(selectedTag, restaurantData);
+//    getTagItems(selectedTag, restaurantData);
+    setInitialSelected(restaurantData);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -135,7 +263,7 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
                               child: ListTile(
                                 title: Text(
                                     restaurantData
-                                        .restaurant.homeScreenTags[index],
+                                        .restaurant.homeScreenTags[index].name,
                                     style: kTitleStyle),
                                 trailing: IconButton(
                                     icon: Icon(
@@ -153,7 +281,7 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
                                                   BorderRadius.circular(20),
                                             ),
                                             title: Text(
-                                                "Delete ${restaurantData.restaurant.homeScreenTags[index]} tag ?"),
+                                                "Delete ${restaurantData.restaurant.homeScreenTags[index].name} tag ?"),
                                             content: Column(
                                               mainAxisSize: MainAxisSize
                                                   .min, // To make the card compact
@@ -192,12 +320,12 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
                                                       onPressed: () {
                                                         restaurantData
                                                             .sendConfiguredDataToBackend({
-                                                          "remove_from":
-                                                              "home_screen",
-                                                          "tag_name": restaurantData
+                                                          "home_screen_lists_id":
+                                                              restaurantData
                                                                   .restaurant
                                                                   .homeScreenTags[
-                                                              index]
+                                                                      index]
+                                                                  .oid
                                                         }, "delete_home_screen_tags");
 
                                                         Navigator.of(context)
@@ -237,49 +365,72 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
                       flex: 2,
                       child: Row(
                         children: <Widget>[
-                          Expanded(
-                            child: Container(
-                              color: Colors.white,
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    padding: EdgeInsets.symmetric(vertical: 10),
-                                    child: ListTile(
-                                      title: Text(
-                                        'Items in $selectedTag',
-                                        style: kHeaderStyleSmall,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: selectedTagItems.length,
-                                      itemBuilder: (context, index) {
-                                        return ListTile(
-                                          title: Text(
-                                            selectedTagItems[index].name,
-                                            style: kTitleStyle,
+                          reorder == false
+                              ? Expanded(
+                                  child: Container(
+                                    color: Colors.white,
+                                    child: Column(
+                                      children: <Widget>[
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 10),
+                                          child: ListTile(
+                                            title: Row(
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: Text(
+                                                    'Items in ${selectedTag.name}',
+                                                    style: kHeaderStyleSmall,
+                                                  ),
+                                                ),
+                                                FlatButton(
+                                                  child: Text('Reorder'),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      reorder = true;
+                                                    });
+                                                  },
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                          trailing: IconButton(
-                                            icon: Icon(Icons.cancel),
-                                            onPressed: () {
-                                              restaurantData
-                                                  .sendConfiguredDataToBackend({
-                                                "food_id":
-                                                    selectedTagItems[index].oid,
-                                                "tag_name": selectedTag,
-                                              }, "remove_home_screen_tags");
+                                        ),
+                                        Expanded(
+                                          child: ListView.builder(
+                                            shrinkWrap: true,
+                                            itemCount:
+                                                selectedTag.foodList.length,
+                                            itemBuilder: (context, index) {
+                                              return ListTile(
+                                                title: Text(
+                                                  selectedTag
+                                                      .foodList[index].name,
+                                                  style: kTitleStyle,
+                                                ),
+                                                trailing: IconButton(
+                                                  icon: Icon(Icons.cancel),
+                                                  onPressed: () {
+                                                    restaurantData
+                                                        .sendConfiguredDataToBackend({
+                                                      "food_id": selectedTag
+                                                          .foodList[index].oid,
+                                                      "home_screen_lists_id":
+                                                          selectedTag.oid,
+                                                    }, "remove_home_screen_tags");
+                                                  },
+                                                ),
+                                              );
                                             },
                                           ),
-                                        );
-                                      },
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
+                                )
+                              : Expanded(
+                                  child: ReorderLayout(
+                                      selectedTag, restaurantData),
+                                ),
                           VerticalDivider(
                             thickness: 2,
                             indent: 12,
@@ -294,7 +445,7 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
                                     padding: EdgeInsets.symmetric(vertical: 10),
                                     child: ListTile(
                                       title: Text(
-                                        'Add New Item to $selectedTag',
+                                        'Add New Item to ${selectedTag.name}',
                                         style: kHeaderStyleSmall,
                                       ),
                                     ),
@@ -338,11 +489,13 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
                                           radioItem == "barMenu"
                                               ? AddBarItemToTags(
                                                   getTagItems: getTagItems,
-                                                  selectedTag: selectedTag,
+                                                  selectedTagId:
+                                                      selectedTag.oid,
                                                 )
                                               : AddFoodItemToTags(
                                                   getTagItems: getTagItems,
-                                                  selectedTag: selectedTag,
+                                                  selectedTagId:
+                                                      selectedTag.oid,
                                                 ),
                                         ],
                                       ),

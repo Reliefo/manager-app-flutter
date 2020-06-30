@@ -69,19 +69,17 @@ class _AddDataState extends State<AddStaff> {
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.all(8),
-                      child: RaisedButton(
-                        color: kThemeColor,
-                        child: Text(
-                          'Add',
-                          style: kTitleStyle,
-                        ),
-                        onPressed: () {
-                          _addStaff(restaurantData);
-                        },
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    child: RaisedButton(
+                      color: kThemeColor,
+                      child: Text(
+                        'Add',
+                        style: kTitleStyle,
                       ),
+                      onPressed: () {
+                        _addStaff(restaurantData);
+                      },
                     ),
                   ),
                   Expanded(
@@ -89,7 +87,7 @@ class _AddDataState extends State<AddStaff> {
                       padding:
                           EdgeInsets.symmetric(vertical: 20, horizontal: 22),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           restaurantData.restaurant.staff == null
                               ? Text('No of Staffs :')
@@ -245,10 +243,10 @@ class _AddDataState extends State<AddStaff> {
                                 IconButton(
                                   icon: Icon(Icons.cancel),
                                   onPressed: () {
-                                    restaurantData.sendConfiguredDataToBackend(
-                                        restaurantData
-                                            .restaurant.staff[index].oid,
-                                        "delete_staff");
+                                    restaurantData.sendConfiguredDataToBackend({
+                                      "staff_id": restaurantData
+                                          .restaurant.staff[index].oid
+                                    }, "delete_staff");
                                   },
                                 ),
                               ],

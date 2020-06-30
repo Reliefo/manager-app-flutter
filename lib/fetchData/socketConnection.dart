@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:adhara_socket_io/adhara_socket_io.dart';
 import 'package:flutter/material.dart';
+import 'package:manager_app/authentication/loadingPage.dart';
 import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/js_socket_service.dart';
 import 'package:manager_app/tabs.dart';
@@ -32,6 +33,8 @@ class _SocketConnectionState extends State<SocketConnection> {
 
     super.initState();
   }
+
+  bool showLoading = true;
 
   JSSocketService jsSocket;
   Restaurant restaurant = Restaurant();
@@ -97,6 +100,9 @@ class _SocketConnectionState extends State<SocketConnection> {
           {
             print('[socket] -> restaurant object');
             fetchRestaurant(eventData);
+            setState(() {
+              showLoading = false;
+            });
             break;
           }
 
@@ -155,79 +161,6 @@ class _SocketConnectionState extends State<SocketConnection> {
       }
     });
   }
-
-//  initSocket(String uri) async {
-//    print('hey from new init file');
-////    print(loginSession.jwt);
-////    print(sockets.length);
-//
-//    var identifier = 'working';
-//    SocketIO socket = await manager.createInstance(SocketOptions(
-//        //Socket IO server URI
-//        uri,
-//        nameSpace: "/reliefo",
-//        //Query params - can be used for authentication
-//        query: {
-//          "jwt": widget.jwt,
-////          "username": loginSession.username,
-//          "info": "new connection from adhara-socketio",
-//          "timestamp": DateTime.now().toString()
-//        },
-//        //Enable or disable platform channel logging
-//        enableLogging: false,
-//        transports: [
-//          Transports.WEB_SOCKET /*, Transports.POLLING*/
-////          Transports.POLLING
-//        ] //Enable required transport
-//
-//        ));
-//    socket.onConnect((data) {
-//      pprint({"Status": "connected..."});
-////      pprint(data);
-////      sendMessage("DEFAULT");
-//      socket.emit("fetch_rest_manager", [
-//        jsonEncode({"restaurant_id": widget.restaurantId})
-//      ]);
-////      socket.emit("rest_with_id", [widget.restaurantId]);
-////      socket.emit("fetch_order_lists", [widget.restaurantId]);
-//      socket.emit("check_logger", [" sending........."]);
-//    });
-//    socket.onConnectError(pprint);
-//    socket.onConnectTimeout(pprint);
-//    socket.onError(pprint);
-//    socket.onDisconnect((data) {
-//      print('object disconnnecgts');
-////      disconnect('working');
-//    });
-//    socket.on("logger", (data) => pprint(data));
-//
-//    socket.on("restaurant_object", (data) => fetchRestaurant(data));
-//
-//    socket.on("updating_config", (data) => getConfiguredDataFromBackend(data));
-//    socket.on("receive_your_people", (data) => fetchRegisteredUsers(data));
-//
-//    socket.on("order_lists", (data) => initialOrderLists(data));
-//
-//    socket.on("new_orders", (data) => newOrders(data));
-//    socket.on("order_updates", (data) => orderUpdates(data));
-//
-//    socket.on("assist", (data) => newAssistanceRequests(data));
-//
-//    socket.on("user_scan", (data) => fetchScanUpdates(data));
-//    socket.on("billing", (data) => fetchBilled(data));
-//
-//    socket.connect();
-//    sockets[identifier] = socket;
-//  }
-//
-//  bool isProbablyConnected(String identifier) {
-//    return _isProbablyConnected[identifier] ?? false;
-//  }
-//
-//  disconnect(String identifier) async {
-//    await manager.clearInstance(sockets[identifier]);
-//    _isProbablyConnected[identifier] = false;
-//  }
 
   pprint(data) {
     if (data is Map) {
@@ -473,6 +406,23 @@ class _SocketConnectionState extends State<SocketConnection> {
               (category) => category.oid == decode["category_id"]);
         });
       }
+
+      if (decode["type"] == "reorder_food_category") {
+        List<Category> oldCategories = List.from(restaurant.foodMenu);
+
+        restaurant.foodMenu.clear();
+
+        decode["category_id_list"]?.forEach((categoryId) {
+          oldCategories?.forEach((category) {
+            if (category.oid == categoryId) {
+              setState(() {
+                restaurant.foodMenu.add(category);
+              });
+            }
+          });
+        });
+      }
+
       if (decode["type"] == "add_bar_category") {
         restaurant.addBarMenuCategory(decode["category"]);
       }
@@ -484,6 +434,22 @@ class _SocketConnectionState extends State<SocketConnection> {
 
             category.description = decode["editing_fields"]["description"];
           }
+        });
+      }
+
+      if (decode["type"] == "reorder_bar_category") {
+        List<Category> oldCategories = List.from(restaurant.barMenu);
+
+        restaurant.barMenu.clear();
+
+        decode["category_id_list"]?.forEach((categoryId) {
+          oldCategories?.forEach((category) {
+            if (category.oid == categoryId) {
+              setState(() {
+                restaurant.barMenu.add(category);
+              });
+            }
+          });
         });
       }
 
@@ -535,31 +501,29 @@ class _SocketConnectionState extends State<SocketConnection> {
 
         print(decode);
 
-        if (decode["category_type"] == "food") {
-          restaurant.foodMenu.forEach((category) {
-            category.foodList.forEach((foodItem) {
-              if (foodItem.oid == decode["food_id"]) {
-                foodItem.addEdited(
-                    decode["editing_fields"], restaurant.addOnsMenu);
-              }
-            });
-          });
-        } else if (decode["category_type"] == "bar") {
-          restaurant.barMenu.forEach((category) {
-            category.foodList.forEach((foodItem) {
-              if (foodItem.oid == decode["food_id"]) {
-                foodItem.addEdited(
-                    decode["editing_fields"], restaurant.addOnsMenu);
-              }
-            });
-          });
-        } else if (decode["category_type"] == "add_ons") {
-          restaurant.addOnsMenu?.forEach((foodItem) {
+        restaurant.foodMenu?.forEach((category) {
+          category?.foodList?.forEach((foodItem) {
             if (foodItem.oid == decode["food_id"]) {
-              foodItem.addEditedAddon(decode["editing_fields"]);
+              foodItem.addEdited(
+                  decode["editing_fields"], restaurant.addOnsMenu);
             }
           });
-        }
+        });
+
+        restaurant.barMenu?.forEach((category) {
+          category?.foodList?.forEach((foodItem) {
+            if (foodItem.oid == decode["food_id"]) {
+              foodItem.addEdited(
+                  decode["editing_fields"], restaurant.addOnsMenu);
+            }
+          });
+        });
+
+        restaurant.addOnsMenu?.forEach((foodItem) {
+          if (foodItem.oid == decode["food_id"]) {
+            foodItem.addEditedAddon(decode["editing_fields"]);
+          }
+        });
       }
 
       if (decode["type"] == "delete_food_item") {
@@ -568,14 +532,61 @@ class _SocketConnectionState extends State<SocketConnection> {
             category?.foodList
                 ?.removeWhere((food) => food.oid == decode["food_id"]);
           });
-        });
 
-        setState(() {
           restaurant.barMenu?.forEach((category) {
             category?.foodList
                 ?.removeWhere((food) => food.oid == decode["food_id"]);
           });
         });
+
+        restaurant.homeScreenTags?.forEach((tags) {
+          tags?.foodList
+              ?.removeWhere((element) => element.oid == decode["food_id"]);
+        });
+
+        restaurant.navigateBetterTags?.forEach((tags) {
+          tags?.foodList
+              ?.removeWhere((element) => element.oid == decode["food_id"]);
+        });
+      }
+
+      if (decode["type"] == "reorder_food_item") {
+        if (decode["category_type"] == "food") {
+          restaurant.foodMenu?.forEach((category) {
+            if (category.oid == decode["category_id"]) {
+              List<MenuFoodItem> oldFoodList = List.from(category.foodList);
+              category.foodList.clear();
+
+              decode["food_id_list"].forEach((foodId) {
+                oldFoodList?.forEach((foodItem) {
+                  if (foodId == foodItem.oid) {
+                    setState(() {
+                      category.foodList.add(foodItem);
+                    });
+                  }
+                });
+              });
+            }
+          });
+        }
+        if (decode["category_type"] == "bar") {
+          restaurant.barMenu?.forEach((category) {
+            if (category.oid == decode["category_id"]) {
+              List<MenuFoodItem> oldFoodList = List.from(category.foodList);
+              category.foodList.clear();
+
+              decode["food_id_list"]?.forEach((foodId) {
+                oldFoodList?.forEach((foodItem) {
+                  if (foodId == foodItem.oid) {
+                    setState(() {
+                      category.foodList.add(foodItem);
+                    });
+                  }
+                });
+              });
+            }
+          });
+        }
       }
 
       if (decode["type"] == "visibility_food_item") {
@@ -624,9 +635,12 @@ class _SocketConnectionState extends State<SocketConnection> {
       }
 
       if (decode["type"] == "delete_add_ons") {
+//        jsSocket.socketEmit("fetch_rest_manager",
+//            jsonEncode({"restaurant_id": widget.restaurantId}));
+
         setState(() {
           restaurant.addOnsMenu
-              .removeWhere((element) => element.oid == decode["food_id"]);
+              ?.removeWhere((element) => element.oid == decode["food_id"]);
         });
       }
 
@@ -634,59 +648,109 @@ class _SocketConnectionState extends State<SocketConnection> {
 
       if (decode["type"] == "add_home_screen_tags") {
         if (decode["add_to"] == "navigate_better") {
-          restaurant.navigateBetterTags.add(decode["tag_name"]);
+          restaurant.navigateBetterTags.add(Tags.fromJson(
+              decode["home_screen_lists"],
+              restaurant.foodMenu,
+              restaurant.barMenu));
         }
 
         if (decode["add_to"] == "home_screen") {
-          restaurant.homeScreenTags.add(decode["tag_name"]);
+          restaurant.homeScreenTags.add(Tags.fromJson(
+              decode["home_screen_lists"],
+              restaurant.foodMenu,
+              restaurant.barMenu));
         }
       }
       if (decode["type"] == "delete_home_screen_tags") {
-        if (decode["remove_from"] == "navigate_better") {
-          restaurant.navigateBetterTags
-              .removeWhere((tag) => tag == decode["tag_name"]);
-        }
+        restaurant.navigateBetterTags
+            ?.removeWhere((tag) => tag.oid == decode["home_screen_lists_id"]);
 
-        if (decode["remove_from"] == "home_screen") {
-          restaurant.homeScreenTags
-              .removeWhere((tag) => tag == decode["tag_name"]);
-        }
+        restaurant.homeScreenTags
+            ?.removeWhere((tag) => tag.oid == decode["home_screen_lists_id"]);
       }
+
       if (decode["type"] == "attach_home_screen_tags") {
+        MenuFoodItem itemToAdd;
+
         restaurant.foodMenu?.forEach((category) {
-          category?.foodList?.forEach((foodItem) {
-            if (foodItem.oid == decode["food_id"]) {
-              foodItem.tags.add(decode["tag_name"]);
+          category?.foodList?.forEach((item) {
+            if (item.oid == decode["food_id"]) {
+              itemToAdd = item;
             }
           });
         });
 
         restaurant.barMenu?.forEach((category) {
-          category?.foodList?.forEach((barItem) {
-            if (barItem.oid == decode["food_id"]) {
-              barItem.tags.add(decode["tag_name"]);
+          category?.foodList?.forEach((item) {
+            if (item.oid == decode["food_id"]) {
+              itemToAdd = item;
             }
           });
+        });
+        restaurant.homeScreenTags?.forEach((tag) {
+          if (tag.oid == decode["home_screen_lists_id"]) {
+            tag.foodList.add(itemToAdd);
+          }
+        });
+        restaurant.navigateBetterTags?.forEach((tag) {
+          if (tag.oid == decode["home_screen_lists_id"]) {
+            tag.foodList.add(itemToAdd);
+          }
         });
       }
 
       if (decode["type"] == "remove_home_screen_tags") {
-        restaurant.foodMenu?.forEach((category) {
-          category?.foodList?.forEach((foodItem) {
-            if (foodItem.oid == decode["food_id"]) {
-              foodItem.tags.removeWhere((tag) => tag == decode["tag_name"]);
-            }
-          });
+        restaurant.homeScreenTags?.forEach((tags) {
+          if (tags.oid == decode["home_screen_lists_id"]) {
+            MenuFoodItem itemToDelete;
+            tags?.foodList?.forEach((item) {
+              if (item.oid == decode["food_id"]) {
+                itemToDelete = item;
+              }
+            });
+            tags.foodList.removeWhere((element) => element == itemToDelete);
+          }
         });
 
-        restaurant.barMenu?.forEach((category) {
-          category?.foodList?.forEach((barItem) {
-            if (barItem.oid == decode["food_id"]) {
-//              print(barItem.tags);
-              barItem.tags.removeWhere((tag) => tag == decode["tag_name"]);
-//              print(barItem.tags);
-            }
+        restaurant.navigateBetterTags?.forEach((tags) {
+          if (tags.oid == decode["home_screen_lists_id"]) {
+            MenuFoodItem itemToDelete;
+            tags?.foodList?.forEach((item) {
+              if (item.oid == decode["food_id"]) {
+                itemToDelete = item;
+              }
+            });
+            tags.foodList.removeWhere((element) => element == itemToDelete);
+          }
+        });
+      }
+
+      if (decode["type"] == "reorder_home_screen_tags") {
+        changeOrder(Tags tags) {
+          List<MenuFoodItem> oldFoodList = List.from(tags.foodList);
+          tags.foodList.clear();
+
+          decode["food_id_list"]?.forEach((foodId) {
+            oldFoodList?.forEach((foodItem) {
+              if (foodId == foodItem.oid) {
+                setState(() {
+                  tags.foodList.add(foodItem);
+                });
+              }
+            });
           });
+        }
+
+        restaurant.homeScreenTags?.forEach((tags) {
+          if (tags.oid == decode["home_screen_lists_id"]) {
+            changeOrder(tags);
+          }
+        });
+
+        restaurant.navigateBetterTags?.forEach((tags) {
+          if (tags.oid == decode["home_screen_lists_id"]) {
+            changeOrder(tags);
+          }
         });
       }
     });
@@ -727,7 +791,7 @@ class _SocketConnectionState extends State<SocketConnection> {
   fetchBilled(data) {
     print("inside billing");
     print(data);
-    print(data["order_history"].keys.toList());
+//    print(data["order_history"].keys.toList());
 //todo: implement billing when requested from customer app
     if (data["status"] == "billed") {
       setState(() {
@@ -772,7 +836,9 @@ class _SocketConnectionState extends State<SocketConnection> {
 //    object_id: 5ead65e1e1823a4f213257af, name: Kunal, username: SIDHOUKUN0,
 //    password: SIDHOUKUN128, status: Registration successful}
     setState(() {
-      data.forEach((k, v) => registeredUser[k.toString()] = v);
+      registeredUser = jsonDecode(data);
+
+//      data.forEach((k, v) => registeredUser[k.toString()] = v);
     });
   }
 
@@ -787,6 +853,10 @@ class _SocketConnectionState extends State<SocketConnection> {
       int completed = 0;
 
       var decoded = jsonDecode(data);
+
+      print("rrrr");
+
+      print(decoded);
 
       queueOrders.clear();
       cookingOrders.clear();
@@ -1034,17 +1104,19 @@ class _SocketConnectionState extends State<SocketConnection> {
   @override
   Widget build(BuildContext context) {
     print("hereeeeww");
-    print(widget.restaurantId);
+    print(registeredUser);
 
-    return TabContainerBottom(
-      managerName: widget.managerName,
+    return showLoading
+        ? LoadingPage()
+        : TabContainerBottom(
+            managerName: widget.managerName,
 //      sockets: sockets,
-      jsSocket: jsSocket,
-      restaurant: restaurant,
-      registeredUser: registeredUser,
-      queueOrders: queueOrders,
-      cookingOrders: cookingOrders,
-      completedOrders: completedOrders,
-    );
+            jsSocket: jsSocket,
+            restaurant: restaurant,
+            registeredUser: registeredUser,
+            queueOrders: queueOrders,
+            cookingOrders: cookingOrders,
+            completedOrders: completedOrders,
+          );
   }
 }

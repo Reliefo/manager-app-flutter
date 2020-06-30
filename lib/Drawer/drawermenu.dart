@@ -1,17 +1,23 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:manager_app/Drawer/Dashboard/dashboard.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configure.dart';
 import 'package:manager_app/Drawer/orderHistory/orderHistory.dart';
 import 'package:manager_app/authentication/loginPage.dart';
 import 'package:manager_app/constants.dart';
+import 'package:manager_app/data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerMenu extends StatelessWidget {
-  final String restaurantName, managerName;
+  final String managerName;
+  final jsSocket;
+  final Restaurant restaurant;
 
   DrawerMenu({
-    this.restaurantName,
+    this.restaurant,
     this.managerName,
+    this.jsSocket,
   });
   clearData() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -25,9 +31,9 @@ class DrawerMenu extends StatelessWidget {
         DrawerHeader(
           child: Column(
             children: <Widget>[
-              restaurantName != null
+              restaurant.name != null
                   ? Text(
-                      restaurantName,
+                      restaurant.name,
                       style: kHeaderStyleSmall,
                       textAlign: TextAlign.left,
                     )
@@ -101,6 +107,23 @@ class DrawerMenu extends StatelessWidget {
                 builder: (context) => Dashboard(),
               ),
             );
+          },
+        ),
+        Divider(),
+
+        FlatButton(
+          child: Row(
+            children: <Widget>[
+              Text(
+                'Refresh',
+                style: kHeaderStyleSmall,
+                textAlign: TextAlign.left,
+              ),
+            ],
+          ),
+          onPressed: () {
+            jsSocket.socketEmit("fetch_rest_manager",
+                jsonEncode({"restaurant_id": restaurant.restaurantId}));
           },
         ),
         Divider(),

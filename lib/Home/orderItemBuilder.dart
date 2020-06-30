@@ -114,47 +114,14 @@ class OrderItemBuilder extends StatelessWidget {
                                   orderList[index]
                                               .orders[index2]
                                               .foodList[index3]
-                                              .foodOption !=
+                                              .customization !=
                                           null
-                                      ? ListView.builder(
-                                          shrinkWrap: true,
-                                          primary: false,
-                                          itemCount: orderList[index]
-                                              .orders[index2]
-                                              .foodList[index3]
-                                              .foodOption
-                                              .options
-                                              .length,
-                                          itemBuilder: (context, index4) {
-                                            return Text(
-                                              '${orderList[index].orders[index2].foodList[index3].foodOption.options[index4]['option_name']}' ??
-                                                  " ",
-                                            );
-                                          },
-                                        )
-                                      : Container(width: 0, height: 0),
-                                  orderList[index]
-                                              .orders[index2]
-                                              .foodList[index3]
-                                              .foodOption !=
-                                          null
-                                      ? ListView.builder(
-                                          shrinkWrap: true,
-                                          primary: false,
-                                          itemCount: orderList[index]
-                                              .orders[index2]
-                                              .foodList[index3]
-                                              .foodOption
-                                              .choices
-                                              .length,
-                                          itemBuilder: (context, index4) {
-                                            return Text(
-                                              '${orderList[index].orders[index2].foodList[index3].foodOption.choices[index4]}' ??
-                                                  " ",
-                                            );
-                                          },
-                                        )
-                                      : Container(width: 0, height: 0),
+                                      ? Text(orderList[index]
+                                          .orders[index2]
+                                          .foodList[index3]
+                                          .customization
+                                          .join(', '))
+                                      : Container(),
                                   orderList[index]
                                               .orders[index2]
                                               .foodList[index3]

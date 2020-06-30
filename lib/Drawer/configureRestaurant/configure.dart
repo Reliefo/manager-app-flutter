@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:manager_app/Drawer/configureRestaurant/Kitchen/addKitchen.dart';
+import 'package:manager_app/Drawer/configureRestaurant/Staff/addStaff.dart';
 import 'package:manager_app/Drawer/configureRestaurant/addBarMenu.dart';
 import 'package:manager_app/Drawer/configureRestaurant/addFoodMenu.dart';
 import 'package:manager_app/Drawer/configureRestaurant/addOns.dart';
-import 'package:manager_app/Drawer/configureRestaurant/addStaff.dart';
 import 'package:manager_app/Drawer/configureRestaurant/assignStaff.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureHomeScreen.dart';
 import 'package:manager_app/Drawer/configureRestaurant/setTax.dart';

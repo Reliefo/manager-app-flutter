@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manager_app/Drawer/configureRestaurant/addFoodItem/ViewItem/viewItem.dart';
 import 'package:manager_app/constants.dart';
+import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
 
@@ -37,6 +38,47 @@ class _AddFoodItemState extends State<AddOnsMenu> {
     itemNameController.clear();
     descriptionController.clear();
     priceController.clear();
+  }
+
+  removeAddOnEverywhere(String addOnId, restaurantData) {
+    List<MenuFoodItem> changedFoodItems = [];
+    removeAddOnsFromCategory(category) {
+      category?.foodList?.forEach((food) {
+        food.customizations?.forEach((customization) {
+          if (customization.customizationType == "add_ons") {
+            List<MenuFoodItem> addOnsToDelete = [];
+            customization.addOns.forEach((addOn) {
+              if (addOn.oid == addOnId) {
+                addOnsToDelete.add(addOn);
+                changedFoodItems.add(food);
+              }
+            });
+            addOnsToDelete?.forEach((item) {
+              customization.addOns.remove(item);
+            });
+          }
+        });
+      });
+    }
+
+    restaurantData.restaurant.foodMenu?.forEach((category) {
+      removeAddOnsFromCategory(category);
+    });
+    restaurantData.restaurant.barMenu?.forEach((category) {
+      removeAddOnsFromCategory(category);
+    });
+    changedFoodItems?.forEach((item) {
+      List<Map<String, dynamic>> dataToBackend = [];
+      item.customizations.forEach((customization) {
+        dataToBackend.add(customization.toJson());
+      });
+      restaurantData.sendConfiguredDataToBackend({
+        "food_id": item.oid,
+        "editing_fields": {"customization": dataToBackend}
+      }, "edit_food_item");
+
+      dataToBackend.clear();
+    });
   }
 
   @override
@@ -191,9 +233,9 @@ class _AddFoodItemState extends State<AddOnsMenu> {
                                   style: kTitleStyle,
                                 ),
                                 subtitle: Text(
-                                  restaurantData.restaurant.addOnsMenu[index]
-                                          .description ??
-                                      "",
+                                  " ₹ " +
+                                      restaurantData
+                                          .restaurant.addOnsMenu[index].price,
                                   style: kSubTitleStyle,
                                 ),
                                 trailing: Row(
@@ -216,6 +258,12 @@ class _AddFoodItemState extends State<AddOnsMenu> {
                                     IconButton(
                                       icon: Icon(Icons.cancel),
                                       onPressed: () {
+                                        /////////////////////////////////////////////
+                                        removeAddOnEverywhere(
+                                            restaurantData.restaurant
+                                                .addOnsMenu[index].oid,
+                                            restaurantData);
+                                        ///////////////////////////////////////////
                                         restaurantData
                                             .sendConfiguredDataToBackend({
                                           "food_id": restaurantData

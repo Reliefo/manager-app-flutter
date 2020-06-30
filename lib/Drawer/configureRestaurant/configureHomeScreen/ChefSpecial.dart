@@ -45,14 +45,17 @@ class ChefSpecial extends StatelessWidget {
           backgroundColor: kThemeColor,
         ),
         body: Container(
-          child: chefSpecialFood.isNotEmpty || chefSpecialBar.isNotEmpty
+          child: restaurantData.restaurant.homeScreenTags[3] != null &&
+                  restaurantData
+                      .restaurant.homeScreenTags[3].foodList.isNotEmpty
               ? SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
                       GridView.builder(
                           shrinkWrap: true,
                           primary: false,
-                          itemCount: chefSpecialFood.length,
+                          itemCount: restaurantData
+                              .restaurant.homeScreenTags[3].foodList.length,
                           gridDelegate:
                               SliverGridDelegateWithMaxCrossAxisExtent(
                             mainAxisSpacing: 4.0,
@@ -74,7 +77,8 @@ class ChefSpecial extends StatelessWidget {
                               ),
                               child: Center(
                                 child: Text(
-                                  chefSpecialFood[index].name,
+                                  restaurantData.restaurant.homeScreenTags[3]
+                                      .foodList[index].name,
                                   style: kTitleStyle,
                                 ),
                               ),

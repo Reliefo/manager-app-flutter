@@ -384,11 +384,15 @@ class _AddDataState extends State<AddData> {
                                                     onPressed: () {
                                                       restaurantData
                                                           .sendConfiguredDataToBackend(
-                                                              restaurantData
-                                                                  .restaurant
-                                                                  .tables[
-                                                                      index - 1]
-                                                                  .oid,
+                                                              {
+                                                            "table_id":
+                                                                restaurantData
+                                                                    .restaurant
+                                                                    .tables[
+                                                                        index -
+                                                                            1]
+                                                                    .oid
+                                                          },
                                                               "delete_tables");
                                                       Navigator.of(context)
                                                           .pop();

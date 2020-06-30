@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:manager_app/Drawer/configureRestaurant/addFoodItem/addItem/naddItem.dart';
+import 'package:manager_app/Drawer/configureRestaurant/reorderCategory.dart';
 import 'package:manager_app/constants.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
@@ -50,12 +52,30 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
   @override
   Widget build(BuildContext context) {
     final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
-//    print(widget.restaurant.foodMenu);
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: kThemeColor,
           title: Text('Add Food Menu'),
+          actions: <Widget>[
+            restaurantData.restaurant.foodMenu != null &&
+                    restaurantData.restaurant.foodMenu.isNotEmpty
+                ? FlatButton(
+                    child: Text('Re-Order'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ReorderCategory(
+                              itemList: restaurantData.restaurant.foodMenu,
+                              configurationType: "reorder_food_category"),
+                        ),
+                      );
+                    },
+                  )
+                : Container(width: 0, height: 0),
+          ],
         ),
         body: Container(
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 18),
@@ -186,7 +206,8 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
                                       ),
                                       subtitle: Text(
                                         restaurantData.restaurant
-                                            .foodMenu[index].description,
+                                                .foodMenu[index].description ??
+                                            "",
                                         style: kSubTitleStyle,
                                       ),
                                       onTap: () {
@@ -390,13 +411,13 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
                                                     ),
                                                     onPressed: () {
                                                       restaurantData
-                                                          .sendConfiguredDataToBackend(
-                                                              restaurantData
-                                                                  .restaurant
-                                                                  .foodMenu[
-                                                                      index]
-                                                                  .oid,
-                                                              "delete_food_category");
+                                                          .sendConfiguredDataToBackend({
+                                                        "category_id":
+                                                            restaurantData
+                                                                .restaurant
+                                                                .foodMenu[index]
+                                                                .oid
+                                                      }, "delete_food_category");
 
                                                       Navigator.of(context)
                                                           .pop();

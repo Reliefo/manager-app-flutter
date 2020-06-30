@@ -1,5 +1,6 @@
 import 'package:custom_switch/custom_switch.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:manager_app/constants.dart';
 import 'package:manager_app/data.dart';
@@ -24,6 +25,8 @@ class ViewItem extends StatefulWidget {
 class _ViewItemState extends State<ViewItem> {
   bool switchStatus = true;
 
+  int radioItemVal;
+
   List<Customization> editCustomizations = [];
   List<Customization> newCustomizations = [];
   List<Map<String, dynamic>> dataToBackend = [];
@@ -36,7 +39,7 @@ class _ViewItemState extends State<ViewItem> {
   final foodOptionPriceEditController = TextEditingController();
   final foodChoiceEditController = TextEditingController();
 
-  addEditChoiceOption() {
+  addEditChoiceOption(restaurantData) {
     print("addEditChoiceOption called");
 
     editCustomizations.clear();
@@ -51,11 +54,16 @@ class _ViewItemState extends State<ViewItem> {
     if (newCustomizations.isNotEmpty) {
       print("adding new customizations");
       editCustomizations.addAll(newCustomizations);
+
+      sendDataToBackend(restaurantData);
+      newCustomizations.clear();
       print("added new customizations");
     }
   }
 
   sendAdonsData(restaurantData) {
+    //todo: replace with send data to backend
+
     customizationToMap();
 
     restaurantData.sendConfiguredDataToBackend({
@@ -86,6 +94,31 @@ class _ViewItemState extends State<ViewItem> {
     });
   }
 
+  customizationToMap() {
+    dataToBackend.clear();
+    editCustomizations.forEach((cust) {
+      dataToBackend.add(cust.toJson());
+    });
+  }
+
+  sendDataToBackend(restaurantData) {
+    customizationToMap();
+
+    restaurantData.sendConfiguredDataToBackend({
+      "food_id": widget.foodItem.oid,
+      "category_type": widget.menuType,
+      "editing_fields": {"customization": dataToBackend}
+    }, "edit_food_item");
+  }
+
+  updateVisibilityToBackend(restaurantData) {
+    restaurantData.sendConfiguredDataToBackend({
+      "category_type": widget.menuType,
+      "food_id": widget.foodItem.oid,
+      "visibility": switchStatus,
+    }, "visibility_food_item");
+  }
+
   Widget editPriceButton(restaurantData) {
 //    print(widget.foodItem.foodOption);
     if (editCustomizations != null) {
@@ -107,23 +140,13 @@ class _ViewItemState extends State<ViewItem> {
       );
   }
 
-  updateVisibilityToBackend(restaurantData) {
-    restaurantData.sendConfiguredDataToBackend({
-      "category_type": widget.menuType,
-      "food_id": widget.foodItem.oid,
-      "visibility": switchStatus,
-    }, "visibility_food_item");
-  }
-
   Widget getLayout(restaurantData, Customization customization) {
     if (customization.customizationType == "options") {
-      return uiForOptions(
-          restaurantData, customization.options, customization.name);
+      return uiForOptions(restaurantData, customization.options, customization);
     }
 
     if (customization.customizationType == "choices") {
-      return uiForChoices(
-          restaurantData, customization.choices, customization.name);
+      return uiForChoices(restaurantData, customization.choices, customization);
     }
     if (customization.customizationType == "add_ons") {
       return uiForAddOns(
@@ -131,7 +154,7 @@ class _ViewItemState extends State<ViewItem> {
     }
   }
 
-  Widget uiForOptions(restaurantData, options, name) {
+  Widget uiForOptions(restaurantData, options, customization) {
     return options != null
         ? Column(
             children: <Widget>[
@@ -140,7 +163,7 @@ class _ViewItemState extends State<ViewItem> {
                 child: Row(
                   children: <Widget>[
                     Text(
-                      name,
+                      customization.name,
                       style: kHeaderStyle,
                     ),
                     SizedBox(
@@ -150,6 +173,23 @@ class _ViewItemState extends State<ViewItem> {
                       icon: Icon(Icons.add),
                       onPressed: () {
                         addNewFoodOptions(restaurantData, options);
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.settings,
+                        color: Colors.blue,
+                      ),
+                      onPressed: () {
+                        showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (BuildContext context) {
+                              return EditCustomizationPreferences(
+                                sendDataToBackend: sendDataToBackend,
+                                customization: customization,
+                              );
+                            });
                       },
                     ),
                     IconButton(
@@ -235,7 +275,7 @@ class _ViewItemState extends State<ViewItem> {
         : Container(height: 0, width: 0);
   }
 
-  Widget uiForChoices(restaurantData, choices, name) {
+  Widget uiForChoices(restaurantData, choices, customization) {
     return choices != null
         ? Column(
             children: <Widget>[
@@ -244,7 +284,7 @@ class _ViewItemState extends State<ViewItem> {
                 child: Row(
                   children: <Widget>[
                     Text(
-                      name,
+                      customization.name,
                       style: kHeaderStyle,
                     ),
                     SizedBox(
@@ -254,6 +294,23 @@ class _ViewItemState extends State<ViewItem> {
                       icon: Icon(Icons.add),
                       onPressed: () {
                         addNewFoodChoices(restaurantData, choices);
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.settings,
+                        color: Colors.blue,
+                      ),
+                      onPressed: () {
+                        showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (BuildContext context) {
+                              return EditCustomizationPreferences(
+                                sendDataToBackend: sendDataToBackend,
+                                customization: customization,
+                              );
+                            });
                       },
                     ),
                     IconButton(
@@ -431,19 +488,12 @@ class _ViewItemState extends State<ViewItem> {
     );
   }
 
-  customizationToMap() {
-    dataToBackend.clear();
-    editCustomizations.forEach((cust) {
-      dataToBackend.add(cust.toJson());
-    });
-  }
-
-  @override
-  void initState() {
-    addEditChoiceOption();
-    // TODO: implement initState
-    super.initState();
-  }
+//  @override
+//  void initState() {
+//    addEditChoiceOption();
+//    // TODO: implement initState
+//    super.initState();
+//  }
 
   @override
   Widget build(BuildContext context) {
@@ -451,7 +501,7 @@ class _ViewItemState extends State<ViewItem> {
 
     print("comming here");
 
-    addEditChoiceOption();
+    addEditChoiceOption(restaurantData);
     getAvailableAddOns(restaurantData);
 
     print(editCustomizations);
@@ -1223,5 +1273,283 @@ class _ViewItemState extends State<ViewItem> {
             ),
           );
         });
+  }
+
+//  Widget editCustomizationPreferences(
+//      restaurantData, Customization customization) {
+//    customizationNameEditController.text = customization.name;
+//    thatNumberEditController.text = customization.thatNumber.toString();
+//    if (radioItemVal == null) {
+//      radioItemVal = customization.lessMore;
+//    }
+//
+//    return AlertDialog(
+//      shape: RoundedRectangleBorder(
+//        borderRadius: BorderRadius.circular(20),
+//      ),
+//      title: Text(
+//        "Edit Preferences",
+//        style: kHeaderStyleSmall,
+//      ),
+//      content: SingleChildScrollView(
+//        child: Container(
+//          width: 350,
+//          child: Column(
+//            mainAxisSize: MainAxisSize.min, // To make the card compact
+//            children: <Widget>[
+//              Row(
+//                children: <Widget>[
+//                  Text("Name : "),
+//                  Expanded(
+//                    child: TextField(
+//                      controller: customizationNameEditController,
+//                      keyboardType: TextInputType.text,
+//                      textCapitalization: TextCapitalization.words,
+//                    ),
+//                  ),
+//                ],
+//              ),
+//              Column(
+//                mainAxisSize: MainAxisSize.min,
+//                crossAxisAlignment: CrossAxisAlignment.start,
+//                children: <Widget>[
+//                  Padding(
+//                    padding: const EdgeInsets.symmetric(
+//                        horizontal: 16.0, vertical: 8),
+//                    child: Text("User can select :"),
+//                  ),
+//                  RadioListTile(
+//                    groupValue: radioItemVal,
+//                    title: Text(
+//                      'Less Than',
+//                      style: kTitleStyle,
+//                    ),
+//                    value: -1,
+//                    onChanged: (val) {
+//                      setState(() {
+//                        radioItemVal = val;
+//                      });
+//                    },
+//                  ),
+//                  RadioListTile(
+//                    groupValue: radioItemVal,
+//                    title: Text(
+//                      'Exactly',
+//                      style: kTitleStyle,
+//                    ),
+//                    value: 0,
+//                    onChanged: (val) {
+//                      setState(() {
+//                        radioItemVal = val;
+//                      });
+//                    },
+//                  ),
+//                  RadioListTile(
+//                    groupValue: radioItemVal,
+//                    title: Text(
+//                      'More Than',
+//                      style: kTitleStyle,
+//                    ),
+//                    value: 1,
+//                    onChanged: (val) {
+//                      setState(() {
+//                        radioItemVal = val;
+//                      });
+//                    },
+//                  ),
+//                ],
+//              ),
+//              Row(
+//                children: <Widget>[
+//                  Text("Quantity : "),
+//                  Expanded(
+//                    child: TextField(
+//                      controller: thatNumberEditController,
+//                      keyboardType: TextInputType.number,
+//                    ),
+//                  ),
+//                ],
+//              ),
+//              Row(
+//                mainAxisAlignment: MainAxisAlignment.spaceAround,
+//                children: <Widget>[
+//                  FlatButton(
+//                    child: Text(
+//                      "Cancel",
+//                      style: TextStyle(color: Colors.red),
+//                    ),
+//                    onPressed: () {
+//                      Navigator.of(context).pop(); // To close the dialog
+//                    },
+//                  ),
+//                  FlatButton(
+//                    child: Text(
+//                      "Done",
+//                      style: TextStyle(color: Colors.green),
+//                    ),
+//                    onPressed: () {
+//                      Navigator.of(context).pop(); // To close the dialog
+//                    },
+//                  ),
+//                ],
+//              )
+//            ],
+//          ),
+//        ),
+//      ),
+//    );
+//  }
+}
+
+class EditCustomizationPreferences extends StatefulWidget {
+  final Customization customization;
+
+  final Function sendDataToBackend;
+
+  EditCustomizationPreferences({
+    @required this.sendDataToBackend,
+    @required this.customization,
+  });
+  @override
+  _EditCustomizationPreferencesState createState() =>
+      _EditCustomizationPreferencesState();
+}
+
+class _EditCustomizationPreferencesState
+    extends State<EditCustomizationPreferences> {
+  final customizationNameEditController = TextEditingController();
+  final thatNumberEditController = TextEditingController();
+  int radioItemVal;
+  @override
+  Widget build(BuildContext context) {
+    RestaurantData restaurantData = Provider.of<RestaurantData>(context);
+
+    customizationNameEditController.text = widget.customization.name;
+    thatNumberEditController.text = widget.customization.thatNumber.toString();
+    if (radioItemVal == null) {
+      radioItemVal = widget.customization.lessMore;
+    }
+
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      title: Text(
+        "Edit Preferences",
+        style: kHeaderStyleSmall,
+      ),
+      content: SingleChildScrollView(
+        child: Container(
+          width: 350,
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // To make the card compact
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Text("Name : "),
+                  Expanded(
+                    child: TextField(
+                      controller: customizationNameEditController,
+                      keyboardType: TextInputType.text,
+                      textCapitalization: TextCapitalization.words,
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8),
+                    child: Text("User can select :"),
+                  ),
+                  RadioListTile(
+                    groupValue: radioItemVal,
+                    title: Text(
+                      'Less Than',
+                      style: kTitleStyle,
+                    ),
+                    value: -1,
+                    onChanged: (val) {
+                      setState(() {
+                        radioItemVal = val;
+                      });
+                    },
+                  ),
+                  RadioListTile(
+                    groupValue: radioItemVal,
+                    title: Text(
+                      'Exactly',
+                      style: kTitleStyle,
+                    ),
+                    value: 0,
+                    onChanged: (val) {
+                      setState(() {
+                        radioItemVal = val;
+                      });
+                    },
+                  ),
+                  RadioListTile(
+                    groupValue: radioItemVal,
+                    title: Text(
+                      'More Than',
+                      style: kTitleStyle,
+                    ),
+                    value: 1,
+                    onChanged: (val) {
+                      setState(() {
+                        radioItemVal = val;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Text("Quantity : "),
+                  Expanded(
+                    child: TextField(
+                      controller: thatNumberEditController,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  FlatButton(
+                    child: Text(
+                      "Cancel",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(); // To close the dialog
+                    },
+                  ),
+                  FlatButton(
+                    child: Text(
+                      "Done",
+                      style: TextStyle(color: Colors.green),
+                    ),
+                    onPressed: () {
+                      widget.customization.name =
+                          customizationNameEditController.text;
+                      widget.customization.lessMore = radioItemVal;
+                      widget.customization.thatNumber =
+                          int.parse(thatNumberEditController.text);
+                      widget.sendDataToBackend(restaurantData);
+                      Navigator.of(context).pop(); // To close the dialog
+                    },
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
