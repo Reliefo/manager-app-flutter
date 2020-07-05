@@ -313,10 +313,13 @@ class _SocketConnectionState extends State<SocketConnection> {
           if (kitchen.oid == decode["kitchen_id"]) {
             KitchenStaff kitchenStaff =
                 KitchenStaff.fromJson(decode["kitchen_staff"]);
-
+                print(kitchen);
+                print(kitchen.kitchenStaffList);
             kitchen.kitchenStaffList.add(kitchenStaff);
+print("ys it mee or fluter");
           }
         });
+        print("Yes it's comign here ktich en staff");
       }
 
       if (decode["type"] == "edit_kitchen_staff") {

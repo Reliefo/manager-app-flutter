@@ -39,7 +39,7 @@ class _NewCustomizationState extends State<NewCustomization> {
         Container(
           padding: EdgeInsets.symmetric(vertical: 16),
           child: Text(
-            "Is this Add-On ?",
+            "An Add-On or an Option?",
             style: kTitleStyle,
           ),
         ),
@@ -49,7 +49,7 @@ class _NewCustomizationState extends State<NewCustomization> {
               child: RadioListTile(
                 groupValue: _addon,
                 title: Text(
-                  'Yes',
+                  'Add-on',
                   style: kTitleStyle,
                 ),
                 value: 'yes',
@@ -65,7 +65,7 @@ class _NewCustomizationState extends State<NewCustomization> {
               child: RadioListTile(
                 groupValue: _addon,
                 title: Text(
-                  'No',
+                  'Option',
                   style: kTitleStyle,
                 ),
                 value: 'no',
@@ -107,7 +107,6 @@ class _NewCustomizationState extends State<NewCustomization> {
                   Expanded(
                     child: TextField(
                       controller: nameController,
-//                      autofocus: true,
                     ),
                   ),
                 ],
@@ -121,7 +120,7 @@ class _NewCustomizationState extends State<NewCustomization> {
                           Container(
                             padding: EdgeInsets.symmetric(vertical: 16),
                             child: Text(
-                              "Extra Chargeable ?",
+                              "Option with or without price?",
                               style: kTitleStyle,
                             ),
                           ),
@@ -131,7 +130,7 @@ class _NewCustomizationState extends State<NewCustomization> {
                                 child: RadioListTile(
                                   groupValue: customizationType,
                                   title: Text(
-                                    'Yes',
+                                    'With price',
                                     style: kTitleStyle,
                                   ),
                                   value: 'options',
@@ -146,7 +145,7 @@ class _NewCustomizationState extends State<NewCustomization> {
                                 child: RadioListTile(
                                   groupValue: customizationType,
                                   title: Text(
-                                    'No',
+                                    'Without Price',
                                     style: kTitleStyle,
                                   ),
                                   value: 'choices',
@@ -235,14 +234,13 @@ class _NewCustomizationState extends State<NewCustomization> {
                           "that_number": int.parse(thatNumberController.text),
                         };
                       }
-
-                      if (nameController.text.isNotEmpty) {
-                        Customization newCustom = new Customization.fromJson(
-                            temp, restaurantData.restaurant.addOnsMenu);
-                        setState(() {
+                      setState(() {
+                        if (nameController.text.isNotEmpty) {
+                          Customization newCustom = new Customization.fromJson(
+                              temp, restaurantData.restaurant.addOnsMenu);
                           widget.newCustomizations.add(newCustom);
-                        });
-                      }
+                        }
+                      });
 
                       Navigator.of(context).pop(); // To close the dialog
                     },

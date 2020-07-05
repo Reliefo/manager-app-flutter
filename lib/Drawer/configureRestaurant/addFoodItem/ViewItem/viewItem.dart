@@ -40,10 +40,7 @@ class _ViewItemState extends State<ViewItem> {
   final foodChoiceEditController = TextEditingController();
 
   addEditChoiceOption(restaurantData) {
-    print("addEditChoiceOption called");
-
     editCustomizations.clear();
-    print("lists cleared");
 
     if (widget.foodItem.customizations != null) {
       widget.foodItem.customizations.forEach((customization) {
@@ -82,7 +79,6 @@ class _ViewItemState extends State<ViewItem> {
       availableAddOnsValues["${addOn.oid}"] = false;
     });
     editCustomizations?.forEach((customization) {
-      print(customization.customizationType);
       if (customization.customizationType == "add_ons") {
         customization.addOns.forEach((addOn) {
           setState(() {
@@ -499,12 +495,8 @@ class _ViewItemState extends State<ViewItem> {
   Widget build(BuildContext context) {
     RestaurantData restaurantData = Provider.of<RestaurantData>(context);
 
-    print("comming here");
-
     addEditChoiceOption(restaurantData);
     getAvailableAddOns(restaurantData);
-
-    print(editCustomizations);
 
     return SafeArea(
       child: Scaffold(
@@ -946,7 +938,7 @@ class _ViewItemState extends State<ViewItem> {
   Widget editFoodItemOptions(restaurantData, option) {
     foodOptionEditController.text = option["option_name"];
 
-    foodOptionPriceEditController.text = option["option_price"];
+    foodOptionPriceEditController.text = option["option_price"].toString();
     showDialog(
         barrierDismissible: false,
         context: context,

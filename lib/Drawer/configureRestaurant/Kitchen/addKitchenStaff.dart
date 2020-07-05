@@ -38,6 +38,7 @@ class _AddDataState extends State<AddKitchenStaff> {
   @override
   Widget build(BuildContext context) {
     final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
+    print(widget.kitchen.kitchenStaffList);
     return Container(
       margin: EdgeInsets.only(left: 12, top: 12),
       color: Colors.white,
