@@ -19,9 +19,8 @@ class _AddDataState extends State<AddStaff> {
       if (staffNameController.text.isNotEmpty) {
         _staffNameValidate = false;
 
-        restaurantData.sendConfiguredDataToBackend([
-          {'name': staffNameController.text.toString()}
-        ], "add_staff");
+        restaurantData.sendConfiguredDataToBackend(
+            {'name': staffNameController.text.toString()}, "add_staff");
 
         staffNameController.clear();
       } else

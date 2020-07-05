@@ -20,6 +20,7 @@ class Configure extends StatelessWidget {
     this.restaurant,
     this.updateConfigDetailsToCloud,
   });
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(

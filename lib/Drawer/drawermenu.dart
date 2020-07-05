@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:custom_switch/custom_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:manager_app/Drawer/Dashboard/dashboard.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configure.dart';
@@ -7,18 +8,34 @@ import 'package:manager_app/Drawer/orderHistory/orderHistory.dart';
 import 'package:manager_app/authentication/loginPage.dart';
 import 'package:manager_app/constants.dart';
 import 'package:manager_app/data.dart';
+import 'package:manager_app/fetchData/configureRestaurantData.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class DrawerMenu extends StatelessWidget {
+class DrawerMenu extends StatefulWidget {
   final String managerName;
-  final jsSocket;
+  final sockets;
   final Restaurant restaurant;
 
   DrawerMenu({
     this.restaurant,
     this.managerName,
-    this.jsSocket,
+    this.sockets,
   });
+
+  @override
+  _DrawerMenuState createState() => _DrawerMenuState();
+}
+
+class _DrawerMenuState extends State<DrawerMenu> {
+  bool switchStatus;
+
+  updateOrderingStatusToBackend(restaurantData, bool boolData, String type) {
+    Map<String, dynamic> data = {"status": boolData};
+
+    restaurantData.sendConfiguredDataToBackend(data, type);
+  }
+
   clearData() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.clear();
@@ -26,20 +43,23 @@ class DrawerMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    RestaurantData restaurantData = Provider.of<RestaurantData>(context);
+    switchStatus = restaurantData.restaurant.orderingAbility;
+
     return ListView(
       children: <Widget>[
         DrawerHeader(
           child: Column(
             children: <Widget>[
-              restaurant.name != null
+              widget.restaurant.name != null
                   ? Text(
-                      restaurant.name,
+                      widget.restaurant.name,
                       style: kHeaderStyleSmall,
                       textAlign: TextAlign.left,
                     )
                   : Container(),
               Text(
-                managerName,
+                widget.managerName,
                 style: kTitleStyle,
                 textAlign: TextAlign.left,
               ),
@@ -47,6 +67,32 @@ class DrawerMenu extends StatelessWidget {
           ),
         ),
 
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                "Accept Orders",
+                style: kHeaderStyleSmall,
+              ),
+              CustomSwitch(
+                activeColor: Colors.green,
+                value: switchStatus,
+                onChanged: (value) {
+                  setState(() {
+                    switchStatus = value;
+                  });
+
+                  updateOrderingStatusToBackend(
+                      restaurantData, switchStatus, "ordering-ability_manage");
+                },
+              ),
+            ],
+          ),
+        ),
+
+        Divider(),
         FlatButton(
           child: Row(
             children: <Widget>[
@@ -122,8 +168,9 @@ class DrawerMenu extends StatelessWidget {
             ],
           ),
           onPressed: () {
-            jsSocket.socketEmit("fetch_rest_manager",
-                jsonEncode({"restaurant_id": restaurant.restaurantId}));
+            widget.sockets['working'].emit("fetch_rest_manager", [
+              jsonEncode({"restaurant_id": widget.restaurant.restaurantId})
+            ]);
           },
         ),
         Divider(),

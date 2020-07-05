@@ -89,15 +89,17 @@ class _NAddItemState extends State<NAddItem> {
 
                                 Navigator.of(context).pop();
 
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ViewItem(
-                                      menuType: widget.menuType,
-                                      foodItem: widget.category.foodList.last,
+                                if (widget.category.foodList != null) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ViewItem(
+                                        menuType: widget.menuType,
+                                        foodItem: widget.category.foodList.last,
+                                      ),
                                     ),
-                                  ),
-                                );
+                                  );
+                                }
                               },
                               child: Text(
                                 "Done",
@@ -189,6 +191,8 @@ class _NAddItemState extends State<NAddItem> {
                                     child: Text(
                                       widget.category.foodList[index - 1].name,
                                       style: kTitleStyle,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ),

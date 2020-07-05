@@ -7,13 +7,13 @@ import 'package:manager_app/data.dart';
 class RestaurantData extends ChangeNotifier {
   final Restaurant restaurant;
   final Map<String, dynamic> registeredUser;
-  final jsSocket;
-//  final Map<String, SocketIO> sockets;
+//  final jsSocket;
+  final sockets;
   RestaurantData({
     this.restaurant,
     this.registeredUser,
-//    this.sockets,
-    this.jsSocket,
+    this.sockets,
+//    this.jsSocket,
   });
 
   sendConfiguredDataToBackend(Map<String, dynamic> localData, type) {
@@ -25,7 +25,7 @@ class RestaurantData extends ChangeNotifier {
       encode = jsonEncode({
         "restaurant_id": restaurantId,
         "type": type,
-        "tables": localData,
+        "table": localData,
       });
     }
 
@@ -248,14 +248,16 @@ class RestaurantData extends ChangeNotifier {
 //    }
     if (type == "edit_food_item") {
       if (localData['editing_fields']['customization'] != null) {
-        int price = 0;
-        List<int> priceList = [];
-        localData['editing_fields']['customization'].forEach((customization) {
+        double price = 0;
+        List<double> priceList = [];
+        localData['editing_fields']['customization']?.forEach((customization) {
           print(customization);
           if (customization['customization_type'] == "options") {
             print("will add price");
+
             customization['list_of_options']?.forEach((option) {
-              priceList.add(int.parse(option['option_price']));
+              print(option['option_price'].runtimeType);
+              priceList.add(option['option_price']);
             });
             if (priceList.isNotEmpty) {
               price = price + priceList.reduce(min);
@@ -363,6 +365,20 @@ class RestaurantData extends ChangeNotifier {
       encode = jsonEncode(localData);
     }
 
+    if (type == "ordering-ability_manage") {
+      localData['restaurant_id'] = restaurantId;
+      localData['type'] = type;
+
+      encode = jsonEncode(localData);
+    }
+
+    if (type == "display-order-buttons_manage") {
+      localData['restaurant_id'] = restaurantId;
+      localData['type'] = type;
+
+      encode = jsonEncode(localData);
+    }
+
     if (type == "set_taxes") {
       encode = jsonEncode({
         "restaurant_id": restaurantId,
@@ -374,7 +390,7 @@ class RestaurantData extends ChangeNotifier {
 
     print(encode);
     //todo: get sockets from socket connection
-    jsSocket.socketEmit('configuring_restaurant', encode);
+    sockets['working'].emit('configuring_restaurant', [encode]);
     print('uploded to cloud');
   }
 
@@ -383,7 +399,7 @@ class RestaurantData extends ChangeNotifier {
     print("test sending");
     encode = jsonEncode(data);
     print(encode);
-    jsSocket.socketEmit('register_your_people', encode);
+    sockets['working'].emit('register_your_people', [encode]);
   }
 
   billTheTable(data) {
@@ -391,11 +407,12 @@ class RestaurantData extends ChangeNotifier {
     print("test sending");
     encode = jsonEncode(data);
     print(encode);
-    jsSocket.socketEmit('bill_the_table', encode);
+    sockets['working'].emit('bill_the_table', [encode]);
   }
 
   refreshAllData() {
-    jsSocket.socketEmit("fetch_rest_manager",
-        jsonEncode({"restaurant_id": restaurant.restaurantId}));
+    sockets['working'].emit("fetch_rest_manager", [
+      jsonEncode({"restaurant_id": restaurant.restaurantId})
+    ]);
   }
 }

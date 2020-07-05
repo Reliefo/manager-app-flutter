@@ -16,8 +16,8 @@ class TabContainerBottom extends StatelessWidget {
   final String managerName;
 //  final List<AssistanceRequest> assistanceReq;
   final Restaurant restaurant;
-//  final sockets;
-  final jsSocket;
+  final sockets;
+//  final jsSocket;
   final Map<String, dynamic> registeredUser;
 
   TabContainerBottom({
@@ -26,8 +26,8 @@ class TabContainerBottom extends StatelessWidget {
     this.completedOrders,
     this.managerName,
     this.restaurant,
-//    this.sockets,
-    this.jsSocket,
+    this.sockets,
+//    this.jsSocket,
     this.registeredUser,
   });
 
@@ -38,8 +38,8 @@ class TabContainerBottom extends StatelessWidget {
         ChangeNotifierProvider<RestaurantData>.value(
           value: RestaurantData(
             restaurant: restaurant,
-//            sockets: sockets,
-            jsSocket: jsSocket,
+            sockets: sockets,
+//            jsSocket: jsSocket,
             registeredUser: registeredUser,
           ),
         ),
@@ -64,7 +64,8 @@ class TabContainerBottom extends StatelessWidget {
           child: Scaffold(
             drawer: Drawer(
               child: DrawerMenu(
-                jsSocket: jsSocket,
+                sockets: sockets,
+//                jsSocket: jsSocket,
                 managerName: managerName,
                 restaurant: restaurant,
               ),

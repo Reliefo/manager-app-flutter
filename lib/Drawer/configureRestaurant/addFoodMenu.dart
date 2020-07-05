@@ -1,3 +1,4 @@
+import 'package:custom_switch/custom_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:manager_app/Drawer/configureRestaurant/addFoodItem/addItem/naddItem.dart';
@@ -21,6 +22,13 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
   final FocusNode _descriptionFocus = FocusNode();
 
   bool _categoryValidate = false;
+
+  bool displayOrderButtonsStatus;
+  updateOrderingStatusToBackend(restaurantData, bool boolData, String type) {
+    Map<String, dynamic> data = {"status": boolData};
+
+    restaurantData.sendConfiguredDataToBackend(data, type);
+  }
 
   _fieldFocusChange(
       BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
@@ -53,6 +61,7 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
   Widget build(BuildContext context) {
     final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
 
+    displayOrderButtonsStatus = restaurantData.restaurant.displayOrderButtons;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -163,6 +172,30 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
                             'No of Category : ${restaurantData.restaurant.foodMenu.length} ',
                             style: kTitleStyle,
                           ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          "Display Order buttons :",
+                          style: kTitleStyle,
+                        ),
+                        SizedBox(width: 20),
+                        CustomSwitch(
+                          activeColor: Colors.green,
+                          value: displayOrderButtonsStatus,
+                          onChanged: (value) {
+                            setState(() {
+                              displayOrderButtonsStatus = value;
+                            });
+
+                            updateOrderingStatusToBackend(
+                                restaurantData,
+                                displayOrderButtonsStatus,
+                                "display-order-buttons_manage");
+                          },
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),

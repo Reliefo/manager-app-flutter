@@ -998,13 +998,17 @@ class _ViewItemState extends State<ViewItem> {
                         ),
                       ),
                       FlatButton(
+                        child: Text(
+                          "Done",
+                          style: TextStyle(color: Colors.green),
+                        ),
                         onPressed: () {
                           setState(() {
                             option["option_name"] =
                                 foodOptionEditController.text;
 
-                            option["option_price"] =
-                                foodOptionPriceEditController.text;
+                            option["option_price"] = double.parse(
+                                foodOptionPriceEditController.text);
                           });
 
                           customizationToMap();
@@ -1023,10 +1027,6 @@ class _ViewItemState extends State<ViewItem> {
 
                           Navigator.of(context).pop(); // To close the dialog
                         },
-                        child: Text(
-                          "Done",
-                          style: TextStyle(color: Colors.green),
-                        ),
                       ),
                     ],
                   )
@@ -1095,7 +1095,8 @@ class _ViewItemState extends State<ViewItem> {
                           setState(() {
                             options.add({
                               "option_name": foodOptionEditController.text,
-                              "option_price": foodOptionPriceEditController.text
+                              "option_price": double.parse(
+                                  foodOptionPriceEditController.text),
                             });
                           });
 

@@ -118,14 +118,10 @@ class _AddDataState extends State<AddData> {
           : _tableSeatValidate = false;
       if (_tableNameController.text.isNotEmpty &&
           _tableSeatController.text.isNotEmpty) {
-        setState(() {
-          restaurantData.sendConfiguredDataToBackend([
-            {
-              'name': _tableNameController.text,
-              'seats': _tableSeatController.text
-            }
-          ], "add_tables");
-        });
+        restaurantData.sendConfiguredDataToBackend({
+          'name': _tableNameController.text,
+          'seats': _tableSeatController.text
+        }, "add_tables");
 
         _tableSeatController.clear();
         _tableNameController.clear();
@@ -163,257 +159,263 @@ class _AddDataState extends State<AddData> {
                   ],
                 ),
               ),
-              Expanded(
-                child: restaurantData.restaurant.tables != null
-                    ? GridView.builder(
-                        itemCount: restaurantData.restaurant.tables.length + 1,
-                        shrinkWrap: true,
-                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                          mainAxisSpacing: 4.0,
-                          crossAxisSpacing: 4.0,
-                          childAspectRatio: (6 / 2),
-                          maxCrossAxisExtent: 450,
-                        ),
-                        primary: false,
-                        itemBuilder: (context, index) {
-                          if (index == 0) {
-                            return addNewTable(restaurantData);
-                          }
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(15.0),
+              restaurantData.restaurant.tables != null
+                  ? Expanded(
+                      child: GridView.builder(
+                          itemCount:
+                              restaurantData.restaurant.tables.length + 1,
+                          shrinkWrap: true,
+                          gridDelegate:
+                              SliverGridDelegateWithMaxCrossAxisExtent(
+                            mainAxisSpacing: 4.0,
+                            crossAxisSpacing: 4.0,
+                            childAspectRatio: (6 / 2),
+                            maxCrossAxisExtent: 450,
+                          ),
+                          primary: false,
+                          itemBuilder: (context, index) {
+                            if (index == 0) {
+                              return addNewTable(restaurantData);
+                            }
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(15.0),
+                                ),
                               ),
-                            ),
-                            margin: EdgeInsets.all(4),
+                              margin: EdgeInsets.all(4),
 //                                padding: EdgeInsets.fromLTRB(16, 8, 4, 0),
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: ListTile(
-                                    title: Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 4.0),
-                                      child: Text(
-                                        'Table Name : ${restaurantData.restaurant.tables[index - 1].name}',
-                                        style: kTitleStyle,
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: ListTile(
+                                      title: Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 4.0),
+                                        child: Text(
+                                          'Table Name : ${restaurantData.restaurant.tables[index - 1].name}',
+                                          style: kTitleStyle,
+                                        ),
                                       ),
-                                    ),
-                                    subtitle: Text(
-                                      'Capacity : ${restaurantData.restaurant.tables[index - 1].seats} Seats',
-                                      style: kSubTitleStyle,
+                                      subtitle: Text(
+                                        'Capacity : ${restaurantData.restaurant.tables[index - 1].seats} Seats',
+                                        style: kSubTitleStyle,
+                                      ),
                                     ),
                                   ),
-                                ),
 
-                                VerticalDivider(
-                                  indent: 16,
-                                  endIndent: 16,
-                                ),
+                                  VerticalDivider(
+                                    indent: 16,
+                                    endIndent: 16,
+                                  ),
 
-                                //////////////// edit and delete buttons //////////////////
-                                Column(
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: FlatButton(
-                                        child: Text(
-                                          "Edit",
-                                          style: kBlueButtonStyle,
-                                        ),
-                                        onPressed: () {
-                                          _tableNameEditController.text =
-                                              restaurantData.restaurant
-                                                  .tables[index - 1].name;
+                                  //////////////// edit and delete buttons //////////////////
+                                  Column(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: FlatButton(
+                                          child: Text(
+                                            "Edit",
+                                            style: kBlueButtonStyle,
+                                          ),
+                                          onPressed: () {
+                                            _tableNameEditController.text =
+                                                restaurantData.restaurant
+                                                    .tables[index - 1].name;
 
-                                          _tableSeatEditController.text =
-                                              restaurantData.restaurant
-                                                  .tables[index - 1].seats;
-                                          showDialog(
-                                            barrierDismissible: false,
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              // return object of type Dialog
-                                              return AlertDialog(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                ),
-                                                content: Column(
-                                                  mainAxisSize: MainAxisSize
-                                                      .min, // To make the card compact
-                                                  children: <Widget>[
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: <Widget>[
-                                                        Text(
-                                                          "Table Name :  ",
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: kTitleStyle,
-                                                        ),
-                                                        SizedBox(width: 20),
-                                                        Container(
-                                                          width: 200,
-                                                          child: TextField(
-                                                            controller:
-                                                                _tableNameEditController,
-                                                            autofocus: true,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    SizedBox(height: 16.0),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: <Widget>[
-                                                        Text(
-                                                          "Seating Capacity :  ",
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: kTitleStyle,
-                                                        ),
-                                                        SizedBox(width: 20),
-                                                        Container(
-                                                          width: 200,
-                                                          child: TextField(
-                                                            controller:
-                                                                _tableSeatEditController,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    SizedBox(height: 24.0),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceAround,
-                                                      children: <Widget>[
-                                                        FlatButton(
-                                                          child: Text(
-                                                            "Cancel",
-                                                            style:
-                                                                kRedButtonStyle,
-                                                          ),
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop(); // To close the dialog
-                                                          },
-                                                        ),
-                                                        FlatButton(
-                                                          child: Text(
-                                                            "Done",
-                                                            style:
-                                                                kGreenButtonStyle,
-                                                          ),
-                                                          onPressed: () {
-                                                            if (_tableNameEditController
-                                                                    .text
-                                                                    .isNotEmpty &&
-                                                                _tableSeatEditController
-                                                                    .text
-                                                                    .isNotEmpty) {
-                                                              restaurantData
-                                                                  .sendConfiguredDataToBackend({
-                                                                "editing_fields":
-                                                                    {
-                                                                  "name":
-                                                                      _tableNameEditController
-                                                                          .text,
-                                                                  "seats":
-                                                                      _tableSeatEditController
-                                                                          .text
-                                                                },
-                                                                "table_id":
-                                                                    "${restaurantData.restaurant.tables[index - 1].oid}"
-                                                              }, "edit_tables");
-                                                            }
-
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop(); // To close the dialog
-                                                          },
-                                                        ),
-                                                      ],
-                                                    )
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: FlatButton(
-                                        child: Text(
-                                          "Delete",
-                                          style: kRedButtonStyle,
-                                        ),
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              // return object of type Dialog
-                                              return AlertDialog(
-                                                title: Text(
-                                                    "Remove ${restaurantData.restaurant.tables[index - 1].name} Table ?"),
-                                                content: new Text(
-                                                    "this will delete all the assigned Staff from this table"),
-                                                actions: <Widget>[
-                                                  FlatButton(
-                                                    child: Text(
-                                                      "Close",
-                                                      style: kBlueButtonStyle,
-                                                    ),
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
+                                            _tableSeatEditController.text =
+                                                restaurantData.restaurant
+                                                    .tables[index - 1].seats;
+                                            showDialog(
+                                              barrierDismissible: false,
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                // return object of type Dialog
+                                                return AlertDialog(
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
                                                   ),
-                                                  FlatButton(
-                                                    child: new Text(
-                                                      "Delete",
-                                                      style: kRedButtonStyle,
-                                                    ),
-                                                    onPressed: () {
-                                                      restaurantData
-                                                          .sendConfiguredDataToBackend(
-                                                              {
-                                                            "table_id":
+                                                  content: Column(
+                                                    mainAxisSize: MainAxisSize
+                                                        .min, // To make the card compact
+                                                    children: <Widget>[
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: <Widget>[
+                                                          Text(
+                                                            "Table Name :  ",
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: kTitleStyle,
+                                                          ),
+                                                          SizedBox(width: 20),
+                                                          Container(
+                                                            width: 200,
+                                                            child: TextField(
+                                                              controller:
+                                                                  _tableNameEditController,
+                                                              autofocus: true,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(height: 16.0),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: <Widget>[
+                                                          Text(
+                                                            "Seating Capacity :  ",
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: kTitleStyle,
+                                                          ),
+                                                          SizedBox(width: 20),
+                                                          Container(
+                                                            width: 200,
+                                                            child: TextField(
+                                                              controller:
+                                                                  _tableSeatEditController,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(height: 24.0),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceAround,
+                                                        children: <Widget>[
+                                                          FlatButton(
+                                                            child: Text(
+                                                              "Cancel",
+                                                              style:
+                                                                  kRedButtonStyle,
+                                                            ),
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop(); // To close the dialog
+                                                            },
+                                                          ),
+                                                          FlatButton(
+                                                            child: Text(
+                                                              "Done",
+                                                              style:
+                                                                  kGreenButtonStyle,
+                                                            ),
+                                                            onPressed: () {
+                                                              if (_tableNameEditController
+                                                                      .text
+                                                                      .isNotEmpty &&
+                                                                  _tableSeatEditController
+                                                                      .text
+                                                                      .isNotEmpty) {
                                                                 restaurantData
-                                                                    .restaurant
-                                                                    .tables[
-                                                                        index -
-                                                                            1]
-                                                                    .oid
-                                                          },
-                                                              "delete_tables");
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
+                                                                    .sendConfiguredDataToBackend({
+                                                                  "editing_fields":
+                                                                      {
+                                                                    "name":
+                                                                        _tableNameEditController
+                                                                            .text,
+                                                                    "seats":
+                                                                        _tableSeatEditController
+                                                                            .text
+                                                                  },
+                                                                  "table_id":
+                                                                      "${restaurantData.restaurant.tables[index - 1].oid}"
+                                                                }, "edit_tables");
+                                                              }
+
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop(); // To close the dialog
+                                                            },
+                                                          ),
+                                                        ],
+                                                      )
+                                                    ],
                                                   ),
-                                                  // usually buttons at the bottom of the dialog
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        },
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          );
-                        })
-                    : Text(' '),
-              ),
+                                      Expanded(
+                                        child: FlatButton(
+                                          child: Text(
+                                            "Delete",
+                                            style: kRedButtonStyle,
+                                          ),
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                // return object of type Dialog
+                                                return AlertDialog(
+                                                  title: Text(
+                                                      "Remove ${restaurantData.restaurant.tables[index - 1].name} Table ?"),
+                                                  content: new Text(
+                                                      "this will delete all the assigned Staff from this table"),
+                                                  actions: <Widget>[
+                                                    FlatButton(
+                                                      child: Text(
+                                                        "Close",
+                                                        style: kBlueButtonStyle,
+                                                      ),
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                    ),
+                                                    FlatButton(
+                                                      child: new Text(
+                                                        "Delete",
+                                                        style: kRedButtonStyle,
+                                                      ),
+                                                      onPressed: () {
+                                                        restaurantData
+                                                            .sendConfiguredDataToBackend({
+                                                          "table_id":
+                                                              restaurantData
+                                                                  .restaurant
+                                                                  .tables[
+                                                                      index - 1]
+                                                                  .oid
+                                                        }, "delete_tables");
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                    ),
+                                                    // usually buttons at the bottom of the dialog
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            );
+                          }),
+                    )
+                  : Container(
+                      height: 130,
+                      width: 350,
+                      child: Center(
+                        child: addNewTable(restaurantData),
+                      ),
+                    ),
             ],
           ),
         ),

@@ -1,6 +1,6 @@
 name: manager_app
 description: LiQR's Manager application.
-version: 0.0.10+11
+version: 0.0.12+13
 
 environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
@@ -14,6 +14,7 @@ dependencies:
   custom_switch: ^0.0.1
   interactive_webview: ^0.1.2
   image_picker: ^0.6.7+2
+  audioplayers: ^0.15.1
 
 
 dev_dependencies:
@@ -30,6 +31,8 @@ flutter:
 
   assets:
       - assets/icons/
+      
+      - assets/sound.mp3
 
   fonts:
     - family: Poppins
