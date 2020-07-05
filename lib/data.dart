@@ -5,7 +5,7 @@ bool staffOrderHistoryDebug = false;
 bool kitchenStaffDebug = false;
 bool categoryDebug = false;
 bool menuFoodItemDebug = false;
-bool customizationDebug = false;
+bool customizationDebug = true;
 bool tableOrdersDebug = false;
 bool orderDebug = false;
 bool foodItemDebug = false;
@@ -795,6 +795,7 @@ class Customization {
 
   Customization.fromJson(
       Map<String, dynamic> json, List<MenuFoodItem> addOnsMenu) {
+    print('here custom');
     if (json['name'] != null) {
       name = json['name'];
     }
@@ -862,6 +863,7 @@ class Customization {
     if (customizationDebug) {
       print("add_ons added to customization ");
     }
+    print('here custom after');
   }
 
   Map<String, dynamic> toJson() {
@@ -1472,9 +1474,9 @@ class Kitchen {
       });
     }
     print("her22e45");
+    kitchenStaffList = new List<KitchenStaff>();
 
     if (json['kitchen_staff'] != null) {
-      kitchenStaffList = new List<KitchenStaff>();
       json['kitchen_staff'].forEach((v) {
         kitchenStaffList.add(KitchenStaff.fromJson(v));
       });
@@ -1487,5 +1489,6 @@ class Kitchen {
     print(kitchen['kitchen_id']);
     oid = kitchen['kitchen_id'];
     name = kitchen['name'];
+    kitchenStaffList = new List<KitchenStaff>();
   }
 }
