@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:manager_app/constants.dart';
 import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
-import 'package:provider/provider.dart';
 
 class NewCustomization extends StatefulWidget {
   List<Customization> newCustomizations;
+  RestaurantData restaurantData;
 
   NewCustomization({
     @required this.newCustomizations,
+    @required this.restaurantData,
   });
 
   @override
@@ -84,7 +85,7 @@ class _NewCustomizationState extends State<NewCustomization> {
 
   @override
   Widget build(BuildContext context) {
-    RestaurantData restaurantData = Provider.of<RestaurantData>(context);
+//    RestaurantData restaurantData = Provider.of<RestaurantData>(context);
 
     return AlertDialog(
       shape: RoundedRectangleBorder(
@@ -237,7 +238,8 @@ class _NewCustomizationState extends State<NewCustomization> {
                       setState(() {
                         if (nameController.text.isNotEmpty) {
                           Customization newCustom = new Customization.fromJson(
-                              temp, restaurantData.restaurant.addOnsMenu);
+                              temp,
+                              widget.restaurantData.restaurant.addOnsMenu);
                           widget.newCustomizations.add(newCustom);
                         }
                       });

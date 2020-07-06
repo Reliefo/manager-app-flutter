@@ -672,6 +672,7 @@ class _ViewItemState extends State<ViewItem> {
                             builder: (BuildContext context) {
                               // return object of type Dialog
                               return NewCustomization(
+                                restaurantData: restaurantData,
                                 newCustomizations: newCustomizations,
                               );
                             },
