@@ -313,10 +313,10 @@ class _SocketConnectionState extends State<SocketConnection> {
           if (kitchen.oid == decode["kitchen_id"]) {
             KitchenStaff kitchenStaff =
                 KitchenStaff.fromJson(decode["kitchen_staff"]);
-                print(kitchen);
-                print(kitchen.kitchenStaffList);
+            print(kitchen);
+            print(kitchen.kitchenStaffList);
             kitchen.kitchenStaffList.add(kitchenStaff);
-print("ys it mee or fluter");
+            print("ys it mee or fluter");
           }
         });
         print("Yes it's comign here ktich en staff");
@@ -919,14 +919,13 @@ print("ys it mee or fluter");
 
   fetchRegisteredUsers(data) {
     print("registered users");
-    print(data);
+
 //    {auth_username: MID001, restaurant_name: House of Commons, user_type: staff,
 //    object_id: 5ead65e1e1823a4f213257af, name: Kunal, username: SIDHOUKUN0,
 //    password: SIDHOUKUN128, status: Registration successful}
-    setState(() {
-      registeredUser = jsonDecode(data);
 
-//      data.forEach((k, v) => registeredUser[k.toString()] = v);
+    setState(() {
+      registeredUser = data;
     });
   }
 
@@ -1194,7 +1193,7 @@ print("ys it mee or fluter");
   @override
   Widget build(BuildContext context) {
     print("hereeeeww");
-    print(restaurant.displayOrderButtons);
+    print(registeredUser);
     print(restaurant.orderingAbility);
 
     return
