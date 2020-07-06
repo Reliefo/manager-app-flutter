@@ -407,6 +407,7 @@ class _ViewItemState extends State<ViewItem> {
                     builder: (BuildContext context) {
                       // return object of type Dialog
                       return AddOnPopup(
+                        restaurantData: restaurantData,
                         sendAdonsData: sendAdonsData,
                         addOns: addOns,
                         availableAddOns: availableAddOns,

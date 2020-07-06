@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:manager_app/constants.dart';
 import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
-import 'package:provider/provider.dart';
 
 class AddOnPopup extends StatefulWidget {
   final List<MenuFoodItem> availableAddOns;
   final Map<String, bool> availableAddOnsValues;
   final addOns;
   final Function sendAdonsData;
+  final RestaurantData restaurantData;
   AddOnPopup({
+    @required this.restaurantData,
     @required this.availableAddOns,
     @required this.availableAddOnsValues,
     @required this.addOns,
@@ -40,7 +41,7 @@ class _AddOnPopupState extends State<AddOnPopup> {
 
   @override
   Widget build(BuildContext context) {
-    RestaurantData restaurantData = Provider.of<RestaurantData>(context);
+//    RestaurantData restaurantData = Provider.of<RestaurantData>(context);
     print("add ons");
     print(widget.addOns);
 
@@ -98,7 +99,7 @@ class _AddOnPopupState extends State<AddOnPopup> {
                 onPressed: () {
                   getSelectedAddOns();
 
-                  widget.sendAdonsData(restaurantData);
+                  widget.sendAdonsData(widget.restaurantData);
 
                   Navigator.of(context).pop(); // To close the dialog
                 },
