@@ -1,6 +1,6 @@
 name: manager_app
 description: LiQR's Manager application.
-version: 0.0.14+15
+version: 0.0.15+16
 
 environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
