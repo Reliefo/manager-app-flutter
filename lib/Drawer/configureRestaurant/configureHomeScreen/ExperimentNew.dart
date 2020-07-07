@@ -4,7 +4,7 @@ import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
 
-class DailySpecial extends StatelessWidget {
+class ExperimentNew extends StatelessWidget {
   final List<MenuFoodItem> dailySpecialBar = [];
   final List<MenuFoodItem> dailySpecialFood = [];
 //  [Most Popular, Chef's Special, Daily Special, On Offer]
@@ -41,7 +41,7 @@ class DailySpecial extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Daily Special"),
+          title: Text("Experiment New"),
           backgroundColor: kThemeColor,
         ),
         body: Container(
@@ -55,7 +55,7 @@ class DailySpecial extends StatelessWidget {
                           shrinkWrap: true,
                           primary: false,
                           itemCount: restaurantData
-                              .restaurant.homeScreenTags[1].foodList.length,
+                              .restaurant.homeScreenTags[2].foodList.length,
                           gridDelegate:
                               SliverGridDelegateWithMaxCrossAxisExtent(
                             mainAxisSpacing: 4.0,
@@ -120,7 +120,7 @@ class DailySpecial extends StatelessWidget {
                 )
               : Center(
                   child: Text(
-                    "Go to Home Screen Tags and add Items to Daily Special Items.",
+                    "Go to Home Screen Tags and add Items to Experiment New .",
                     style: kHeaderStyle,
                   ),
                 ),

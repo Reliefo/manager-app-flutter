@@ -890,19 +890,20 @@ class _SocketConnectionState extends State<SocketConnection> {
         RestaurantOrderHistory history =
             RestaurantOrderHistory.fromJson(data["order_history"]);
 
-        restaurant.orderHistory.add(history);
+        restaurant.orderHistory?.add(history);
 
         ///////////////////////  remove and clean ////////////////////
-        queueOrders.removeWhere((order) => order.tableId == data["table_id"]);
+        queueOrders?.removeWhere((order) => order.tableId == data["table_id"]);
 
-        cookingOrders.removeWhere((order) => order.tableId == data["table_id"]);
+        cookingOrders
+            ?.removeWhere((order) => order.tableId == data["table_id"]);
         completedOrders
-            .removeWhere((order) => order.tableId == data["table_id"]);
+            ?.removeWhere((order) => order.tableId == data["table_id"]);
         restaurant.assistanceRequests
-            .removeWhere((request) => request.tableId == data["table_id"]);
+            ?.removeWhere((request) => request.tableId == data["table_id"]);
 
         Tables billedTable;
-        restaurant.tables.forEach((table) {
+        restaurant.tables?.forEach((table) {
           if (table.oid == data["table_id"]) {
             print("table found");
             billedTable = table;
@@ -910,11 +911,11 @@ class _SocketConnectionState extends State<SocketConnection> {
         });
 
         print("for each complete");
-        billedTable.users.clear();
+        billedTable?.users?.clear();
         print("user cleared");
-        billedTable.queueCount = 0;
-        billedTable.cookingCount = 0;
-        billedTable.completedCount = 0;
+        billedTable?.queueCount = 0;
+        billedTable?.cookingCount = 0;
+        billedTable?.completedCount = 0;
       });
     }
     print("table comp");

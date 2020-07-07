@@ -228,6 +228,7 @@ class _NAddItemState extends State<NAddItem> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ViewItem(
+                              showCustomization: true,
                               menuType: widget.menuType,
                               foodItem: widget.category.foodList[index - 1],
                             ),

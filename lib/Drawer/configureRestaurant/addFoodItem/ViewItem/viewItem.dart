@@ -13,7 +13,10 @@ import 'newCustomization.dart';
 class ViewItem extends StatefulWidget {
   final menuType;
   final MenuFoodItem foodItem;
+  final bool showCustomization;
+
   ViewItem({
+    this.showCustomization,
     this.menuType,
     this.foodItem,
   });
@@ -660,48 +663,52 @@ class _ViewItemState extends State<ViewItem> {
                 ),
               ),
               VerticalDivider(),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
-                      RaisedButton(
-                        child: Text("Add New customization + "),
-                        onPressed: () {
-                          showDialog(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (BuildContext context) {
-                              // return object of type Dialog
-                              return NewCustomization(
-                                restaurantData: restaurantData,
-                                newCustomizations: newCustomizations,
-                              );
-                            },
-                          );
-                        },
-                      ),
-                      editCustomizations != null
-                          ? ListView.builder(
-                              primary: false,
-                              shrinkWrap: true,
-                              itemCount: editCustomizations.length,
-                              itemBuilder: (context, index) {
-                                return Column(
-                                  children: <Widget>[
-                                    getLayout(
-                                      restaurantData,
-                                      editCustomizations[index],
-                                    ),
-                                  ],
+              widget.showCustomization == true
+                  ? Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: <Widget>[
+                            RaisedButton(
+                              child: Text("Add New customization + "),
+                              onPressed: () {
+                                showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    // return object of type Dialog
+                                    return NewCustomization(
+                                      restaurantData: restaurantData,
+                                      newCustomizations: newCustomizations,
+                                    );
+                                  },
                                 );
-                              })
-                          : Container(
-                              child: Text("no customization"),
+                              },
                             ),
-                    ],
-                  ),
-                ),
-              ),
+                            editCustomizations != null
+                                ? ListView.builder(
+                                    primary: false,
+                                    shrinkWrap: true,
+                                    itemCount: editCustomizations.length,
+                                    itemBuilder: (context, index) {
+                                      return Column(
+                                        children: <Widget>[
+                                          getLayout(
+                                            restaurantData,
+                                            editCustomizations[index],
+                                          ),
+                                        ],
+                                      );
+                                    })
+                                : Container(
+                                    child: Text("no customization"),
+                                  ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : Expanded(
+                      child: Container(child: Text("*")),
+                    ),
             ],
           ),
         ),

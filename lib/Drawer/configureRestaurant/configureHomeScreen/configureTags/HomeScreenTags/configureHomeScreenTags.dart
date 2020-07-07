@@ -209,7 +209,7 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: kThemeColor,
-          title: Text('Configure Home Screen Tags'),
+          title: Text('Configure Home Screen Lists'),
         ),
         body: Container(
           child: Row(
@@ -265,81 +265,88 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
                                     restaurantData
                                         .restaurant.homeScreenTags[index].name,
                                     style: kTitleStyle),
-                                trailing: IconButton(
-                                    icon: Icon(
-                                      Icons.close,
-                                      color: Colors.red,
-                                    ),
-                                    onPressed: () {
-                                      showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            title: Text(
-                                                "Delete ${restaurantData.restaurant.homeScreenTags[index].name} tag ?"),
-                                            content: Column(
-                                              mainAxisSize: MainAxisSize
-                                                  .min, // To make the card compact
-                                              children: <Widget>[
-                                                Text(
-                                                  "This will delete all the food items under this tag",
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    fontSize: 16.0,
-                                                  ),
+                                trailing: index >
+                                        2 // to hide delete button for first 3 tags.
+                                    ? IconButton(
+                                        icon: Icon(
+                                          Icons.close,
+                                          color: Colors.red,
+                                        ),
+                                        onPressed: () {
+                                          showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
                                                 ),
-                                                SizedBox(height: 24.0),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceAround,
+                                                title: Text(
+                                                    "Delete ${restaurantData.restaurant.homeScreenTags[index].name} tag ?"),
+                                                content: Column(
+                                                  mainAxisSize: MainAxisSize
+                                                      .min, // To make the card compact
                                                   children: <Widget>[
-                                                    FlatButton(
-                                                      child: Text(
-                                                        "Back",
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.green),
+                                                    Text(
+                                                      "This will delete all the food items under this tag",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 16.0,
                                                       ),
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop(); // To close the dialog
-                                                      },
                                                     ),
-                                                    FlatButton(
-                                                      child: Text(
-                                                        "Delete",
-                                                        style: TextStyle(
-                                                            color: Colors.red),
-                                                      ),
-                                                      onPressed: () {
-                                                        restaurantData
-                                                            .sendConfiguredDataToBackend({
-                                                          "home_screen_lists_id":
-                                                              restaurantData
-                                                                  .restaurant
-                                                                  .homeScreenTags[
-                                                                      index]
-                                                                  .oid
-                                                        }, "delete_home_screen_tags");
+                                                    SizedBox(height: 24.0),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceAround,
+                                                      children: <Widget>[
+                                                        FlatButton(
+                                                          child: Text(
+                                                            "Back",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .green),
+                                                          ),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(); // To close the dialog
+                                                          },
+                                                        ),
+                                                        FlatButton(
+                                                          child: Text(
+                                                            "Delete",
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.red),
+                                                          ),
+                                                          onPressed: () {
+                                                            restaurantData
+                                                                .sendConfiguredDataToBackend({
+                                                              "home_screen_lists_id":
+                                                                  restaurantData
+                                                                      .restaurant
+                                                                      .homeScreenTags[
+                                                                          index]
+                                                                      .oid
+                                                            }, "delete_home_screen_tags");
 
-                                                        Navigator.of(context)
-                                                            .pop(); // To close the dialog
-                                                      },
-                                                    ),
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(); // To close the dialog
+                                                          },
+                                                        ),
+                                                      ],
+                                                    )
                                                   ],
-                                                )
-                                              ],
-                                            ),
+                                                ),
+                                              );
+                                            },
                                           );
-                                        },
-                                      );
-                                    }),
+                                        })
+                                    : Container(width: 0, height: 0),
                                 onTap: () {
                                   _onSelected(index, restaurantData);
                                   getTagItems(

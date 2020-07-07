@@ -206,7 +206,7 @@ class _ConfigureNavigateBetterTagsState
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: kThemeColor,
-          title: Text('Configure Navigate Better'),
+          title: Text('Configure Need Help Choosing'),
         ),
         body: Container(
           child: Row(

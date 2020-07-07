@@ -162,8 +162,8 @@ class Restaurant {
       print("Navigate Better Tags added to restaurant object.!");
     }
 
+    orderHistory = new List<RestaurantOrderHistory>();
     if (json['order_history'].isNotEmpty) {
-      orderHistory = new List<RestaurantOrderHistory>();
       json['order_history'].forEach((v) {
         orderHistory.add(new RestaurantOrderHistory.fromJson(v));
       });
@@ -171,8 +171,9 @@ class Restaurant {
     if (debug) {
       print("Order History added to restaurant object.!");
     }
+
+    kitchens = new List<Kitchen>();
     if (json['kitchens'].isNotEmpty) {
-      kitchens = new List<Kitchen>();
       json['kitchens'].forEach((v) {
         kitchens.add(new Kitchen.fromJson(v));
       });

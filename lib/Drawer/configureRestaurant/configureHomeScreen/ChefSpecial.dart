@@ -55,7 +55,7 @@ class ChefSpecial extends StatelessWidget {
                           shrinkWrap: true,
                           primary: false,
                           itemCount: restaurantData
-                              .restaurant.homeScreenTags[3].foodList.length,
+                              .restaurant.homeScreenTags[1].foodList.length,
                           gridDelegate:
                               SliverGridDelegateWithMaxCrossAxisExtent(
                             mainAxisSpacing: 4.0,

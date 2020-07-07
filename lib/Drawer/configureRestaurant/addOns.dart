@@ -280,6 +280,7 @@ class _AddFoodItemState extends State<AddOnsMenu> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => ViewItem(
+                                      showCustomization: false,
                                       menuType: "add_ons",
                                       foodItem: restaurantData
                                           .restaurant.addOnsMenu[index],

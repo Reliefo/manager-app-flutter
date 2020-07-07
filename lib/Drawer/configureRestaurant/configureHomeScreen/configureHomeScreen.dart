@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/ChefSpecial.dart';
-import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/DailySpecial.dart';
+import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/ExperimentNew.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/MostPopular.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureTags/HomeScreenTags/configureHomeScreenTags.dart';
 import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/configureTags/navigateBetter/ConfigureNavigateBetterTags.dart';
-import 'package:manager_app/Drawer/configureRestaurant/configureHomeScreen/onOffer.dart';
 import 'package:manager_app/constants.dart';
 
 class ConfigureHomeScreen extends StatelessWidget {
@@ -32,7 +31,7 @@ class ConfigureHomeScreen extends StatelessWidget {
                         child: FlatButton(
                           child: Center(
                             child: Text(
-                              'Navigate Better Tags',
+                              'Need Help Choosing',
                               style: kHeaderStyleSmall,
                             ),
                           ),
@@ -62,7 +61,7 @@ class ConfigureHomeScreen extends StatelessWidget {
                         child: FlatButton(
                           child: Center(
                             child: Text(
-                              'Home Screen Tags',
+                              'Home Screen Lists',
                               style: kHeaderStyleSmall,
                             ),
                           ),
@@ -78,37 +77,6 @@ class ConfigureHomeScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.all(25),
-                      child: Card(
-                        color: Color(0xffE5EDF1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        child: FlatButton(
-                          child: Center(
-                            child: Text(
-                              'On Offer',
-                              style: kHeaderStyleSmall,
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => OnOffer(),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                ]),
-              ),
-              Expanded(
-                child: Row(children: <Widget>[
                   Expanded(
                     child: Container(
                       padding: EdgeInsets.all(25),
@@ -136,33 +104,10 @@ class ConfigureHomeScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.all(25),
-                      child: Card(
-                        color: Color(0xffE5EDF1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        child: FlatButton(
-                          child: Center(
-                            child: Text(
-                              'Daily Special',
-                              style: kHeaderStyleSmall,
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DailySpecial(),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
+                ]),
+              ),
+              Expanded(
+                child: Row(children: <Widget>[
                   Expanded(
                     child: Container(
                       padding: EdgeInsets.all(25),
@@ -189,6 +134,60 @@ class ConfigureHomeScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(25),
+                      child: Card(
+                        color: Color(0xffE5EDF1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: FlatButton(
+                          child: Center(
+                            child: Text(
+                              'Experiment New',
+                              style: kHeaderStyleSmall,
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ExperimentNew(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+//                      padding: EdgeInsets.all(25),
+//                      child: Card(
+//                        color: Color(0xffE5EDF1),
+//                        shape: RoundedRectangleBorder(
+//                          borderRadius: BorderRadius.circular(20.0),
+//                        ),
+//                        child: FlatButton(
+//                          child: Center(
+//                            child: Text(
+//                              'Chef Special',
+//                              style: kHeaderStyleSmall,
+//                            ),
+//                          ),
+//                          onPressed: () {
+//                            Navigator.push(
+//                              context,
+//                              MaterialPageRoute(
+//                                builder: (context) => ChefSpecial(),
+//                              ),
+//                            );
+//                          },
+//                        ),
+//                      ),
+                        ),
                   ),
                 ]),
               ),

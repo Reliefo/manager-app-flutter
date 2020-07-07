@@ -127,22 +127,36 @@ class SingleTable extends StatelessWidget {
                       ),
                     ),
                     Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          Container(
+                      child: Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Container(
                               padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: RaisedButton(
-                                onPressed: () {
+                              height: double.maxFinite,
+                              color: Colors.red[500],
+                              child: GestureDetector(
+                                onTap: () {
                                   requestBilling(context);
                                 },
-                                child: Text(
-                                  "Bill",
-                                  style: homePageS1,
-                                  textAlign: TextAlign.right,
+                                child: Row(
+                                  children: <Widget>[
+                                    Icon(Icons.receipt),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0),
+                                      child: Text(
+                                        "Bill & Clear",
+                                        style: homePageS1,
+                                        textAlign: TextAlign.right,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              )),
-                        ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
