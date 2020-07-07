@@ -214,12 +214,12 @@ class Restaurant {
 //    });
 //  }
 
-  addKitchenRooms(data) {
-    if (this.kitchens == null) {
-      this.kitchens = new List<Kitchen>();
-    }
-    this.kitchens.add(new Kitchen.addConfig(data));
-  }
+//  addKitchenRooms(data) {
+//    if (kitchens == null) {
+//      kitchens = new List<Kitchen>();
+//    }
+//    kitchens.add(new Kitchen.addConfig(data));
+//  }
 
   addFoodMenuCategory(category) {
     if (this.foodMenu == null) {
@@ -1466,16 +1466,15 @@ class Kitchen {
     if (json['name'] != null) {
       name = json['name'];
     }
-    print("here45");
+
+    categoriesList = new List<Category>();
     if (json['categories'] != null) {
-      categoriesList = new List<Category>();
       json['categories'].forEach((v) {
         categoriesList.add(Category.addConfig(v));
       });
     }
-    print("her22e45");
-    kitchenStaffList = new List<KitchenStaff>();
 
+    kitchenStaffList = new List<KitchenStaff>();
     if (json['kitchen_staff'] != null) {
       json['kitchen_staff'].forEach((v) {
         kitchenStaffList.add(KitchenStaff.fromJson(v));
@@ -1483,12 +1482,9 @@ class Kitchen {
     }
   }
 
-  Kitchen.addConfig(kitchen) {
-    print("config kitchen");
-    print(kitchen);
-    print(kitchen['kitchen_id']);
-    oid = kitchen['kitchen_id'];
-    name = kitchen['name'];
-    kitchenStaffList = new List<KitchenStaff>();
-  }
+//  Kitchen.addConfig(Map<String, dynamic> kitchen) {
+//    print("config kitchen");
+//    oid = kitchen['kitchen_id'];
+//    name = kitchen['name'];
+//  }
 }

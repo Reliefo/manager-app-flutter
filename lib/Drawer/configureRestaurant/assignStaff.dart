@@ -26,21 +26,19 @@ class _AssignStaffState extends State<AssignStaff> {
   filterStaff(restaurantData) {
     print("ddddd");
 
-    restaurantData.restaurant.tables.forEach((table) {
+    restaurantData.restaurant.tables?.forEach((table) {
       List<Staff> tableStaff = [];
-      restaurantData.restaurant.staff.forEach((staff) {
+      restaurantData.restaurant.staff?.forEach((staff) {
         tableStaff.add(staff);
       });
       dropdownStaff[table.oid] = tableStaff;
     });
 
-    restaurantData.restaurant.tables.forEach((table) {
-      if (table.staff != null) {
-        table.staff.forEach((staff) {
-          dropdownStaff[table.oid]
-              .removeWhere((element) => element.oid == staff.oid);
-        });
-      }
+    restaurantData.restaurant.tables?.forEach((table) {
+      table.staff?.forEach((staff) {
+        dropdownStaff[table.oid]
+            .removeWhere((element) => element.oid == staff.oid);
+      });
     });
 
     print("heskadkajla");
@@ -280,9 +278,11 @@ class _AssignStaffState extends State<AssignStaff> {
                               ),
                             );
                           })
-                      : Text(
-                          'Add tables first',
-                          style: kTitleStyle,
+                      : Center(
+                          child: Text(
+                            'Add tables and Staff before assigning.!',
+                            style: kTitleStyle,
+                          ),
                         ),
                 )
               ],

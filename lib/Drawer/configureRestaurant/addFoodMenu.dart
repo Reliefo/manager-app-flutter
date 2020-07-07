@@ -166,7 +166,7 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    restaurantData.restaurant.tables == null
+                    restaurantData.restaurant.foodMenu == null
                         ? Text('No of Category :')
                         : Text(
                             'No of Category : ${restaurantData.restaurant.foodMenu.length} ',

@@ -348,9 +348,12 @@ class _SocketConnectionState extends State<SocketConnection> {
 
       /////////////////////////////////  kitchen //////////////////////
       if (decode["type"] == "add_kitchen") {
-        print(decode);
         setState(() {
-          restaurant.kitchens.add(new Kitchen.addConfig(decode));
+          print(decode.runtimeType);
+          print(decode['kitchen_obj'].runtimeType);
+
+          Kitchen kit = Kitchen.fromJson(decode['kitchen_obj']);
+          restaurant.kitchens.add(kit);
         });
       }
 
