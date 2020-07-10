@@ -21,7 +21,7 @@ class NAddItem extends StatefulWidget {
 class _NAddItemState extends State<NAddItem> {
   final itemNameController = TextEditingController();
 
-  Widget addNewItem(restaurantData) {
+  Widget addNewItem(RestaurantData restaurantData) {
     return GestureDetector(
         child: Container(
           decoration: BoxDecoration(
@@ -92,17 +92,18 @@ class _NAddItemState extends State<NAddItem> {
 
                                 Navigator.of(context).pop();
 
-                                if (widget.category.foodList != null) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ViewItem(
-                                        menuType: widget.menuType,
-                                        foodItem: widget.category.foodList.last,
-                                      ),
-                                    ),
-                                  );
-                                }
+//                                if (widget.category.foodList != null) {
+//                                  Navigator.push(
+//                                    context,
+//                                    MaterialPageRoute(
+//                                      builder: (context) => ViewItem(
+//                                        showCustomization: true,
+//                                        menuType: widget.menuType,
+//                                        foodItem: widget.category.foodList.last,
+//                                      ),
+//                                    ),
+//                                  );
+//                                }
                               },
                               child: Text(
                                 "Done",
@@ -120,8 +121,8 @@ class _NAddItemState extends State<NAddItem> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
+  Widget build(BuildContext kcontext) {
+    final RestaurantData restaurantData = Provider.of<RestaurantData>(kcontext);
 
     return SafeArea(
       child: Scaffold(
@@ -135,7 +136,7 @@ class _NAddItemState extends State<NAddItem> {
                     child: Text('Re-Order'),
                     onPressed: () {
                       Navigator.push(
-                        context,
+                        kcontext,
                         MaterialPageRoute(
                           builder: (context) => ReorderFoodItem(
                               menuType: widget.menuType,

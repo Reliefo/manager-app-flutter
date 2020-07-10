@@ -16,9 +16,9 @@ class ViewItem extends StatefulWidget {
   final bool showCustomization;
 
   ViewItem({
-    this.showCustomization,
-    this.menuType,
-    this.foodItem,
+    @required this.showCustomization,
+    @required this.menuType,
+    @required this.foodItem,
   });
 
   @override
@@ -95,6 +95,7 @@ class _ViewItemState extends State<ViewItem> {
 
   customizationToMap() {
     dataToBackend.clear();
+
     editCustomizations.forEach((cust) {
       dataToBackend.add(cust.toJson());
     });
@@ -185,6 +186,7 @@ class _ViewItemState extends State<ViewItem> {
                             context: context,
                             builder: (BuildContext context) {
                               return EditCustomizationPreferences(
+                                restaurantData: restaurantData,
                                 sendDataToBackend: sendDataToBackend,
                                 customization: customization,
                               );
@@ -306,6 +308,7 @@ class _ViewItemState extends State<ViewItem> {
                             context: context,
                             builder: (BuildContext context) {
                               return EditCustomizationPreferences(
+                                restaurantData: restaurantData,
                                 sendDataToBackend: sendDataToBackend,
                                 customization: customization,
                               );
@@ -357,7 +360,7 @@ class _ViewItemState extends State<ViewItem> {
                             icon: Icon(Icons.edit),
                             onPressed: () {
                               editFoodItemChoices(
-                                  restaurantData, choices[index2]);
+                                  restaurantData, choices, index2);
                             },
                           ),
                           IconButton(
@@ -497,7 +500,8 @@ class _ViewItemState extends State<ViewItem> {
 
   @override
   Widget build(BuildContext context) {
-    RestaurantData restaurantData = Provider.of<RestaurantData>(context);
+    print(context);
+    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
 
     addEditChoiceOption(restaurantData);
     getAvailableAddOns(restaurantData);
@@ -679,6 +683,7 @@ class _ViewItemState extends State<ViewItem> {
                                     return NewCustomization(
                                       restaurantData: restaurantData,
                                       newCustomizations: newCustomizations,
+                                      addEditChoiceOption: addEditChoiceOption,
                                     );
                                   },
                                 );
@@ -984,7 +989,8 @@ class _ViewItemState extends State<ViewItem> {
                         width: 200,
                         child: TextField(
                           controller: foodOptionPriceEditController,
-                          keyboardType: TextInputType.number,
+                          keyboardType:
+                              TextInputType.numberWithOptions(decimal: true),
                         ),
                       ),
                     ],
@@ -1080,8 +1086,8 @@ class _ViewItemState extends State<ViewItem> {
                         width: 200,
                         child: TextField(
                           controller: foodOptionPriceEditController,
-                          keyboardType: TextInputType.text,
-                          textCapitalization: TextCapitalization.sentences,
+                          keyboardType:
+                              TextInputType.numberWithOptions(decimal: true),
                         ),
                       ),
                     ],
@@ -1137,8 +1143,8 @@ class _ViewItemState extends State<ViewItem> {
         });
   }
 
-  Widget editFoodItemChoices(restaurantData, choice) {
-    foodChoiceEditController.text = choice;
+  Widget editFoodItemChoices(restaurantData, choice, index2) {
+    foodChoiceEditController.text = choice[index2];
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -1180,12 +1186,20 @@ class _ViewItemState extends State<ViewItem> {
                         ),
                       ),
                       FlatButton(
+                        child: Text(
+                          "Done",
+                          style: TextStyle(color: Colors.green),
+                        ),
                         onPressed: () {
                           setState(() {
-                            choice = foodChoiceEditController.text;
+                            choice[index2] = foodChoiceEditController.text;
                           });
 
+                          print("kkk");
+
                           customizationToMap();
+
+                          print(dataToBackend);
 
                           if (foodChoiceEditController.text.isNotEmpty) {
                             restaurantData.sendConfiguredDataToBackend({
@@ -1195,17 +1209,10 @@ class _ViewItemState extends State<ViewItem> {
                             }, "edit_food_item");
 
                             foodChoiceEditController.clear();
-
-//                            editChoices.clear();
-//                            editOptions.clear();
                           }
 
                           Navigator.of(context).pop(); // To close the dialog
                         },
-                        child: Text(
-                          "Done",
-                          style: TextStyle(color: Colors.green),
-                        ),
                       ),
                     ],
                   )
@@ -1288,141 +1295,17 @@ class _ViewItemState extends State<ViewItem> {
           );
         });
   }
-
-//  Widget editCustomizationPreferences(
-//      restaurantData, Customization customization) {
-//    customizationNameEditController.text = customization.name;
-//    thatNumberEditController.text = customization.thatNumber.toString();
-//    if (radioItemVal == null) {
-//      radioItemVal = customization.lessMore;
-//    }
-//
-//    return AlertDialog(
-//      shape: RoundedRectangleBorder(
-//        borderRadius: BorderRadius.circular(20),
-//      ),
-//      title: Text(
-//        "Edit Preferences",
-//        style: kHeaderStyleSmall,
-//      ),
-//      content: SingleChildScrollView(
-//        child: Container(
-//          width: 350,
-//          child: Column(
-//            mainAxisSize: MainAxisSize.min, // To make the card compact
-//            children: <Widget>[
-//              Row(
-//                children: <Widget>[
-//                  Text("Name : "),
-//                  Expanded(
-//                    child: TextField(
-//                      controller: customizationNameEditController,
-//                      keyboardType: TextInputType.text,
-//                      textCapitalization: TextCapitalization.words,
-//                    ),
-//                  ),
-//                ],
-//              ),
-//              Column(
-//                mainAxisSize: MainAxisSize.min,
-//                crossAxisAlignment: CrossAxisAlignment.start,
-//                children: <Widget>[
-//                  Padding(
-//                    padding: const EdgeInsets.symmetric(
-//                        horizontal: 16.0, vertical: 8),
-//                    child: Text("User can select :"),
-//                  ),
-//                  RadioListTile(
-//                    groupValue: radioItemVal,
-//                    title: Text(
-//                      'Less Than',
-//                      style: kTitleStyle,
-//                    ),
-//                    value: -1,
-//                    onChanged: (val) {
-//                      setState(() {
-//                        radioItemVal = val;
-//                      });
-//                    },
-//                  ),
-//                  RadioListTile(
-//                    groupValue: radioItemVal,
-//                    title: Text(
-//                      'Exactly',
-//                      style: kTitleStyle,
-//                    ),
-//                    value: 0,
-//                    onChanged: (val) {
-//                      setState(() {
-//                        radioItemVal = val;
-//                      });
-//                    },
-//                  ),
-//                  RadioListTile(
-//                    groupValue: radioItemVal,
-//                    title: Text(
-//                      'More Than',
-//                      style: kTitleStyle,
-//                    ),
-//                    value: 1,
-//                    onChanged: (val) {
-//                      setState(() {
-//                        radioItemVal = val;
-//                      });
-//                    },
-//                  ),
-//                ],
-//              ),
-//              Row(
-//                children: <Widget>[
-//                  Text("Quantity : "),
-//                  Expanded(
-//                    child: TextField(
-//                      controller: thatNumberEditController,
-//                      keyboardType: TextInputType.number,
-//                    ),
-//                  ),
-//                ],
-//              ),
-//              Row(
-//                mainAxisAlignment: MainAxisAlignment.spaceAround,
-//                children: <Widget>[
-//                  FlatButton(
-//                    child: Text(
-//                      "Cancel",
-//                      style: TextStyle(color: Colors.red),
-//                    ),
-//                    onPressed: () {
-//                      Navigator.of(context).pop(); // To close the dialog
-//                    },
-//                  ),
-//                  FlatButton(
-//                    child: Text(
-//                      "Done",
-//                      style: TextStyle(color: Colors.green),
-//                    ),
-//                    onPressed: () {
-//                      Navigator.of(context).pop(); // To close the dialog
-//                    },
-//                  ),
-//                ],
-//              )
-//            ],
-//          ),
-//        ),
-//      ),
-//    );
-//  }
 }
 
 class EditCustomizationPreferences extends StatefulWidget {
   final Customization customization;
-
   final Function sendDataToBackend;
+  final RestaurantData restaurantData;
 
   EditCustomizationPreferences({
     @required this.sendDataToBackend,
     @required this.customization,
+    @required this.restaurantData,
   });
   @override
   _EditCustomizationPreferencesState createState() =>
@@ -1436,7 +1319,7 @@ class _EditCustomizationPreferencesState
   int radioItemVal;
   @override
   Widget build(BuildContext context) {
-    RestaurantData restaurantData = Provider.of<RestaurantData>(context);
+//    RestaurantData restaurantData = Provider.of<RestaurantData>(context);
 
     customizationNameEditController.text = widget.customization.name;
     thatNumberEditController.text = widget.customization.thatNumber.toString();
@@ -1465,7 +1348,7 @@ class _EditCustomizationPreferencesState
                     child: TextField(
                       controller: customizationNameEditController,
                       keyboardType: TextInputType.text,
-                      textCapitalization: TextCapitalization.words,
+                      textCapitalization: TextCapitalization.sentences,
                     ),
                   ),
                 ],
@@ -1555,7 +1438,7 @@ class _EditCustomizationPreferencesState
                       widget.customization.lessMore = radioItemVal;
                       widget.customization.thatNumber =
                           int.parse(thatNumberEditController.text);
-                      widget.sendDataToBackend(restaurantData);
+                      widget.sendDataToBackend(widget.restaurantData);
                       Navigator.of(context).pop(); // To close the dialog
                     },
                   ),

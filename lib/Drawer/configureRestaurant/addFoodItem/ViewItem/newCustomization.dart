@@ -4,12 +4,14 @@ import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 
 class NewCustomization extends StatefulWidget {
-  List<Customization> newCustomizations;
-  RestaurantData restaurantData;
+  final List<Customization> newCustomizations;
+  final RestaurantData restaurantData;
+  final Function addEditChoiceOption;
 
   NewCustomization({
     @required this.newCustomizations,
     @required this.restaurantData,
+    @required this.addEditChoiceOption,
   });
 
   @override
@@ -235,16 +237,18 @@ class _NewCustomizationState extends State<NewCustomization> {
                           "that_number": int.parse(thatNumberController.text),
                         };
                       }
-                      setState(() {
-                        if (nameController.text.isNotEmpty) {
-                          Customization newCustom = new Customization.fromJson(
-                              temp,
-                              widget.restaurantData.restaurant.addOnsMenu);
-                          widget.newCustomizations.add(newCustom);
-                        }
-                      });
 
-                      Navigator.of(context).pop(); // To close the dialog
+                      if (nameController.text.isNotEmpty) {
+                        Customization newCustom = new Customization.fromJson(
+                            temp, widget.restaurantData.restaurant.addOnsMenu);
+                        setState(() {
+                          widget.newCustomizations.add(newCustom);
+                        });
+                        widget.addEditChoiceOption(widget.restaurantData);
+                      }
+
+                      Navigator.of(context).pop();
+                      // To close the dialog
                     },
                   ),
                 ],
