@@ -238,6 +238,7 @@ class _ConfigureHomeScreenTagsState extends State<ConfigureHomeScreenTags> {
                                 builder: (BuildContext context) {
                                   // return object of type Dialog
                                   return AddNewTag(
+                                      restaurantData: restaurantData,
                                       addTo: "home_screen",
                                       tagController: tagController);
                                 },

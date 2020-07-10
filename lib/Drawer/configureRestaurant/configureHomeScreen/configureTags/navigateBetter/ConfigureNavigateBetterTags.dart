@@ -235,6 +235,7 @@ class _ConfigureNavigateBetterTagsState
                                 builder: (BuildContext context) {
                                   // return object of type Dialog
                                   return AddNewTag(
+                                      restaurantData: restaurantData,
                                       addTo: "navigate_better",
                                       tagController: tagController);
                                 },

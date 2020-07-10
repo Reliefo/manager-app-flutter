@@ -11,7 +11,7 @@
 #
 
 # Uncomment the line if you want fastlane to automatically update itself
-# update_fastlane
+ update_fastlane
 
 default_platform(:android)
 
@@ -23,6 +23,12 @@ platform :android do
 
 desc "Deploy a new beta build to Google Play"
 lane :beta do
+
+  changelog = prompt(
+      text: "Changelog: ",
+      multi_line_end_keyword: "END"
+    )
+
   build_number = number_of_commits()
   Dir.chdir "../.." do
     sh("flutter", "packages", "get")
@@ -30,6 +36,24 @@ lane :beta do
     sh("flutter", "build", "appbundle", "--build-number=#{build_number}")
   end
   upload_to_play_store(track: 'beta', aab: '../build/app/outputs/bundle/release/app.aab')
+end
+
+
+desc "Deploy a new production build to Google Play"
+lane :production do
+
+  changelog = prompt(
+        text: "Changelog: ",
+        multi_line_end_keyword: "END"
+      )
+
+  build_number = number_of_commits()
+  Dir.chdir "../.." do
+    sh("flutter", "packages", "get")
+    sh("flutter", "clean")
+    sh("flutter", "build", "appbundle", "--build-number=#{build_number}")
+  end
+  upload_to_play_store(track: 'production', aab: '../build/app/outputs/bundle/release/app.aab')
 end
 
 

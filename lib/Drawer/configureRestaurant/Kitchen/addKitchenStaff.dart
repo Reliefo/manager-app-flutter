@@ -66,6 +66,7 @@ class _AddDataState extends State<AddKitchenStaff> {
                       ),
                     ),
                     keyboardType: TextInputType.text,
+                    textCapitalization: TextCapitalization.sentences,
                   ),
                 ),
               ),
@@ -159,6 +160,11 @@ class _AddDataState extends State<AddKitchenStaff> {
                                                   controller:
                                                       _staffNameEditController,
                                                   autofocus: true,
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  textCapitalization:
+                                                      TextCapitalization
+                                                          .sentences,
                                                 ),
                                               ),
                                             ],

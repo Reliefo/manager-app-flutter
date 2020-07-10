@@ -61,7 +61,7 @@ class _AddDataState extends State<AddData> {
 //                        ),
                       ),
                       keyboardType: TextInputType.text,
-                      textCapitalization: TextCapitalization.words,
+                      textCapitalization: TextCapitalization.sentences,
                     ),
                   ),
                 ),

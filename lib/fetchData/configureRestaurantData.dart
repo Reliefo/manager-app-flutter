@@ -7,8 +7,9 @@ import 'package:manager_app/data.dart';
 class RestaurantData extends ChangeNotifier {
   final Restaurant restaurant;
   final Map<String, dynamic> registeredUser;
-//  final jsSocket;
   final sockets;
+//  final jsSocket;
+
   RestaurantData({
     this.restaurant,
     this.registeredUser,

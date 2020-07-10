@@ -101,6 +101,7 @@ class _AddMenuState extends State<AddBarMenu> {
                           //fillColor: Colors.green
                         ),
                         keyboardType: TextInputType.text,
+                        textCapitalization: TextCapitalization.sentences,
                       ),
                     ),
                   ),
@@ -121,6 +122,7 @@ class _AddMenuState extends State<AddBarMenu> {
                           ),
                         ),
                         keyboardType: TextInputType.text,
+                        textCapitalization: TextCapitalization.sentences,
                         validator: (value) {
                           if (value.isEmpty) {
                             return 'Please enter Description';
@@ -268,6 +270,12 @@ class _AddMenuState extends State<AddBarMenu> {
                                                           child: TextField(
                                                             controller:
                                                                 _categoryEditController,
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .text,
+                                                            textCapitalization:
+                                                                TextCapitalization
+                                                                    .sentences,
                                                             autofocus: true,
                                                           ),
                                                         ),
@@ -291,6 +299,12 @@ class _AddMenuState extends State<AddBarMenu> {
                                                           child: TextField(
                                                             controller:
                                                                 _descriptionEditController,
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .text,
+                                                            textCapitalization:
+                                                                TextCapitalization
+                                                                    .sentences,
                                                           ),
                                                         ),
                                                       ],

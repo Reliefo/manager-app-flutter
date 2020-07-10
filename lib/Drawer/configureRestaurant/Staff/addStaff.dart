@@ -65,6 +65,7 @@ class _AddDataState extends State<AddStaff> {
                           ),
                         ),
                         keyboardType: TextInputType.text,
+                        textCapitalization: TextCapitalization.sentences,
                       ),
                     ),
                   ),

@@ -116,6 +116,7 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
                           //fillColor: Colors.green
                         ),
                         keyboardType: TextInputType.text,
+                        textCapitalization: TextCapitalization.sentences,
                       ),
                     ),
                   ),
@@ -137,6 +138,7 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
                           //fillColor: Colors.green
                         ),
                         keyboardType: TextInputType.text,
+                        textCapitalization: TextCapitalization.sentences,
                         validator: (value) {
                           if (value.isEmpty) {
                             return 'Please enter Description';
@@ -312,6 +314,12 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
                                                             controller:
                                                                 _categoryEditController,
                                                             autofocus: true,
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .text,
+                                                            textCapitalization:
+                                                                TextCapitalization
+                                                                    .sentences,
                                                           ),
                                                         ),
                                                       ],
@@ -334,6 +342,12 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
                                                           child: TextField(
                                                             controller:
                                                                 _descriptionEditController,
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .text,
+                                                            textCapitalization:
+                                                                TextCapitalization
+                                                                    .sentences,
                                                           ),
                                                         ),
                                                       ],

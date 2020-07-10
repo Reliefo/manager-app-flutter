@@ -129,6 +129,8 @@ class _AddFoodItemState extends State<AddOnsMenu> {
                                     //fillColor: Colors.green
                                   ),
                                   keyboardType: TextInputType.text,
+                                  textCapitalization:
+                                      TextCapitalization.sentences,
                                   validator: (value) {
                                     if (value.isEmpty) {
                                       return 'Please enter item';
@@ -162,6 +164,8 @@ class _AddFoodItemState extends State<AddOnsMenu> {
                                     //fillColor: Colors.green
                                   ),
                                   keyboardType: TextInputType.text,
+                                  textCapitalization:
+                                      TextCapitalization.sentences,
                                   validator: (value) {
                                     if (value.isEmpty) {
                                       return 'Please enter Description';
@@ -189,7 +193,8 @@ class _AddFoodItemState extends State<AddOnsMenu> {
                                       borderRadius: BorderRadius.circular(12.0),
                                     ),
                                   ),
-                                  keyboardType: TextInputType.number,
+                                  keyboardType: TextInputType.numberWithOptions(
+                                      decimal: true),
                                   validator: (value) {
                                     if (value.isEmpty) {
                                       return 'Please enter Price';

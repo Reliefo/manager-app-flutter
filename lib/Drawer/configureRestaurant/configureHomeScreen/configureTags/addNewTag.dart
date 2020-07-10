@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:manager_app/fetchData/configureRestaurantData.dart';
-import 'package:provider/provider.dart';
 
 class AddNewTag extends StatelessWidget {
   const AddNewTag({
     Key key,
     @required this.tagController,
     @required this.addTo,
+    @required this.restaurantData,
   }) : super(key: key);
 
   final TextEditingController tagController;
   final String addTo;
+  final restaurantData;
 
   @override
   Widget build(BuildContext context) {
-    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
+//    final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
     return AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -37,6 +37,8 @@ class AddNewTag extends StatelessWidget {
                 width: 200,
                 child: TextField(
                   controller: tagController,
+                  keyboardType: TextInputType.text,
+                  textCapitalization: TextCapitalization.sentences,
                   autofocus: true,
                 ),
               ),

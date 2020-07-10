@@ -1,2 +1,2 @@
-json_key_file("/Users/naveen/Desktop/playstore-key.json") # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
+json_key_file("/Users/naveen/AndroidStudioProjects/playstore-key.json") # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
 package_name("com.liqr.managerapp") # e.g. com.krausefx.app

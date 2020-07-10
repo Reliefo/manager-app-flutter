@@ -744,7 +744,7 @@ class _ViewItemState extends State<ViewItem> {
                     width: 200,
                     child: TextField(
                       controller: itemNameEditController,
-                      textCapitalization: TextCapitalization.words,
+                      textCapitalization: TextCapitalization.sentences,
                       autofocus: true,
                     ),
                   ),
@@ -820,7 +820,7 @@ class _ViewItemState extends State<ViewItem> {
                     width: 200,
                     child: TextField(
                       controller: descriptionEditController,
-                      textCapitalization: TextCapitalization.words,
+                      textCapitalization: TextCapitalization.sentences,
                       autofocus: true,
                     ),
                   ),
@@ -896,7 +896,8 @@ class _ViewItemState extends State<ViewItem> {
                     width: 200,
                     child: TextField(
                       controller: priceEditController,
-                      textCapitalization: TextCapitalization.words,
+                      keyboardType:
+                          TextInputType.numberWithOptions(decimal: true),
                       autofocus: true,
                     ),
                   ),
@@ -969,6 +970,8 @@ class _ViewItemState extends State<ViewItem> {
                         child: TextField(
                           controller: foodOptionEditController,
                           autofocus: true,
+                          keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.sentences,
                         ),
                       ),
                     ],
@@ -981,6 +984,7 @@ class _ViewItemState extends State<ViewItem> {
                         width: 200,
                         child: TextField(
                           controller: foodOptionPriceEditController,
+                          keyboardType: TextInputType.number,
                         ),
                       ),
                     ],
@@ -1062,6 +1066,8 @@ class _ViewItemState extends State<ViewItem> {
                         child: TextField(
                           controller: foodOptionEditController,
                           autofocus: true,
+                          keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.sentences,
                         ),
                       ),
                     ],
@@ -1074,6 +1080,8 @@ class _ViewItemState extends State<ViewItem> {
                         width: 200,
                         child: TextField(
                           controller: foodOptionPriceEditController,
+                          keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.sentences,
                         ),
                       ),
                     ],
@@ -1151,6 +1159,8 @@ class _ViewItemState extends State<ViewItem> {
                         width: 200,
                         child: TextField(
                           controller: foodChoiceEditController,
+                          keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.sentences,
                           autofocus: true,
                         ),
                       ),
@@ -1228,6 +1238,8 @@ class _ViewItemState extends State<ViewItem> {
                         width: 200,
                         child: TextField(
                           controller: foodChoiceEditController,
+                          keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.sentences,
                           autofocus: true,
                         ),
                       ),
@@ -1514,7 +1526,8 @@ class _EditCustomizationPreferencesState
                   Expanded(
                     child: TextField(
                       controller: thatNumberEditController,
-                      keyboardType: TextInputType.number,
+                      keyboardType:
+                          TextInputType.numberWithOptions(decimal: true),
                     ),
                   ),
                 ],

@@ -54,6 +54,9 @@ class _NAddItemState extends State<NAddItem> {
                               width: 200,
                               child: TextField(
                                 controller: itemNameController,
+                                keyboardType: TextInputType.text,
+                                textCapitalization:
+                                    TextCapitalization.sentences,
                                 autofocus: true,
                               ),
                             ),

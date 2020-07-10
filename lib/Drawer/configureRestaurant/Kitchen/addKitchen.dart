@@ -72,6 +72,7 @@ class _AddDataState extends State<AddKitchen> {
                             ),
                           ),
                           keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.sentences,
                         ),
                       ),
                     ),
@@ -145,6 +146,11 @@ class _AddDataState extends State<AddKitchen> {
                                                         controller:
                                                             _kitchenNameEditController,
                                                         autofocus: true,
+                                                        keyboardType:
+                                                            TextInputType.text,
+                                                        textCapitalization:
+                                                            TextCapitalization
+                                                                .sentences,
                                                       ),
                                                     ),
                                                   ],
