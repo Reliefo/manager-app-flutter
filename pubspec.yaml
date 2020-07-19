@@ -16,6 +16,7 @@ dependencies:
   image_picker: ^0.6.7+2
   audioplayers: ^0.15.1
   socket_io_client: ^0.9.10
+  fluttertoast: ^7.0.1
 
 
 dev_dependencies:

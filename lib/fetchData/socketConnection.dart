@@ -7,6 +7,7 @@ import 'package:manager_app/data.dart';
 import 'package:manager_app/tabs.dart';
 import 'package:manager_app/url.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'session.dart';
 
@@ -165,7 +166,16 @@ class _SocketConnectionState extends State<SocketConnection> {
 //      }
 //    });
 //  }
-  bolo() {}
+  bolo() {
+//    FlutterToast.showToast(
+//        msg: "This is Center Short Toast",
+//        toastLength: Toast.LENGTH_SHORT,
+//        gravity: ToastGravity.CENTER,
+//        timeInSecForIosWeb: 1,
+//        backgroundColor: Colors.red,
+//        textColor: Colors.white,
+//        fontSize: 16.0);
+  }
 //  initSocket(String uri) async {
 //    print('hey from new init file');
 //
@@ -891,14 +901,11 @@ class _SocketConnectionState extends State<SocketConnection> {
       }
 
       var decoded = jsonDecode(data);
-      print("inside scanned update");
-      print(decoded);
+      print("a new user scanned");
 
 //      {_id: {$oid: 5ebbc03a58aabe0f1c7f1599}, _cls: User.TempUser, name: Venus_1,
 //      dine_in_history: [], current_table_id: 5eb41b91adb66da6f5312123, personal_cart: [],
 //      timestamp: {$date: 1589322567835}, planet: Venus, planet_no: 1, unique_id: 9a8269f2-881f-4$Venus_1}
-      print(decoded["current_table_id"]);
-      print(decoded["_id"]["\$oid"]);
 
       restaurant.tables.forEach((table) {
         Users selectedUser;
@@ -917,45 +924,52 @@ class _SocketConnectionState extends State<SocketConnection> {
   }
 
   fetchBilled(data) {
-    print("inside billing");
-    print(data);
+    setState(() {
+      if (data is Map) {
+        data = json.encode(data);
+      }
+      var decoded = jsonDecode(data);
+      print("inside billing");
+      print(decoded);
 //    print(data["order_history"].keys.toList());
 //todo: implement billing when requested from customer app
-    if (data["status"] == "billed") {
-      setState(() {
-        /////////////////////// add bill to history ///////////////////
-        RestaurantOrderHistory history =
-            RestaurantOrderHistory.fromJson(data["order_history"]);
+      if (decoded["status"] == "billed") {
+        setState(() {
+          /////////////////////// add bill to history ///////////////////
+          RestaurantOrderHistory history =
+              RestaurantOrderHistory.fromJson(decoded["order_history"]);
 
-        restaurant.orderHistory?.add(history);
+          restaurant.orderHistory?.add(history);
 
-        ///////////////////////  remove and clean ////////////////////
-        queueOrders?.removeWhere((order) => order.tableId == data["table_id"]);
+          ///////////////////////  remove and clean ////////////////////
+          queueOrders
+              ?.removeWhere((order) => order.tableId == decoded["table_id"]);
 
-        cookingOrders
-            ?.removeWhere((order) => order.tableId == data["table_id"]);
-        completedOrders
-            ?.removeWhere((order) => order.tableId == data["table_id"]);
-        restaurant.assistanceRequests
-            ?.removeWhere((request) => request.tableId == data["table_id"]);
+          cookingOrders
+              ?.removeWhere((order) => order.tableId == decoded["table_id"]);
+          completedOrders
+              ?.removeWhere((order) => order.tableId == decoded["table_id"]);
+          restaurant.assistanceRequests?.removeWhere(
+              (request) => request.tableId == decoded["table_id"]);
 
-        Tables billedTable;
-        restaurant.tables?.forEach((table) {
-          if (table.oid == data["table_id"]) {
-            print("table found");
-            billedTable = table;
-          }
+          Tables billedTable;
+          restaurant.tables?.forEach((table) {
+            if (table.oid == decoded["table_id"]) {
+              print("table found");
+              billedTable = table;
+            }
+          });
+
+          print("for each complete");
+          billedTable?.users?.clear();
+          print("user cleared");
+          billedTable?.queueCount = 0;
+          billedTable?.cookingCount = 0;
+          billedTable?.completedCount = 0;
         });
-
-        print("for each complete");
-        billedTable?.users?.clear();
-        print("user cleared");
-        billedTable?.queueCount = 0;
-        billedTable?.cookingCount = 0;
-        billedTable?.completedCount = 0;
-      });
-    }
-    print("table comp");
+      } else {}
+      print("table comp");
+    });
   }
 
   fetchRegisteredUsers(data) {
@@ -1048,8 +1062,6 @@ class _SocketConnectionState extends State<SocketConnection> {
       int queue = 0;
       var decoded = jsonDecode(data);
 
-      print(decoded);
-
       TableOrder order = TableOrder.fromJson(decoded);
 
       queueOrders.add(order);
@@ -1073,7 +1085,6 @@ class _SocketConnectionState extends State<SocketConnection> {
       }
       var decoded = jsonDecode(data);
       print("order updateds");
-      print(decoded);
       var selectedOrder;
 
       if (decoded['type'] == "cooking") {
@@ -1186,8 +1197,6 @@ class _SocketConnectionState extends State<SocketConnection> {
       }
       print("new assistanceReq");
       var decoded = jsonDecode(data);
-      print(decoded);
-      print(decoded['status']);
       if (decoded['status'] == "accepted") {
         acceptedAssistanceReq(decoded);
       } else if (decoded['status'] == "pending") {
