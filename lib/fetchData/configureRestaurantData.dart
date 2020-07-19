@@ -17,6 +17,15 @@ class RestaurantData extends ChangeNotifier {
 //    this.jsSocket,
   });
 
+  sendDataThroughSocket(String eventName, var encodedData) {
+    String socketPackage = "socketio";
+    if (socketPackage == "adhara") {
+      sockets['working'].emit(eventName, [encodedData]);
+    } else {
+      sockets['liqr'].emit(eventName, encodedData);
+    }
+  }
+
   sendConfiguredDataToBackend(Map<String, dynamic> localData, type) {
     var encode;
     String restaurantId = restaurant.restaurantId;
@@ -391,7 +400,7 @@ class RestaurantData extends ChangeNotifier {
 
     print(encode);
     //todo: get sockets from socket connection
-    sockets['working'].emit('configuring_restaurant', [encode]);
+    sendDataThroughSocket('configuring_restaurant', encode);
     print('uploded to cloud');
   }
 
@@ -400,7 +409,8 @@ class RestaurantData extends ChangeNotifier {
     print("test sending");
     encode = jsonEncode(data);
     print(encode);
-    sockets['working'].emit('register_your_people', [encode]);
+//    sockets['working'].emit('register_your_people', [encode]);
+    sendDataThroughSocket('register_your_people', encode);
   }
 
   billTheTable(data) {
@@ -408,12 +418,15 @@ class RestaurantData extends ChangeNotifier {
     print("test sending");
     encode = jsonEncode(data);
     print(encode);
-    sockets['working'].emit('bill_the_table', [encode]);
+//    sockets['working'].emit('bill_the_table', [encode]);
+    sendDataThroughSocket('bill_the_table', encode);
   }
 
   refreshAllData() {
-    sockets['working'].emit("fetch_rest_manager", [
-      jsonEncode({"restaurant_id": restaurant.restaurantId})
-    ]);
+//    sockets['working'].emit("fetch_rest_manager", [
+//      jsonEncode({"restaurant_id": restaurant.restaurantId})
+//    ]);
+    sendDataThroughSocket('fetch_rest_manager',
+        jsonEncode({"restaurant_id": restaurant.restaurantId}));
   }
 }

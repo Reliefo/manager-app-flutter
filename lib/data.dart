@@ -5,7 +5,7 @@ bool staffOrderHistoryDebug = false;
 bool kitchenStaffDebug = false;
 bool categoryDebug = false;
 bool menuFoodItemDebug = false;
-bool customizationDebug = true;
+bool customizationDebug = false;
 bool tableOrdersDebug = false;
 bool orderDebug = false;
 bool foodItemDebug = false;
@@ -89,7 +89,6 @@ class Restaurant {
         );
       });
     }
-
     if (debug) {
       print("Food menu added to restaurant object.!");
     }
@@ -607,7 +606,7 @@ class Category {
     if (category['description'] != null) {
       description = category['description'];
     }
-    print('added to category');
+//    print('added to category');
   }
 
 //  addFoodItem(foodItem) {
@@ -654,7 +653,7 @@ class MenuFoodItem {
   });
 
   MenuFoodItem.fromJson(Map<String, dynamic> json, addOnsMenu) {
-    print(json);
+//    print(json);
     if (json['_id']['\$oid'] != null) {
       oid = json['_id']['\$oid'];
     }
@@ -691,7 +690,7 @@ class MenuFoodItem {
   }
 
   MenuFoodItem.fromJsonForAddon(Map<String, dynamic> json) {
-    print(json);
+//    print(json);
     if (json['_id']['\$oid'] != null) {
       oid = json['_id']['\$oid'];
     }
@@ -796,7 +795,6 @@ class Customization {
 
   Customization.fromJson(
       Map<String, dynamic> json, List<MenuFoodItem> addOnsMenu) {
-    print('here custom');
     if (json['name'] != null) {
       name = json['name'];
     }
@@ -864,7 +862,6 @@ class Customization {
     if (customizationDebug) {
       print("add_ons added to customization ");
     }
-    print('here custom after');
   }
 
   Map<String, dynamic> toJson() {
@@ -1107,7 +1104,7 @@ class FoodItem {
           });
         }
         if (custom['customization_type'] == 'options') {
-          print("hey");
+//          print("hey");
         }
         if (custom['customization_type'] == 'add_ons') {
           custom['list_of_options']?.forEach((addOn) {
@@ -1325,12 +1322,12 @@ class RestaurantOrderHistory {
   });
 
   RestaurantOrderHistory.fromJson(Map<String, dynamic> json) {
-    print("order history");
-    print(json.keys.toList());
-//
-    print(json['bill_structure']);
-    print(json['timestamp']);
-    print(json['pdf']);
+//    print("order history");
+//    print(json.keys.toList());
+////
+//    print(json['bill_structure']);
+//    print(json['timestamp']);
+//    print(json['pdf']);
 
     if (json['_id']['\$oid'] != null) {
       oid = json['_id']['\$oid'];
@@ -1422,9 +1419,9 @@ class Bill {
   });
 //  {Pre-Tax Amount: 870.0, Total Tax: 8.5, Total Amount: 943.95}
   Bill.fromJson(Map<String, dynamic> json) {
-    print(json['Pre-Tax Amount'].runtimeType);
-    print(json['Taxes'].runtimeType);
-    print(json['Total Amount'].runtimeType);
+//    print(json['Pre-Tax Amount'].runtimeType);
+//    print(json['Taxes'].runtimeType);
+//    print(json['Total Amount'].runtimeType);
 
     if (json['Pre-Tax Amount'] != null) {
       if (json['Pre-Tax Amount'].runtimeType == int) {
@@ -1457,8 +1454,8 @@ class Kitchen {
   });
 
   Kitchen.fromJson(Map<String, dynamic> json) {
-    print('kitchen json');
-    print(json.keys.toList());
+//    print('kitchen json');
+//    print(json.keys.toList());
 
     if (json['_id']['\$oid'] != null) {
       oid = json['_id']['\$oid'];

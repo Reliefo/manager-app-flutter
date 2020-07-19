@@ -138,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
     await data.setString('restaurantId', restaurantIdToSave);
     await data.setString('managerName', managerNameToSave);
 
-    print("Saved tokens to storage");
+//    print("Saved tokens to storage");
   }
 
   String validatePassword(String value) {
@@ -166,8 +166,6 @@ class _LoginPageState extends State<LoginPage> {
     if (_key.currentState.validate()) {
       // No any error in validation
       _key.currentState.save();
-      print("Username $username");
-      print("Password $password");
 
       _makePostRequest(loginUrl, username, password);
     } else {
@@ -186,17 +184,11 @@ class _LoginPageState extends State<LoginPage> {
       "app": "manager",
     };
     // make POST request
-    print("json $data");
     http.Response response = await http.post(url, body: data);
     // check the status code for the result
     int statusCode = response.statusCode;
     // this API passes back the id of the new item added to the body
     var decoded = json.decode(response.body);
-    print("status code");
-
-    print(statusCode);
-    print("response");
-    print(decoded);
 
     if (statusCode == 200) {
       setState(() {

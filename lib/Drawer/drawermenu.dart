@@ -168,9 +168,11 @@ class _DrawerMenuState extends State<DrawerMenu> {
             ],
           ),
           onPressed: () {
-            widget.sockets['working'].emit("fetch_rest_manager", [
-              jsonEncode({"restaurant_id": widget.restaurant.restaurantId})
-            ]);
+//            widget.sockets['working'].emit("fetch_rest_manager", [
+//              jsonEncode({"restaurant_id": widget.restaurant.restaurantId})
+//            ]);
+            widget.sockets['liqr'].emit("fetch_rest_manager",
+                jsonEncode({"restaurant_id": widget.restaurant.restaurantId}));
           },
         ),
         Divider(),
