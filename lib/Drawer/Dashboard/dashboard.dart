@@ -45,9 +45,9 @@ class _DashboardState extends State<Dashboard> {
 // end date-time next day(midnight) 3 am
     endTime = DateTime(now.year, now.month, now.day + 1, 3);
 
-    print("current Day Sales");
-    print(startTime);
-    print(endTime);
+//    print("current Day Sales");
+//    print(startTime);
+//    print(endTime);
     setState(() {
       currentDaySales = calculateSales(startTime, endTime);
 
@@ -57,15 +57,9 @@ class _DashboardState extends State<Dashboard> {
 
   calculateRecentSales() {
     recentSales.clear();
-    print("resent dateslll");
     for (var i = 0; i < 8; ++i) {
       DateTime startTime = DateTime(now.year, now.month, now.day - i, 9);
       DateTime endTime = DateTime(now.year, now.month, now.day + 1 - i, 3);
-
-      print("resent dates");
-
-      print(startTime);
-      print(endTime);
 
       Map<String, int> value = calculateSales(startTime, endTime);
       setState(() {
@@ -80,9 +74,9 @@ class _DashboardState extends State<Dashboard> {
 
     startTime = DateTime(now.year, now.month, now.day - now.weekday + 1, 9);
     endTime = DateTime.now();
-    print("currentWeekSales");
-    print(startTime);
-    print(endTime);
+//    print("currentWeekSales");
+//    print(startTime);
+//    print(endTime);
 
     setState(() {
       currentWeekSales = calculateSales(startTime, endTime);
@@ -96,9 +90,9 @@ class _DashboardState extends State<Dashboard> {
 
     startTime = DateTime(now.year, now.month, now.day - now.weekday - 6, 9);
     endTime = DateTime(startTime.year, startTime.month, startTime.day + 7, 3);
-    print("LastWeekSales");
-    print(startTime);
-    print(endTime);
+//    print("LastWeekSales");
+//    print(startTime);
+//    print(endTime);
 
     setState(() {
       lastWeekSales = calculateSales(startTime, endTime);
@@ -118,9 +112,9 @@ class _DashboardState extends State<Dashboard> {
       now.hour,
       now.minute,
     );
-    print("currentMonthSales");
-    print(startTime);
-    print(endTime);
+//    print("currentMonthSales");
+//    print(startTime);
+//    print(endTime);
 
     setState(() {
       currentMonthSales = calculateSales(startTime, endTime);
@@ -134,9 +128,9 @@ class _DashboardState extends State<Dashboard> {
 
     startTime = DateTime(now.year, now.month - 1, 1, 9);
     endTime = DateTime(now.year, now.month, 1, 3);
-    print("lastMonthSales");
-    print(startTime);
-    print(endTime);
+//    print("lastMonthSales");
+//    print(startTime);
+//    print(endTime);
     setState(() {
       lastMonthSales = calculateSales(startTime, endTime);
       lastMonthHistory = getRestaurantOrderHistory(startTime, endTime);
@@ -149,18 +143,13 @@ class _DashboardState extends State<Dashboard> {
     double totalAmount = 0;
 
     orderHistory?.forEach((order) {
-      print("hereeee");
       if (order.timeStamp.isAfter(startTime) &&
           order.timeStamp.isBefore(endTime)) {
         preTaxAmount += order.bill.preTaxAmount;
-        print("coming");
         totalTax += order.bill.totalTax;
-        print("coming1");
         totalAmount += order.bill.totalAmount;
       }
     });
-    print("total sales");
-    print(totalAmount);
     return {
       "preTaxAmount": preTaxAmount.round(),
       "totalTax": totalTax.round(),

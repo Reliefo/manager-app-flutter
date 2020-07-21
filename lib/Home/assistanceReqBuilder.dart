@@ -11,8 +11,8 @@ class AssistanceRequestBuilder extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    print("assistance");
-    print(requestList);
+//    print("assistance");
+//    print(requestList);
     return ListView.builder(
       itemCount: requestList.length,
       shrinkWrap: true,
