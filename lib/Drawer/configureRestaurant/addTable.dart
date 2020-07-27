@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:manager_app/constants.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AddData extends StatefulWidget {
   @override
@@ -106,6 +107,14 @@ class _AddDataState extends State<AddData> {
         ],
       ),
     );
+  }
+
+  _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   _sendTableToBackend(restaurantData) {
@@ -345,6 +354,20 @@ class _AddDataState extends State<AddData> {
                                                 );
                                               },
                                             );
+                                          },
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: FlatButton(
+                                          child: Text(
+                                            "QR Code",
+                                            style: kBlueButtonStyle,
+                                          ),
+                                          onPressed: () {
+                                            _launchURL(restaurantData
+                                                .restaurant
+                                                .tables[index - 1]
+                                                .qr_code_link);
                                           },
                                         ),
                                       ),

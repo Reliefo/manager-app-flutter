@@ -239,6 +239,7 @@ class Restaurant {
 class Tables {
   String oid;
   String name;
+  String qr_code_link;
   String seats;
   List<Staff> staff;
   List<Users> users = [];
@@ -255,6 +256,7 @@ class Tables {
   Tables({
     this.oid,
     this.name,
+    this.qr_code_link,
     this.seats,
     this.staff,
     this.users,
@@ -271,6 +273,9 @@ class Tables {
 
     if (json['name'] != null) {
       name = json['name'];
+    }
+    if (json['qr_code_link'] != null) {
+      qr_code_link = json['qr_code_link'];
     }
 
     if (json['seats'] != null) {
