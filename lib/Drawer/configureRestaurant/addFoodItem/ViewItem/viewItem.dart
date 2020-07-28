@@ -120,6 +120,30 @@ class _ViewItemState extends State<ViewItem> {
     }, "visibility_food_item");
   }
 
+  String findLowestPriceAndSetPriceField(restaurantData){
+    double min = double.maxFinite;
+    editCustomizations?.forEach((customization) {
+      customization.options.forEach((option){
+        option.forEach((k,v) {
+          if(k == "option_price"){
+            if(v < min) min = v;
+          }
+        });
+      });
+    });
+    newCustomizations?.forEach((customization) {
+      customization.options.forEach((option){
+        option.forEach((k,v) {
+          if(k == "option_price"){
+            double temp = double.parse(v);
+            if(temp < min) min = temp;
+          }
+        });
+      });
+    });
+    String minimum = min.toInt().toString() + '+';
+    return minimum;
+  }
   Widget editPriceButton(restaurantData) {
 //    print(widget.foodItem.foodOption);
     if (editCustomizations != null) {
@@ -501,7 +525,7 @@ class _ViewItemState extends State<ViewItem> {
 
   @override
   Widget build(BuildContext context) {
-    print(context);
+    //print(context);
     final RestaurantData restaurantData = Provider.of<RestaurantData>(context);
 
     addEditChoiceOption(restaurantData);
@@ -1147,8 +1171,8 @@ class _ViewItemState extends State<ViewItem> {
                               "editing_fields": {"customization": dataToBackend}
                             }, "edit_food_item");
                             newCustomizations.clear();
+                            widget.foodItem.price = findLowestPriceAndSetPriceField(restaurantData);
                           }
-
                           Navigator.of(context).pop(); // To close the dialog
                         },
                         child: Text(
@@ -1217,11 +1241,11 @@ class _ViewItemState extends State<ViewItem> {
                             choice[index2] = foodChoiceEditController.text;
                           });
 
-                          print("kkk");
+                          //print("kkk");
 
                           customizationToMap();
 
-                          print(dataToBackend);
+                          //print(dataToBackend);
 
                           if (foodChoiceEditController.text.isNotEmpty) {
                             restaurantData.sendConfiguredDataToBackend({
@@ -1231,6 +1255,7 @@ class _ViewItemState extends State<ViewItem> {
                             }, "edit_food_item");
 
                             foodChoiceEditController.clear();
+                            widget.foodItem.price = findLowestPriceAndSetPriceField(restaurantData);
                           }
 
                           Navigator.of(context).pop(); // To close the dialog
