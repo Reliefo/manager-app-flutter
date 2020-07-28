@@ -5,6 +5,8 @@ import 'package:manager_app/constants.dart';
 import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 
 class NAddItem extends StatefulWidget {
   final Category category;
@@ -86,11 +88,20 @@ class _NAddItemState extends State<NAddItem> {
                                       "name": itemNameController.text,
                                     },
                                   }, "add_food_item");
-
                                   itemNameController.clear();
+                                  Navigator.of(context).pop();
                                 }
-
-                                Navigator.of(context).pop();
+                                else{
+                                  Fluttertoast.showToast(
+                                      msg: "Please enter name",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 16.0
+                                  );
+                                }
 
 //                                if (widget.category.foodList != null) {
 //                                  Navigator.push(
