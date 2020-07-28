@@ -2,6 +2,7 @@ import 'package:custom_switch/custom_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:manager_app/constants.dart';
 import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
@@ -506,215 +507,236 @@ class _ViewItemState extends State<ViewItem> {
     addEditChoiceOption(restaurantData);
     getAvailableAddOns(restaurantData);
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(widget.foodItem.name),
-          backgroundColor: kThemeColor,
-        ),
-        body: Container(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.3,
-                              height: MediaQuery.of(context).size.height * 0.3,
-                              color: Colors.blue,
-                            ),
-                            Expanded(
-                              child: Column(
-                                children: <Widget>[
-                                  switchStatus == true
-                                      ? Text(
-                                          "This Item is visible in Menu",
-                                          textAlign: TextAlign.center,
-                                          style: kHeaderStyleSmall,
-                                        )
-                                      : Text(
-                                          "This Item is Not visible in Menu",
-                                          textAlign: TextAlign.center,
-                                          style: kHeaderStyleSmall,
-                                        ),
-                                  SizedBox(height: 12.0),
-                                  CustomSwitch(
-                                    activeColor: Colors.green,
-                                    value: widget.foodItem.visibility,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        switchStatus = value;
-                                      });
-                                      updateVisibilityToBackend(restaurantData);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 12),
-                          child: Column(
+    return new WillPopScope(
+      onWillPop: () async {
+          // You can do some work here.
+          // Returning true allows the pop to happen, returning false prevents it.
+          if(widget.foodItem.price == null) {
+            Fluttertoast.showToast(
+                msg: 'Please set the price',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.white,
+                textColor: Colors.black,
+                fontSize: 16.0
+            );
+            return false;
+          }
+          else{
+            return true;
+          }
+        },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(widget.foodItem.name),
+            backgroundColor: kThemeColor,
+          ),
+          body: Container(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    "Item Name : ",
-                                    textAlign: TextAlign.left,
-                                    style: kHeaderStyleSmall,
-                                  ),
-                                  SizedBox(width: 24),
-                                  IconButton(
-                                    icon: Icon(Icons.edit),
-                                    onPressed: () {
-                                      editItemName(restaurantData);
-                                    },
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 12),
                               Container(
-                                child: Text(
-                                  widget.foodItem.name,
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                height: MediaQuery.of(context).size.height * 0.3,
+                                color: Colors.blue,
+                              ),
+                              Expanded(
+                                child: Column(
+                                  children: <Widget>[
+                                    switchStatus == true
+                                        ? Text(
+                                            "This Item is visible in Menu",
+                                            textAlign: TextAlign.center,
+                                            style: kHeaderStyleSmall,
+                                          )
+                                        : Text(
+                                            "This Item is Not visible in Menu",
+                                            textAlign: TextAlign.center,
+                                            style: kHeaderStyleSmall,
+                                          ),
+                                    SizedBox(height: 12.0),
+                                    CustomSwitch(
+                                      activeColor: Colors.green,
+                                      value: widget.foodItem.visibility,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          switchStatus = value;
+                                        });
+                                        updateVisibilityToBackend(restaurantData);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Text(
+                                      "Item Name : ",
+                                      textAlign: TextAlign.left,
+                                      style: kHeaderStyleSmall,
+                                    ),
+                                    SizedBox(width: 24),
+                                    IconButton(
+                                      icon: Icon(Icons.edit),
+                                      onPressed: () {
+                                        editItemName(restaurantData);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 12),
+                                Container(
+                                  child: Text(
+                                    widget.foodItem.name,
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontFamily: 'Poppins',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Text(
+                                      "Description : ",
+                                      textAlign: TextAlign.left,
+                                      style: kHeaderStyleSmall,
+                                    ),
+                                    SizedBox(width: 24),
+                                    IconButton(
+                                      icon: Icon(Icons.edit),
+                                      onPressed: () {
+                                        editItemDescription(restaurantData);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 12),
+                                Text(
+                                  widget.foodItem.description ?? "",
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontSize: 16.0,
                                     fontFamily: 'Poppins',
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    "Description : ",
-                                    textAlign: TextAlign.left,
-                                    style: kHeaderStyleSmall,
-                                  ),
-                                  SizedBox(width: 24),
-                                  IconButton(
-                                    icon: Icon(Icons.edit),
-                                    onPressed: () {
-                                      editItemDescription(restaurantData);
-                                    },
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 12),
-                              Text(
-                                widget.foodItem.description ?? "",
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontFamily: 'Poppins',
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Text(
+                                      "Price : ",
+                                      textAlign: TextAlign.left,
+                                      style: kHeaderStyleSmall,
+                                    ),
+                                    SizedBox(width: 24),
+                                    editPriceButton(restaurantData),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    "Price : ",
-                                    textAlign: TextAlign.left,
-                                    style: kHeaderStyleSmall,
+                                SizedBox(height: 12),
+                                Text(
+                                  widget.foodItem.price ?? "",
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontFamily: 'Poppins',
                                   ),
-                                  SizedBox(width: 24),
-                                  editPriceButton(restaurantData),
-                                ],
-                              ),
-                              SizedBox(height: 12),
-                              Text(
-                                widget.foodItem.price ?? "",
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontFamily: 'Poppins',
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              VerticalDivider(),
-              widget.showCustomization == true
-                  ? Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: <Widget>[
-                            RaisedButton(
-                              child: Text("Add new customization list + "),
-                              onPressed: () {
-                                showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    // return object of type Dialog
-                                    return NewCustomization(
-                                      restaurantData: restaurantData,
-                                      newCustomizations: newCustomizations,
-                                      addEditChoiceOption: addEditChoiceOption,
-                                    );
-                                  },
-                                );
-                              },
-                            ),
-                            editCustomizations != null
-                                ? ListView.builder(
-                                    primary: false,
-                                    shrinkWrap: true,
-                                    itemCount: editCustomizations.length,
-                                    itemBuilder: (context, index) {
-                                      return Column(
-                                        children: <Widget>[
-                                          getLayout(
-                                            restaurantData,
-                                            editCustomizations[index],
-                                          ),
-                                        ],
+                VerticalDivider(),
+                widget.showCustomization == true
+                    ? Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: <Widget>[
+                              RaisedButton(
+                                child: Text("Add new customization list + "),
+                                onPressed: () {
+                                  showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      // return object of type Dialog
+                                      return NewCustomization(
+                                        restaurantData: restaurantData,
+                                        newCustomizations: newCustomizations,
+                                        addEditChoiceOption: addEditChoiceOption,
                                       );
-                                    })
-                                : Container(
-                                    child: Text("no customization"),
-                                  ),
-                          ],
+                                    },
+                                  );
+                                },
+                              ),
+                              editCustomizations != null
+                                  ? ListView.builder(
+                                      primary: false,
+                                      shrinkWrap: true,
+                                      itemCount: editCustomizations.length,
+                                      itemBuilder: (context, index) {
+                                        return Column(
+                                          children: <Widget>[
+                                            getLayout(
+                                              restaurantData,
+                                              editCustomizations[index],
+                                            ),
+                                          ],
+                                        );
+                                      })
+                                  : Container(
+                                      child: Text("no customization"),
+                                    ),
+                            ],
+                          ),
                         ),
+                      )
+                    : Expanded(
+                        child: Container(child: Text("*")),
                       ),
-                    )
-                  : Expanded(
-                      child: Container(child: Text("*")),
-                    ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -1295,6 +1317,7 @@ class _ViewItemState extends State<ViewItem> {
           );
         });
   }
+
 }
 
 class EditCustomizationPreferences extends StatefulWidget {

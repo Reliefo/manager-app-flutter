@@ -401,7 +401,7 @@ class RestaurantData extends ChangeNotifier {
     print(encode);
     //todo: get sockets from socket connection
     sendDataThroughSocket('configuring_restaurant', encode);
-    print('uploded to cloud');
+    print('uploaded to cloud');
   }
 
   sendStaffRegistrationToBackend(data) {
