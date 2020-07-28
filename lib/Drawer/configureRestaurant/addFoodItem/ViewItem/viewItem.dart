@@ -673,7 +673,7 @@ class _ViewItemState extends State<ViewItem> {
                         child: Column(
                           children: <Widget>[
                             RaisedButton(
-                              child: Text("Add New customization + "),
+                              child: Text("Add new customization list + "),
                               onPressed: () {
                                 showDialog(
                                   barrierDismissible: false,

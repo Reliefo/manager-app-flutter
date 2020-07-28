@@ -4,6 +4,8 @@ version: 0.0.16
 
 environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
+#  sdk: ">=2.9.0-14.1.beta <3.0.0"
+
 
 dependencies:
   flutter:
@@ -16,6 +18,7 @@ dependencies:
   image_picker: ^0.6.7+2
   audioplayers: ^0.15.1
   socket_io_client: ^0.9.10
+  url_launcher: ^5.5.0
   fluttertoast: ^7.0.1
 
 

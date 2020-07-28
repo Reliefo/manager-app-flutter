@@ -242,6 +242,7 @@ class _SocketConnectionState extends State<SocketConnection> {
     // Dart client
     IO.Socket socket = IO.io("https://liqr.cc/reliefo", <String, dynamic>{
       'transports': ['websocket'],
+//      'transports': ['polling'],
       'extraHeaders': {'Authorization': 'Bearer ' + widget.jwt} // optional
     });
     socket.on('connect', (_) {
@@ -973,14 +974,19 @@ class _SocketConnectionState extends State<SocketConnection> {
   }
 
   fetchRegisteredUsers(data) {
+    if (data is Map) {
+      data = json.encode(data);
+    }
+    var decoded = jsonDecode(data);
     print("registered users");
+    print(decoded);
 
 //    {auth_username: MID001, restaurant_name: House of Commons, user_type: staff,
 //    object_id: 5ead65e1e1823a4f213257af, name: Kunal, username: SIDHOUKUN0,
 //    password: SIDHOUKUN128, status: Registration successful}
 
     setState(() {
-      registeredUser = data;
+      registeredUser = decoded;
     });
   }
 

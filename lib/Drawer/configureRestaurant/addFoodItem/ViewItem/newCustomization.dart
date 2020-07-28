@@ -28,6 +28,8 @@ class _NewCustomizationState extends State<NewCustomization> {
   ];
   Map<String, dynamic> selectedVal;
 
+  bool _customizationListValidate = true;
+
   ///////////////////////////////////////
   final nameController = TextEditingController();
   final thatNumberController = TextEditingController();
@@ -94,7 +96,7 @@ class _NewCustomizationState extends State<NewCustomization> {
         borderRadius: BorderRadius.circular(20),
       ),
       title: Text(
-        "New customization",
+        "New customization list",
         style: kHeaderStyleSmall,
       ),
       content: SingleChildScrollView(
@@ -110,6 +112,9 @@ class _NewCustomizationState extends State<NewCustomization> {
                   Expanded(
                     child: TextField(
                       controller: nameController,
+                      decoration: InputDecoration(
+                        errorText: _customizationListValidate ? null : 'Value Can\'t Be Empty',
+                      ),
                     ),
                   ),
                 ],
@@ -221,6 +226,8 @@ class _NewCustomizationState extends State<NewCustomization> {
                     onPressed: () {
                       print(" selected customizationType :");
                       print(customizationType);
+
+                      print(nameController.text);
                       var temp;
                       if (customizationType == "add_ons") {
                         temp = {
@@ -243,12 +250,20 @@ class _NewCustomizationState extends State<NewCustomization> {
                             temp, widget.restaurantData.restaurant.addOnsMenu);
                         setState(() {
                           widget.newCustomizations.add(newCustom);
+                          _customizationListValidate = true;
                         });
                         widget.addEditChoiceOption(widget.restaurantData);
+                        // To close the dialog
+                        Navigator.of(context).pop();
+                      }
+                      else{
+                        setState(() {
+                          _customizationListValidate = false;
+                        });
                       }
 
-                      Navigator.of(context).pop();
-                      // To close the dialog
+
+
                     },
                   ),
                 ],
