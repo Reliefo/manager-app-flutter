@@ -56,6 +56,11 @@ const kGreenButtonStyle = TextStyle(
 
 const kBlueButtonStyle = TextStyle(
   color: Colors.blue,
+  fontSize: 30.0,
+  fontFamily: "Poppins",
+);
+const downloadTheBill = TextStyle(
+  fontSize: 20.0,
   fontFamily: "Poppins",
 );
 
