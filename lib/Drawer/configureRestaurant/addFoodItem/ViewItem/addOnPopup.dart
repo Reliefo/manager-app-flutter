@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:manager_app/constants.dart';
 import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
+import 'package:manager_app/Drawer/configureRestaurant/addOns.dart';
 
 class AddOnPopup extends StatefulWidget {
   final List<MenuFoodItem> availableAddOns;
@@ -45,20 +46,45 @@ class _AddOnPopupState extends State<AddOnPopup> {
     print("add ons");
     print(widget.addOns);
 
-    return AlertDialog(
+    return Dialog(
+
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
-      title: Text(
-        "Select Add-Ons",
-        style: kHeaderStyleSmall,
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min, // To make the card compact
+
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(10.0,0,10.0,0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text('Add-Ons',textAlign: TextAlign.left,),
+                FlatButton(
+                  child: Text(
+                    "Edit",
+                    //textDirection: TextDirection.rtl,
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddOnsMenu(),
+                      ),
+                    );
+                    //Navigator.of(context).pop(); // To close the dialog
+                  },
+                ),
+              ],
+            ),
+          ),
           Container(
-            width: 350,
-            height: 350,
+            width: 300,
+            height: 150,
             child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: widget.availableAddOns.length,
@@ -80,7 +106,8 @@ class _AddOnPopupState extends State<AddOnPopup> {
                 }),
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               FlatButton(
                 child: Text(
@@ -98,9 +125,7 @@ class _AddOnPopupState extends State<AddOnPopup> {
                 ),
                 onPressed: () {
                   getSelectedAddOns();
-
                   widget.sendAdonsData(widget.restaurantData);
-
                   Navigator.of(context).pop(); // To close the dialog
                 },
               ),
