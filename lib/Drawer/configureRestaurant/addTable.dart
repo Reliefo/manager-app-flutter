@@ -29,7 +29,12 @@ class _AddDataState extends State<AddData> {
   Widget addNewTable(restaurantData) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.black12,
+        border: new Border.all(
+            color: Colors.green,
+            width: 2.0,
+            style: BorderStyle.solid
+        ),
+        color: Colors.white,
         borderRadius: BorderRadius.all(
           Radius.circular(15.0),
         ),
