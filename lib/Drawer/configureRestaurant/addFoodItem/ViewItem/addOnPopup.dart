@@ -10,6 +10,7 @@ class AddOnPopup extends StatefulWidget {
   final addOns;
   final Function sendAdonsData;
   final RestaurantData restaurantData;
+
   AddOnPopup({
     @required this.restaurantData,
     @required this.availableAddOns,
@@ -17,12 +18,14 @@ class AddOnPopup extends StatefulWidget {
     @required this.addOns,
     @required this.sendAdonsData,
   });
+
   @override
   _AddOnPopupState createState() => _AddOnPopupState();
 }
 
 class _AddOnPopupState extends State<AddOnPopup> {
   List<String> selectedAddOns = [];
+
   getSelectedAddOns() {
     widget.availableAddOnsValues.forEach((addOnId, val) {
       if (val == true) {
@@ -47,31 +50,31 @@ class _AddOnPopupState extends State<AddOnPopup> {
     print(widget.addOns);
 
     return Dialog(
-
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
-
       child: Container(
-        width :500,
+        width: 500,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.fromLTRB(50.0,0,10.0,0),
+              padding: const EdgeInsets.fromLTRB(50.0, 0, 10.0, 0),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Expanded(child:
-                  Text('Add-Ons',
+                  Expanded(
+                      child: Text(
+                    'Add-Ons',
                     textAlign: TextAlign.left,
                     style: TextStyle(fontWeight: FontWeight.bold),
-      )),
+                  )),
                   Expanded(
-                    child: OutlineButton(
-                      shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10.0)),
+                    child: RaisedButton(
+                      shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(10.0)),
                       child: Text(
                         "Edit",
                         //textDirection: TextDirection.rtl,
@@ -118,29 +121,30 @@ class _AddOnPopupState extends State<AddOnPopup> {
               //mainAxisAlignment: MainAxisAlignment.spaceAround,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-              Expanded(
-              child: FlatButton(
-                          child: Text(
-                            "Cancel",
-                            style: TextStyle(color: Colors.red),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop(); // To close the dialog
-                          },
-                        ),
-              ),
                 Expanded(
-                  child:FlatButton(
-                  child: Text(
-                    "Done",
-                    style: TextStyle(color: Colors.green),
+                  child: FlatButton(
+                    child: Text(
+                      "Cancel",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(); // To close the dialog
+                    },
                   ),
-                  onPressed: () {
-                    getSelectedAddOns();
-                    widget.sendAdonsData(widget.restaurantData);
-                    Navigator.of(context).pop(); // To close the dialog
-                  },
-                ),),
+                ),
+                Expanded(
+                  child: FlatButton(
+                    child: Text(
+                      "Done",
+                      style: TextStyle(color: Colors.green),
+                    ),
+                    onPressed: () {
+                      getSelectedAddOns();
+                      widget.sendAdonsData(widget.restaurantData);
+                      Navigator.of(context).pop(); // To close the dialog
+                    },
+                  ),
+                ),
               ],
             )
           ],
