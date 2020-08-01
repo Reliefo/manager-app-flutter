@@ -52,86 +52,99 @@ class _AddOnPopupState extends State<AddOnPopup> {
         borderRadius: BorderRadius.circular(20),
       ),
 
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(10.0,0,10.0,0),
-            child: Row(
+      child: Container(
+        width :500,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(50.0,0,10.0,0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Expanded(child:
+                  Text('Add-Ons',
+                    textAlign: TextAlign.left,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+      )),
+                  Expanded(
+                    child: OutlineButton(
+                      shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10.0)),
+                      child: Text(
+                        "Edit",
+                        //textDirection: TextDirection.rtl,
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddOnsMenu(),
+                          ),
+                        );
+                        //Navigator.of(context).pop(); // To close the dialog
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 300,
+              height: 150,
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: widget.availableAddOns.length,
+                  itemBuilder: (context, index) {
+                    return CheckboxListTile(
+                        title: Text(
+                          widget.availableAddOns[index].name,
+                          textAlign: TextAlign.left,
+                          style: kTitleStyle,
+                        ),
+                        value: widget.availableAddOnsValues[
+                            "${widget.availableAddOns[index].oid}"],
+                        onChanged: (bool val) {
+                          setState(() {
+                            widget.availableAddOnsValues[
+                                "${widget.availableAddOns[index].oid}"] = val;
+                          });
+                        });
+                  }),
+            ),
+            Row(
+              //mainAxisAlignment: MainAxisAlignment.spaceAround,
               mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text('Add-Ons',textAlign: TextAlign.left,),
-                FlatButton(
+              Expanded(
+              child: FlatButton(
+                          child: Text(
+                            "Cancel",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop(); // To close the dialog
+                          },
+                        ),
+              ),
+                Expanded(
+                  child:FlatButton(
                   child: Text(
-                    "Edit",
-                    //textDirection: TextDirection.rtl,
-                    style: TextStyle(color: Colors.grey),
+                    "Done",
+                    style: TextStyle(color: Colors.green),
                   ),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AddOnsMenu(),
-                      ),
-                    );
-                    //Navigator.of(context).pop(); // To close the dialog
+                    getSelectedAddOns();
+                    widget.sendAdonsData(widget.restaurantData);
+                    Navigator.of(context).pop(); // To close the dialog
                   },
-                ),
+                ),),
               ],
-            ),
-          ),
-          Container(
-            width: 300,
-            height: 150,
-            child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: widget.availableAddOns.length,
-                itemBuilder: (context, index) {
-                  return CheckboxListTile(
-                      title: Text(
-                        widget.availableAddOns[index].name,
-                        textAlign: TextAlign.left,
-                        style: kTitleStyle,
-                      ),
-                      value: widget.availableAddOnsValues[
-                          "${widget.availableAddOns[index].oid}"],
-                      onChanged: (bool val) {
-                        setState(() {
-                          widget.availableAddOnsValues[
-                              "${widget.availableAddOns[index].oid}"] = val;
-                        });
-                      });
-                }),
-          ),
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.spaceAround,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              FlatButton(
-                child: Text(
-                  "Cancel",
-                  style: TextStyle(color: Colors.red),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop(); // To close the dialog
-                },
-              ),
-              FlatButton(
-                child: Text(
-                  "Done",
-                  style: TextStyle(color: Colors.green),
-                ),
-                onPressed: () {
-                  getSelectedAddOns();
-                  widget.sendAdonsData(widget.restaurantData);
-                  Navigator.of(context).pop(); // To close the dialog
-                },
-              ),
-            ],
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
