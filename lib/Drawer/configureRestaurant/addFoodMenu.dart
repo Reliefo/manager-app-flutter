@@ -244,6 +244,7 @@ class _AddFoodMenuState extends State<AddFoodMenu> {
                                                 .foodMenu[index].description ??
                                             "",
                                         style: kSubTitleStyle,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                       onTap: () {
                                         Navigator.push(

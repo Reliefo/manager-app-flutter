@@ -28,7 +28,7 @@ class ViewItem extends StatefulWidget {
 
 class _ViewItemState extends State<ViewItem> {
   bool switchStatus = true;
-
+  bool showPriceEditButton = true;
   int radioItemVal;
 
   List<Customization> editCustomizations = [];
@@ -49,6 +49,14 @@ class _ViewItemState extends State<ViewItem> {
     if (widget.foodItem.customizations != null) {
       widget.foodItem.customizations.forEach((customization) {
         editCustomizations.add(customization);
+        if(customization.customizationType == "options"){
+            setState(() {
+              showPriceEditButton = false;
+            });
+        }
+        //add_ons, choices, options
+        //choices is options without price
+        //options is options with price
       });
     }
 
@@ -145,24 +153,17 @@ class _ViewItemState extends State<ViewItem> {
     return minimum;
   }
   Widget editPriceButton(restaurantData) {
-//    print(widget.foodItem.foodOption);
-    if (editCustomizations != null) {
-      if (editCustomizations.isEmpty) {
-        return IconButton(
-          icon: Icon(Icons.edit),
-          onPressed: () {
-            editItemPrice(restaurantData);
-          },
-        );
-      } else
-        return Container(width: 0, height: 0);
-    } else
+    if(showPriceEditButton == true){
       return IconButton(
         icon: Icon(Icons.edit),
         onPressed: () {
           editItemPrice(restaurantData);
         },
       );
+    }
+    else{
+      return Container(width: 0, height: 0);
+    }
   }
 
   Widget getLayout(restaurantData, Customization customization) {
@@ -460,6 +461,7 @@ class _ViewItemState extends State<ViewItem> {
                     }
                   });
                   editCustomizations.remove(toRemove);
+                  refreshPriceEditButton();
 
                   customizationToMap();
                   restaurantData.sendConfiguredDataToBackend({
@@ -536,15 +538,7 @@ class _ViewItemState extends State<ViewItem> {
           // You can do some work here.
           // Returning true allows the pop to happen, returning false prevents it.
           if(widget.foodItem.price == null) {
-            Fluttertoast.showToast(
-                msg: 'Please set the price',
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-                timeInSecForIosWeb: 1,
-                backgroundColor: Colors.red,
-                textColor: Colors.white,
-                fontSize: 16.0
-            );
+            confirmExit();
             return false;
           }
           else{
@@ -1341,6 +1335,49 @@ class _ViewItemState extends State<ViewItem> {
             ),
           );
         });
+  }
+
+  Widget confirmExit(){
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Text("Price is not set for this item, do you want to go back to the menu page?"),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Cancel"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+
+              FlatButton(
+                child: Text("Yes"),
+                onPressed: () {
+                  //Put your code here which you want to execute on No button click.
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  void refreshPriceEditButton() {
+    bool flag = true;
+    editCustomizations?.forEach((customization) {
+      if(customization.customizationType == "options"){
+          flag = false;
+      }
+      //add_ons, choices, options
+      //choices is options without price
+      //options is options with price
+    });
+    setState(() {
+      showPriceEditButton = flag;
+    });
   }
 
 }

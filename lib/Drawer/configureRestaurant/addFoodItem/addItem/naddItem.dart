@@ -90,16 +90,6 @@ class _NAddItemState extends State<NAddItem> {
                                   }, "add_food_item");
                                   itemNameController.clear();
                                   Navigator.of(context).pop();
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ViewItem(
-                                        showCustomization: true,
-                                        menuType: widget.menuType,
-                                        foodItem: widget.category.foodList[widget.category.foodList.length - 1],
-                                      ),
-                                    ),
-                                  );
                                 }
                                 else{
                                   Fluttertoast.showToast(
