@@ -5,8 +5,8 @@ import 'package:manager_app/constants.dart';
 import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:provider/provider.dart';
+import 'dart:async';
 import 'package:fluttertoast/fluttertoast.dart';
-
 
 class NAddItem extends StatefulWidget {
   final Category category;
@@ -79,7 +79,7 @@ class _NAddItemState extends State<NAddItem> {
                               ),
                             ),
                             FlatButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 if (itemNameController.text.isNotEmpty) {
                                   restaurantData.sendConfiguredDataToBackend({
                                     "category_id": widget.category.oid,
@@ -88,6 +88,8 @@ class _NAddItemState extends State<NAddItem> {
                                       "name": itemNameController.text,
                                     },
                                   }, "add_food_item");
+                                  await new Future.delayed(
+                                      const Duration(seconds: 1));
                                   itemNameController.clear();
                                   Navigator.of(context).pop();
                                   Navigator.push(
@@ -96,12 +98,13 @@ class _NAddItemState extends State<NAddItem> {
                                       builder: (context) => ViewItem(
                                         showCustomization: true,
                                         menuType: widget.menuType,
-                                        foodItem: widget.category.foodList[widget.category.foodList.length - 1],
+                                        foodItem: widget.category.foodList[
+                                            widget.category.foodList.length -
+                                                1],
                                       ),
                                     ),
                                   );
-                                }
-                                else{
+                                } else {
                                   Fluttertoast.showToast(
                                       msg: "Please enter name",
                                       toastLength: Toast.LENGTH_SHORT,
@@ -109,8 +112,7 @@ class _NAddItemState extends State<NAddItem> {
                                       timeInSecForIosWeb: 1,
                                       backgroundColor: Colors.red,
                                       textColor: Colors.white,
-                                      fontSize: 16.0
-                                  );
+                                      fontSize: 16.0);
                                 }
 
 //                                if (widget.category.foodList != null) {
