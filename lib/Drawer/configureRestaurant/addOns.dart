@@ -204,8 +204,8 @@ class _AddFoodItemState extends State<AddOnsMenu> {
                                 ),
                               ),
                             ),
-                            FlatButton(
-                              child: Text('confirm item'),
+                            RaisedButton(
+                              child: Text('Confirm item'),
                               onPressed: () {
                                 confirmItem(restaurantData);
                               },

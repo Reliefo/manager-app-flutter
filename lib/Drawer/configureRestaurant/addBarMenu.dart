@@ -201,6 +201,7 @@ class _AddMenuState extends State<AddBarMenu> {
                                         restaurantData.restaurant.barMenu[index]
                                             .description,
                                         style: kSubTitleStyle,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                       onTap: () {
                                         Navigator.push(

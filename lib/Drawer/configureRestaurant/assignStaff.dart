@@ -166,9 +166,11 @@ class _AssignStaffState extends State<AssignStaff> {
                                                               .oid);
                                                     });
                                                   },
-                                                  child: Text(
-                                                    "assign",
-                                                    style: kTitleStyle,
+                                                  child: RaisedButton(
+                                                    child: Text(
+                                                      "Assign",
+                                                      style: kTitleStyle,
+                                                    ),
                                                   ),
                                                 ),
                                               ],

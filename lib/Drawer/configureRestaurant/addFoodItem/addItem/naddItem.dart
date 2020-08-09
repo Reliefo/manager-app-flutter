@@ -92,18 +92,6 @@ class _NAddItemState extends State<NAddItem> {
                                       const Duration(seconds: 1));
                                   itemNameController.clear();
                                   Navigator.of(context).pop();
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ViewItem(
-                                        showCustomization: true,
-                                        menuType: widget.menuType,
-                                        foodItem: widget.category.foodList[
-                                            widget.category.foodList.length -
-                                                1],
-                                      ),
-                                    ),
-                                  );
                                 } else {
                                   Fluttertoast.showToast(
                                       msg: "Please enter name",

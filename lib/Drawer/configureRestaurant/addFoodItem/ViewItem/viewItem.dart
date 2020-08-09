@@ -2,7 +2,6 @@ import 'package:custom_switch/custom_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:manager_app/constants.dart';
 import 'package:manager_app/data.dart';
 import 'package:manager_app/fetchData/configureRestaurantData.dart';
@@ -26,9 +25,25 @@ class ViewItem extends StatefulWidget {
   _ViewItemState createState() => _ViewItemState();
 }
 
+class EditCustomizationPreferences extends StatefulWidget {
+  final Customization customization;
+  final Function sendDataToBackend;
+  final RestaurantData restaurantData;
+
+  EditCustomizationPreferences({
+    @required this.sendDataToBackend,
+    @required this.customization,
+    @required this.restaurantData,
+  });
+  @override
+  _EditCustomizationPreferencesState createState() =>
+      _EditCustomizationPreferencesState();
+}
+
+
 class _ViewItemState extends State<ViewItem> {
   bool switchStatus = true;
-
+  bool showPriceEditButton = true;
   int radioItemVal;
 
   List<Customization> editCustomizations = [];
@@ -49,6 +64,14 @@ class _ViewItemState extends State<ViewItem> {
     if (widget.foodItem.customizations != null) {
       widget.foodItem.customizations.forEach((customization) {
         editCustomizations.add(customization);
+        if(customization.customizationType == "options"){
+            setState(() {
+              showPriceEditButton = false;
+            });
+        }
+        //add_ons, choices, options
+        //choices is options without price
+        //options is options with price
       });
     }
 
@@ -121,8 +144,9 @@ class _ViewItemState extends State<ViewItem> {
   }
 
   String findLowestPriceAndSetPriceField(restaurantData){
-    double min = double.maxFinite;
+    double total = 0;
     editCustomizations?.forEach((customization) {
+      double min = double.maxFinite;
       customization.options.forEach((option){
         option.forEach((k,v) {
           if(k == "option_price"){
@@ -130,8 +154,10 @@ class _ViewItemState extends State<ViewItem> {
           }
         });
       });
+      total = total + min;
     });
     newCustomizations?.forEach((customization) {
+      double min = double.maxFinite;
       customization.options.forEach((option){
         option.forEach((k,v) {
           if(k == "option_price"){
@@ -140,29 +166,24 @@ class _ViewItemState extends State<ViewItem> {
           }
         });
       });
+      total = total + min;
     });
-    String minimum = min.toInt().toString() + '+';
+    String minimum = total.toInt().toString() + '+';
     return minimum;
   }
+
   Widget editPriceButton(restaurantData) {
-//    print(widget.foodItem.foodOption);
-    if (editCustomizations != null) {
-      if (editCustomizations.isEmpty) {
-        return IconButton(
-          icon: Icon(Icons.edit),
-          onPressed: () {
-            editItemPrice(restaurantData);
-          },
-        );
-      } else
-        return Container(width: 0, height: 0);
-    } else
+    if(showPriceEditButton == true){
       return IconButton(
         icon: Icon(Icons.edit),
         onPressed: () {
           editItemPrice(restaurantData);
         },
       );
+    }
+    else{
+      return Container(width: 0, height: 0);
+    }
   }
 
   Widget getLayout(restaurantData, Customization customization) {
@@ -237,6 +258,7 @@ class _ViewItemState extends State<ViewItem> {
                           "category_type": widget.menuType,
                           "editing_fields": {"customization": dataToBackend}
                         }, "edit_food_item");
+                        refreshPriceEditButton();
                       },
                     ),
                   ],
@@ -460,6 +482,7 @@ class _ViewItemState extends State<ViewItem> {
                     }
                   });
                   editCustomizations.remove(toRemove);
+                  //refreshPriceEditButton();
 
                   customizationToMap();
                   restaurantData.sendConfiguredDataToBackend({
@@ -516,6 +539,626 @@ class _ViewItemState extends State<ViewItem> {
     );
   }
 
+  Widget editItemName(restaurantData) {
+    itemNameEditController.text = widget.foodItem.name;
+
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min, // To make the card compact
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    "Item Name : ",
+                    textAlign: TextAlign.center,
+                    style: kTitleStyle,
+                  ),
+                  SizedBox(width: 20),
+                  Container(
+                    width: 200,
+                    child: TextField(
+                      controller: itemNameEditController,
+                      textCapitalization: TextCapitalization.sentences,
+                      autofocus: true,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 24.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  FlatButton(
+                    child: Text(
+                      "Cancel",
+                      style:
+                      TextStyle(fontFamily: "Poppins", color: Colors.red),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(); // To close the dialog
+                    },
+                  ),
+                  FlatButton(
+                    child: Text(
+                      "Done",
+                      style:
+                      TextStyle(fontFamily: "Poppins", color: Colors.green),
+                    ),
+                    onPressed: () {
+                      if (itemNameEditController.text.isNotEmpty) {
+                        restaurantData.sendConfiguredDataToBackend({
+                          "food_id": widget.foodItem.oid,
+                          "category_type": widget.menuType,
+                          "editing_fields": {
+                            "name": itemNameEditController.text,
+                          },
+                        }, "edit_food_item");
+                      }
+                      Navigator.of(context).pop(); // To close the dialog
+                    },
+                  ),
+                ],
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget editItemDescription(restaurantData) {
+    descriptionEditController.text = widget.foodItem.description;
+
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min, // To make the card compact
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    "Description : ",
+                    textAlign: TextAlign.center,
+                    style: kTitleStyle,
+                  ),
+                  SizedBox(width: 20),
+                  Container(
+                    width: 200,
+                    child: TextField(
+                      controller: descriptionEditController,
+                      textCapitalization: TextCapitalization.sentences,
+                      autofocus: true,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 24.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  FlatButton(
+                    child: Text(
+                      "Cancel",
+                      style:
+                      TextStyle(fontFamily: "Poppins", color: Colors.red),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(); // To close the dialog
+                    },
+                  ),
+                  FlatButton(
+                    child: Text(
+                      "Done",
+                      style:
+                      TextStyle(fontFamily: "Poppins", color: Colors.green),
+                    ),
+                    onPressed: () {
+                      if (descriptionEditController.text.isNotEmpty) {
+                        restaurantData.sendConfiguredDataToBackend({
+                          "food_id": widget.foodItem.oid,
+                          "category_type": widget.menuType,
+                          "editing_fields": {
+                            "description": descriptionEditController.text,
+                          },
+                        }, "edit_food_item");
+                      }
+                      Navigator.of(context).pop(); // To close the dialog
+                    },
+                  ),
+                ],
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget editItemPrice(restaurantData) {
+    priceEditController.text = widget.foodItem.price;
+
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min, // To make the card compact
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    "Price : ",
+                    textAlign: TextAlign.center,
+                    style: kTitleStyle,
+                  ),
+                  SizedBox(width: 20),
+                  Container(
+                    width: 200,
+                    child: TextField(
+                      controller: priceEditController,
+                      keyboardType:
+                      TextInputType.numberWithOptions(decimal: true),
+                      autofocus: true,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 24.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  FlatButton(
+                    child: Text(
+                      "Cancel",
+                      style:
+                      TextStyle(fontFamily: "Poppins", color: Colors.red),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(); // To close the dialog
+                    },
+                  ),
+                  FlatButton(
+                    child: Text(
+                      "Done",
+                      style:
+                      TextStyle(fontFamily: "Poppins", color: Colors.green),
+                    ),
+                    onPressed: () {
+                      if (priceEditController.text.isNotEmpty) {
+                        restaurantData.sendConfiguredDataToBackend({
+                          "food_id": widget.foodItem.oid,
+                          "category_type": widget.menuType,
+                          "editing_fields": {
+                            "price": priceEditController.text,
+                          },
+                        }, "edit_food_item");
+                      }
+                      Navigator.of(context).pop(); // To close the dialog
+                    },
+                  ),
+                ],
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget editFoodItemOptions(restaurantData, option) {
+    foodOptionEditController.text = option["option_name"];
+
+    foodOptionPriceEditController.text = option["option_price"].toString();
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            content: Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Text("Name : "),
+                      SizedBox(width: 8),
+                      Container(
+                        width: 200,
+                        child: TextField(
+                          controller: foodOptionEditController,
+                          autofocus: true,
+                          keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.sentences,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Text("Price : "),
+                      SizedBox(width: 8),
+                      Container(
+                        width: 200,
+                        child: TextField(
+                          controller: foodOptionPriceEditController,
+                          keyboardType:
+                          TextInputType.numberWithOptions(decimal: true),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 24.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // To close the dialog
+                        },
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                      FlatButton(
+                        child: Text(
+                          "Done",
+                          style: TextStyle(color: Colors.green),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            option["option_name"] =
+                                foodOptionEditController.text;
+
+                            option["option_price"] = double.parse(
+                                foodOptionPriceEditController.text);
+                          });
+
+                          customizationToMap();
+
+                          if (foodOptionEditController.text.isNotEmpty &&
+                              foodOptionPriceEditController.text.isNotEmpty) {
+                            restaurantData.sendConfiguredDataToBackend({
+                              "food_id": widget.foodItem.oid,
+                              "category_type": widget.menuType,
+                              "editing_fields": {"customization": dataToBackend}
+                            }, "edit_food_item");
+
+                            foodOptionEditController.clear();
+                            foodOptionPriceEditController.clear();
+                          }
+
+                          Navigator.of(context).pop(); // To close the dialog
+                        },
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  Widget addNewFoodOptions(restaurantData, options) {
+    foodOptionEditController.clear();
+    foodOptionPriceEditController.clear();
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            content: Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Text("Name : "),
+                      SizedBox(width: 8),
+                      Container(
+                        width: 200,
+                        child: TextField(
+                          controller: foodOptionEditController,
+                          autofocus: true,
+                          keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.sentences,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Text("Price : "),
+                      SizedBox(width: 8),
+                      Container(
+                        width: 200,
+                        child: TextField(
+                          controller: foodOptionPriceEditController,
+                          keyboardType:
+                          TextInputType.numberWithOptions(decimal: true),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 24.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // To close the dialog
+                        },
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                      FlatButton(
+                        onPressed: () {
+                          setState(() {
+                            options.add({
+                              "option_name": foodOptionEditController.text,
+                              "option_price": double.parse(
+                                  foodOptionPriceEditController.text),
+                            });
+                          });
+
+                          customizationToMap();
+
+                          if (foodOptionEditController.text.isNotEmpty &&
+                              foodOptionPriceEditController.text.isNotEmpty) {
+                            restaurantData.sendConfiguredDataToBackend({
+                              "food_id": widget.foodItem.oid,
+                              "category_type": widget.menuType,
+                              "editing_fields": {"customization": dataToBackend}
+                            }, "edit_food_item");
+                            newCustomizations.clear();
+                            widget.foodItem.price = findLowestPriceAndSetPriceField(restaurantData);
+                          }
+                          Navigator.of(context).pop(); // To close the dialog
+                        },
+                        child: Text(
+                          "Done",
+                          style: TextStyle(color: Colors.green),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  Widget editFoodItemChoices(restaurantData, choice, index2) {
+    foodChoiceEditController.text = choice[index2];
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            content: Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Text("Name : "),
+                      SizedBox(width: 8),
+                      Container(
+                        width: 200,
+                        child: TextField(
+                          controller: foodChoiceEditController,
+                          keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.sentences,
+                          autofocus: true,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 24.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // To close the dialog
+                        },
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                      FlatButton(
+                        child: Text(
+                          "Done",
+                          style: TextStyle(color: Colors.green),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            choice[index2] = foodChoiceEditController.text;
+                          });
+
+                          //print("kkk");
+
+                          customizationToMap();
+
+                          //print(dataToBackend);
+
+                          if (foodChoiceEditController.text.isNotEmpty) {
+                            restaurantData.sendConfiguredDataToBackend({
+                              "food_id": widget.foodItem.oid,
+                              "category_type": widget.menuType,
+                              "editing_fields": {"customization": dataToBackend}
+                            }, "edit_food_item");
+
+                            foodChoiceEditController.clear();
+                            widget.foodItem.price = findLowestPriceAndSetPriceField(restaurantData);
+                          }
+
+                          Navigator.of(context).pop(); // To close the dialog
+                        },
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  Widget addNewFoodChoices(restaurantData, choices) {
+    foodChoiceEditController.clear();
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            content: Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Text("Name : "),
+                      SizedBox(width: 8),
+                      Container(
+                        width: 200,
+                        child: TextField(
+                          controller: foodChoiceEditController,
+                          keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.sentences,
+                          autofocus: true,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 24.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // To close the dialog
+                        },
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                      FlatButton(
+                        onPressed: () {
+                          setState(() {
+                            choices.add(foodChoiceEditController.text);
+                          });
+                          customizationToMap();
+                          if (foodChoiceEditController.text.isNotEmpty) {
+                            restaurantData.sendConfiguredDataToBackend({
+                              "food_id": widget.foodItem.oid,
+                              "category_type": widget.menuType,
+                              "editing_fields": {"customization": dataToBackend}
+                            }, "edit_food_item");
+                            newCustomizations.clear();
+                          }
+
+                          Navigator.of(context).pop(); // To close the dialog
+                        },
+                        child: Text(
+                          "Done",
+                          style: TextStyle(color: Colors.green),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  Widget confirmExit(){
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Text("Price is not set for this item, do you want to go back to the menu page?"),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Cancel"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+
+              FlatButton(
+                child: Text("Yes"),
+                onPressed: () {
+                  //Put your code here which you want to execute on No button click.
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  void refreshPriceEditButton() {
+    bool flag = true;
+    editCustomizations?.forEach((customization) {
+      if(customization.customizationType == "options"){
+        flag = false;
+      }
+      //add_ons, choices, options
+      //choices is options without price
+      //options is options with price
+    });
+    setState(() {
+      showPriceEditButton = flag;
+    });
+  }
+
+
 //  @override
 //  void initState() {
 //    addEditChoiceOption();
@@ -536,15 +1179,7 @@ class _ViewItemState extends State<ViewItem> {
           // You can do some work here.
           // Returning true allows the pop to happen, returning false prevents it.
           if(widget.foodItem.price == null) {
-            Fluttertoast.showToast(
-                msg: 'Please set the price',
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-                timeInSecForIosWeb: 1,
-                backgroundColor: Colors.red,
-                textColor: Colors.white,
-                fontSize: 16.0
-            );
+            confirmExit();
             return false;
           }
           else{
@@ -767,601 +1402,9 @@ class _ViewItemState extends State<ViewItem> {
     );
   }
 
-  Widget editItemName(restaurantData) {
-    itemNameEditController.text = widget.foodItem.name;
-
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min, // To make the card compact
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    "Item Name : ",
-                    textAlign: TextAlign.center,
-                    style: kTitleStyle,
-                  ),
-                  SizedBox(width: 20),
-                  Container(
-                    width: 200,
-                    child: TextField(
-                      controller: itemNameEditController,
-                      textCapitalization: TextCapitalization.sentences,
-                      autofocus: true,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 24.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  FlatButton(
-                    child: Text(
-                      "Cancel",
-                      style:
-                          TextStyle(fontFamily: "Poppins", color: Colors.red),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop(); // To close the dialog
-                    },
-                  ),
-                  FlatButton(
-                    child: Text(
-                      "Done",
-                      style:
-                          TextStyle(fontFamily: "Poppins", color: Colors.green),
-                    ),
-                    onPressed: () {
-                      if (itemNameEditController.text.isNotEmpty) {
-                        restaurantData.sendConfiguredDataToBackend({
-                          "food_id": widget.foodItem.oid,
-                          "category_type": widget.menuType,
-                          "editing_fields": {
-                            "name": itemNameEditController.text,
-                          },
-                        }, "edit_food_item");
-                      }
-                      Navigator.of(context).pop(); // To close the dialog
-                    },
-                  ),
-                ],
-              )
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget editItemDescription(restaurantData) {
-    descriptionEditController.text = widget.foodItem.description;
-
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min, // To make the card compact
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    "Description : ",
-                    textAlign: TextAlign.center,
-                    style: kTitleStyle,
-                  ),
-                  SizedBox(width: 20),
-                  Container(
-                    width: 200,
-                    child: TextField(
-                      controller: descriptionEditController,
-                      textCapitalization: TextCapitalization.sentences,
-                      autofocus: true,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 24.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  FlatButton(
-                    child: Text(
-                      "Cancel",
-                      style:
-                          TextStyle(fontFamily: "Poppins", color: Colors.red),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop(); // To close the dialog
-                    },
-                  ),
-                  FlatButton(
-                    child: Text(
-                      "Done",
-                      style:
-                          TextStyle(fontFamily: "Poppins", color: Colors.green),
-                    ),
-                    onPressed: () {
-                      if (descriptionEditController.text.isNotEmpty) {
-                        restaurantData.sendConfiguredDataToBackend({
-                          "food_id": widget.foodItem.oid,
-                          "category_type": widget.menuType,
-                          "editing_fields": {
-                            "description": descriptionEditController.text,
-                          },
-                        }, "edit_food_item");
-                      }
-                      Navigator.of(context).pop(); // To close the dialog
-                    },
-                  ),
-                ],
-              )
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget editItemPrice(restaurantData) {
-    priceEditController.text = widget.foodItem.price;
-
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min, // To make the card compact
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    "Price : ",
-                    textAlign: TextAlign.center,
-                    style: kTitleStyle,
-                  ),
-                  SizedBox(width: 20),
-                  Container(
-                    width: 200,
-                    child: TextField(
-                      controller: priceEditController,
-                      keyboardType:
-                          TextInputType.numberWithOptions(decimal: true),
-                      autofocus: true,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 24.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  FlatButton(
-                    child: Text(
-                      "Cancel",
-                      style:
-                          TextStyle(fontFamily: "Poppins", color: Colors.red),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop(); // To close the dialog
-                    },
-                  ),
-                  FlatButton(
-                    child: Text(
-                      "Done",
-                      style:
-                          TextStyle(fontFamily: "Poppins", color: Colors.green),
-                    ),
-                    onPressed: () {
-                      if (priceEditController.text.isNotEmpty) {
-                        restaurantData.sendConfiguredDataToBackend({
-                          "food_id": widget.foodItem.oid,
-                          "category_type": widget.menuType,
-                          "editing_fields": {
-                            "price": priceEditController.text,
-                          },
-                        }, "edit_food_item");
-                      }
-                      Navigator.of(context).pop(); // To close the dialog
-                    },
-                  ),
-                ],
-              )
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget editFoodItemOptions(restaurantData, option) {
-    foodOptionEditController.text = option["option_name"];
-
-    foodOptionPriceEditController.text = option["option_price"].toString();
-    showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            content: Container(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text("Name : "),
-                      SizedBox(width: 8),
-                      Container(
-                        width: 200,
-                        child: TextField(
-                          controller: foodOptionEditController,
-                          autofocus: true,
-                          keyboardType: TextInputType.text,
-                          textCapitalization: TextCapitalization.sentences,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Text("Price : "),
-                      SizedBox(width: 8),
-                      Container(
-                        width: 200,
-                        child: TextField(
-                          controller: foodOptionPriceEditController,
-                          keyboardType:
-                              TextInputType.numberWithOptions(decimal: true),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 24.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      FlatButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(); // To close the dialog
-                        },
-                        child: Text(
-                          "Cancel",
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ),
-                      FlatButton(
-                        child: Text(
-                          "Done",
-                          style: TextStyle(color: Colors.green),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            option["option_name"] =
-                                foodOptionEditController.text;
-
-                            option["option_price"] = double.parse(
-                                foodOptionPriceEditController.text);
-                          });
-
-                          customizationToMap();
-
-                          if (foodOptionEditController.text.isNotEmpty &&
-                              foodOptionPriceEditController.text.isNotEmpty) {
-                            restaurantData.sendConfiguredDataToBackend({
-                              "food_id": widget.foodItem.oid,
-                              "category_type": widget.menuType,
-                              "editing_fields": {"customization": dataToBackend}
-                            }, "edit_food_item");
-
-                            foodOptionEditController.clear();
-                            foodOptionPriceEditController.clear();
-                          }
-
-                          Navigator.of(context).pop(); // To close the dialog
-                        },
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-          );
-        });
-  }
-
-  Widget addNewFoodOptions(restaurantData, options) {
-    foodOptionEditController.clear();
-    foodOptionPriceEditController.clear();
-    showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            content: Container(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text("Name : "),
-                      SizedBox(width: 8),
-                      Container(
-                        width: 200,
-                        child: TextField(
-                          controller: foodOptionEditController,
-                          autofocus: true,
-                          keyboardType: TextInputType.text,
-                          textCapitalization: TextCapitalization.sentences,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Text("Price : "),
-                      SizedBox(width: 8),
-                      Container(
-                        width: 200,
-                        child: TextField(
-                          controller: foodOptionPriceEditController,
-                          keyboardType:
-                              TextInputType.numberWithOptions(decimal: true),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 24.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      FlatButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(); // To close the dialog
-                        },
-                        child: Text(
-                          "Cancel",
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ),
-                      FlatButton(
-                        onPressed: () {
-                          setState(() {
-                            options.add({
-                              "option_name": foodOptionEditController.text,
-                              "option_price": double.parse(
-                                  foodOptionPriceEditController.text),
-                            });
-                          });
-
-                          customizationToMap();
-
-                          if (foodOptionEditController.text.isNotEmpty &&
-                              foodOptionPriceEditController.text.isNotEmpty) {
-                            restaurantData.sendConfiguredDataToBackend({
-                              "food_id": widget.foodItem.oid,
-                              "category_type": widget.menuType,
-                              "editing_fields": {"customization": dataToBackend}
-                            }, "edit_food_item");
-                            newCustomizations.clear();
-                            widget.foodItem.price = findLowestPriceAndSetPriceField(restaurantData);
-                          }
-                          Navigator.of(context).pop(); // To close the dialog
-                        },
-                        child: Text(
-                          "Done",
-                          style: TextStyle(color: Colors.green),
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-          );
-        });
-  }
-
-  Widget editFoodItemChoices(restaurantData, choice, index2) {
-    foodChoiceEditController.text = choice[index2];
-    showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            content: Container(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text("Name : "),
-                      SizedBox(width: 8),
-                      Container(
-                        width: 200,
-                        child: TextField(
-                          controller: foodChoiceEditController,
-                          keyboardType: TextInputType.text,
-                          textCapitalization: TextCapitalization.sentences,
-                          autofocus: true,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 24.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      FlatButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(); // To close the dialog
-                        },
-                        child: Text(
-                          "Cancel",
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ),
-                      FlatButton(
-                        child: Text(
-                          "Done",
-                          style: TextStyle(color: Colors.green),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            choice[index2] = foodChoiceEditController.text;
-                          });
-
-                          //print("kkk");
-
-                          customizationToMap();
-
-                          //print(dataToBackend);
-
-                          if (foodChoiceEditController.text.isNotEmpty) {
-                            restaurantData.sendConfiguredDataToBackend({
-                              "food_id": widget.foodItem.oid,
-                              "category_type": widget.menuType,
-                              "editing_fields": {"customization": dataToBackend}
-                            }, "edit_food_item");
-
-                            foodChoiceEditController.clear();
-                            widget.foodItem.price = findLowestPriceAndSetPriceField(restaurantData);
-                          }
-
-                          Navigator.of(context).pop(); // To close the dialog
-                        },
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-          );
-        });
-  }
-
-  Widget addNewFoodChoices(restaurantData, choices) {
-    foodChoiceEditController.clear();
-    showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            content: Container(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text("Name : "),
-                      SizedBox(width: 8),
-                      Container(
-                        width: 200,
-                        child: TextField(
-                          controller: foodChoiceEditController,
-                          keyboardType: TextInputType.text,
-                          textCapitalization: TextCapitalization.sentences,
-                          autofocus: true,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 24.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      FlatButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(); // To close the dialog
-                        },
-                        child: Text(
-                          "Cancel",
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ),
-                      FlatButton(
-                        onPressed: () {
-                          setState(() {
-                            choices.add(foodChoiceEditController.text);
-                          });
-                          customizationToMap();
-                          if (foodChoiceEditController.text.isNotEmpty) {
-                            restaurantData.sendConfiguredDataToBackend({
-                              "food_id": widget.foodItem.oid,
-                              "category_type": widget.menuType,
-                              "editing_fields": {"customization": dataToBackend}
-                            }, "edit_food_item");
-                            newCustomizations.clear();
-                          }
-
-                          Navigator.of(context).pop(); // To close the dialog
-                        },
-                        child: Text(
-                          "Done",
-                          style: TextStyle(color: Colors.green),
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-          );
-        });
-  }
-
 }
 
-class EditCustomizationPreferences extends StatefulWidget {
-  final Customization customization;
-  final Function sendDataToBackend;
-  final RestaurantData restaurantData;
-
-  EditCustomizationPreferences({
-    @required this.sendDataToBackend,
-    @required this.customization,
-    @required this.restaurantData,
-  });
-  @override
-  _EditCustomizationPreferencesState createState() =>
-      _EditCustomizationPreferencesState();
-}
-
-class _EditCustomizationPreferencesState
-    extends State<EditCustomizationPreferences> {
+class _EditCustomizationPreferencesState extends State<EditCustomizationPreferences> {
   final customizationNameEditController = TextEditingController();
   final thatNumberEditController = TextEditingController();
   int radioItemVal;
