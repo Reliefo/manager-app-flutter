@@ -144,19 +144,20 @@ class _ViewItemState extends State<ViewItem> {
   }
 
   String findLowestPriceAndSetPriceField(restaurantData){
-    double min = double.maxFinite;
     double total = 0;
     editCustomizations?.forEach((customization) {
+      double min = double.maxFinite;
       customization.options.forEach((option){
         option.forEach((k,v) {
           if(k == "option_price"){
             if(v < min) min = v;
           }
         });
-        total = total + min;
       });
+      total = total + min;
     });
     newCustomizations?.forEach((customization) {
+      double min = double.maxFinite;
       customization.options.forEach((option){
         option.forEach((k,v) {
           if(k == "option_price"){
@@ -164,8 +165,8 @@ class _ViewItemState extends State<ViewItem> {
             if(temp < min) min = temp;
           }
         });
-        total = total + min;
       });
+      total = total + min;
     });
     String minimum = total.toInt().toString() + '+';
     return minimum;
