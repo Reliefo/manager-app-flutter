@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:custom_switch/custom_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -60,20 +62,21 @@ class _ViewItemState extends State<ViewItem> {
 
   addEditChoiceOption(restaurantData) {
     editCustomizations.clear();
-
+    var temp = true;
     if (widget.foodItem.customizations != null) {
       widget.foodItem.customizations.forEach((customization) {
         editCustomizations.add(customization);
         if(customization.customizationType == "options"){
-            setState(() {
-              showPriceEditButton = false;
-            });
+              temp = false;
         }
         //add_ons, choices, options
         //choices is options without price
         //options is options with price
       });
     }
+    setState(() {
+      showPriceEditButton = temp;
+    });
 
     if (newCustomizations.isNotEmpty) {
       print("adding new customizations");
@@ -143,7 +146,7 @@ class _ViewItemState extends State<ViewItem> {
     }, "visibility_food_item");
   }
 
-  String findLowestPriceAndSetPriceField(restaurantData){
+  String findLowestPriceAndSetPriceField(){
     double total = 0;
     editCustomizations?.forEach((customization) {
       double min = double.maxFinite;
@@ -867,6 +870,7 @@ class _ViewItemState extends State<ViewItem> {
   }
 
   Widget addNewFoodOptions(restaurantData, options) {
+    //print("addNewFoodOptions");
     foodOptionEditController.clear();
     foodOptionPriceEditController.clear();
     showDialog(
@@ -937,13 +941,15 @@ class _ViewItemState extends State<ViewItem> {
 
                           if (foodOptionEditController.text.isNotEmpty &&
                               foodOptionPriceEditController.text.isNotEmpty) {
+                            var price = findLowestPriceAndSetPriceField();
                             restaurantData.sendConfiguredDataToBackend({
                               "food_id": widget.foodItem.oid,
                               "category_type": widget.menuType,
-                              "editing_fields": {"customization": dataToBackend}
+                              "editing_fields": {"customization": dataToBackend,
+                              "price":price},
                             }, "edit_food_item");
                             newCustomizations.clear();
-                            widget.foodItem.price = findLowestPriceAndSetPriceField(restaurantData);
+                            //widget.foodItem.price = price;
                           }
                           Navigator.of(context).pop(); // To close the dialog
                         },
@@ -1020,14 +1026,18 @@ class _ViewItemState extends State<ViewItem> {
                           //print(dataToBackend);
 
                           if (foodChoiceEditController.text.isNotEmpty) {
+                            var price = findLowestPriceAndSetPriceField();
                             restaurantData.sendConfiguredDataToBackend({
                               "food_id": widget.foodItem.oid,
                               "category_type": widget.menuType,
-                              "editing_fields": {"customization": dataToBackend}
+                              "editing_fields": {
+                                "customization": dataToBackend,
+                                "price":price
+                              }
                             }, "edit_food_item");
 
                             foodChoiceEditController.clear();
-                            widget.foodItem.price = findLowestPriceAndSetPriceField(restaurantData);
+                            //widget.foodItem.price = findLowestPriceAndSetPriceField();
                           }
 
                           Navigator.of(context).pop(); // To close the dialog
