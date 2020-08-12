@@ -150,18 +150,19 @@ class _ViewItemState extends State<ViewItem> {
     double total = 0;
     editCustomizations?.forEach((customization) {
       double min = double.maxFinite;
-      customization.options.forEach((option){
+      customization.options?.forEach((option){
         option.forEach((k,v) {
           if(k == "option_price"){
             if(v < min) min = v;
           }
         });
       });
+      if(min == double.maxFinite) min = 0;
       total = total + min;
     });
     newCustomizations?.forEach((customization) {
       double min = double.maxFinite;
-      customization.options.forEach((option){
+      customization.options?.forEach((option){
         option.forEach((k,v) {
           if(k == "option_price"){
             double temp = double.parse(v);
@@ -169,6 +170,7 @@ class _ViewItemState extends State<ViewItem> {
           }
         });
       });
+      if(min == double.maxFinite) min = 0;
       total = total + min;
     });
     String minimum = total.toInt().toString() + '+';
@@ -256,12 +258,13 @@ class _ViewItemState extends State<ViewItem> {
                         editCustomizations.remove(toRemove);
 
                         customizationToMap();
+                        var price = findLowestPriceAndSetPriceField();
                         restaurantData.sendConfiguredDataToBackend({
                           "food_id": widget.foodItem.oid,
                           "category_type": widget.menuType,
-                          "editing_fields": {"customization": dataToBackend}
+                          "editing_fields": {"customization": dataToBackend, "price": price}
                         }, "edit_food_item");
-                        refreshPriceEditButton();
+                        refreshItemPriceField();
                       },
                     ),
                   ],
@@ -307,14 +310,16 @@ class _ViewItemState extends State<ViewItem> {
                               });
 
                               customizationToMap();
-
+                              var price = findLowestPriceAndSetPriceField();
                               restaurantData.sendConfiguredDataToBackend({
                                 "food_id": widget.foodItem.oid,
                                 "category_type": widget.menuType,
                                 "editing_fields": {
-                                  "customization": dataToBackend
+                                  "customization": dataToBackend,
+                                  "price":price
                                 }
                               }, "edit_food_item");
+                              refreshItemPriceField();
                             },
                           ),
                         ],
@@ -847,11 +852,13 @@ class _ViewItemState extends State<ViewItem> {
 
                           if (foodOptionEditController.text.isNotEmpty &&
                               foodOptionPriceEditController.text.isNotEmpty) {
+                            var price = findLowestPriceAndSetPriceField();
                             restaurantData.sendConfiguredDataToBackend({
                               "food_id": widget.foodItem.oid,
                               "category_type": widget.menuType,
-                              "editing_fields": {"customization": dataToBackend}
+                              "editing_fields": {"customization": dataToBackend, "price":price}
                             }, "edit_food_item");
+                            refreshItemPriceField();
 
                             foodOptionEditController.clear();
                             foodOptionPriceEditController.clear();
@@ -949,8 +956,10 @@ class _ViewItemState extends State<ViewItem> {
                               "price":price},
                             }, "edit_food_item");
                             newCustomizations.clear();
+                            refreshItemPriceField();
                             //widget.foodItem.price = price;
                           }
+
                           Navigator.of(context).pop(); // To close the dialog
                         },
                         child: Text(
@@ -1153,7 +1162,7 @@ class _ViewItemState extends State<ViewItem> {
         });
   }
 
-  void refreshPriceEditButton() {
+  void refreshItemPriceField() {
     bool flag = true;
     editCustomizations?.forEach((customization) {
       if(customization.customizationType == "options"){

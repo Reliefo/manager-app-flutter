@@ -738,7 +738,6 @@ class MenuFoodItem {
     if (edited['price'] != null) {
       this.price = edited['price'];
     }
-    print('added edited here');
 
     if (edited['customization'] != null) {
       this.customizations = new List<Customization>();
@@ -748,7 +747,6 @@ class MenuFoodItem {
       });
     }
 
-    print('added edited here45');
   }
 
   addEditedAddon(edited) {
@@ -765,7 +763,6 @@ class MenuFoodItem {
     if (edited['price'] != null) {
       this.price = edited['price'];
     }
-    print('added edited here');
   }
 }
 //{_id: {$oid: 5eecae8b4cd8e08657db05bb}, name: Tomato Cucumber Grill,

@@ -257,50 +257,9 @@ class RestaurantData extends ChangeNotifier {
 //      }
 //    }
     if (type == "edit_food_item") {
-      if (localData['editing_fields']['customization'] != null) {
-        double price = 0;
-        List<double> priceList = [];
-        localData['editing_fields']['customization']?.forEach((customization) {
-          print(customization);
-          if (customization['customization_type'] == "options") {
-            print("will add price");
-
-            customization['list_of_options']?.forEach((option) {
-              print(option['option_price'].runtimeType);
-              priceList.add(option['option_price']);
-            });
-            if (priceList.isNotEmpty) {
-              price = price + priceList.reduce(min);
-            }
-
-            encode = jsonEncode({
-              "restaurant_id": restaurantId,
-              "type": type,
-              "category_type": localData["category_type"],
-              "food_id": localData["food_id"],
-              "editing_fields": {
-                "price": "${price.toString() + " +"}",
-                "customization": localData["editing_fields"]["customization"],
-              },
-            });
-          }
-        });
-        print("price:  ");
-        print(price);
-        encode = jsonEncode({
-          "restaurant_id": restaurantId,
-          "type": type,
-          "category_type": localData["category_type"],
-          "food_id": localData["food_id"],
-          "editing_fields": {
-            "customization": localData["editing_fields"]["customization"],
-          },
-        });
-      } else {
         localData["type"] = type;
         localData['restaurant_id'] = restaurantId;
         encode = jsonEncode(localData);
-      }
     }
     if (type == "delete_food_item") {
       encode = jsonEncode({

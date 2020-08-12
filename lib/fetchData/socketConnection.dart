@@ -289,6 +289,7 @@ class _SocketConnectionState extends State<SocketConnection> {
 
 //////////////////////////////////restaurant///////////////////////////
   fetchRestaurant(data) {
+    print("restaurant_object socket.on");
     setState(() {
       if (data is Map) {
         data = json.encode(data);
@@ -305,6 +306,7 @@ class _SocketConnectionState extends State<SocketConnection> {
   }
 
   getConfiguredDataFromBackend(data) {
+    print("updating_config socket.on");
     setState(() {
       if (data is Map) {
         data = json.encode(data);
@@ -636,7 +638,6 @@ class _SocketConnectionState extends State<SocketConnection> {
       }
 
       if (decode["type"] == "edit_food_item") {
-        print("edit food items");
 
         print(decode);
 
@@ -992,6 +993,7 @@ class _SocketConnectionState extends State<SocketConnection> {
 
 //////////////////////////orders//////////////////////////
   initialOrderLists(data) {
+    print("order_lists socket.on");
     setState(() {
       if (data is Map) {
         data = json.encode(data);
@@ -1085,6 +1087,7 @@ class _SocketConnectionState extends State<SocketConnection> {
   }
 
   orderUpdates(data) {
+    print("order_updates socket.on");
     setState(() {
       if (data is Map) {
         data = json.encode(data);
