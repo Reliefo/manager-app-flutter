@@ -148,31 +148,56 @@ class _ViewItemState extends State<ViewItem> {
 
   String findLowestPriceAndSetPriceField(){
     double total = 0;
+
+
+
     editCustomizations?.forEach((customization) {
       double min = double.maxFinite;
+      //print(customization.lessMore); can be -1 for less than, 0 for exactly, 1 for more than
+      //print(customization.thatNumber); lessthan/morethan/exactly what number? thats this variable
+      List<double> option_prices = [];
       customization.options?.forEach((option){
         option.forEach((k,v) {
           if(k == "option_price"){
-            if(v < min) min = v;
+            option_prices.add(v);
           }
         });
       });
-      if(min == double.maxFinite) min = 0;
+      option_prices.sort();
+      if(option_prices.length == 0) min = 0;
+      else{
+        if(customization.lessMore == 1 || customization.lessMore == 0){
+          min = option_prices.take(customization.thatNumber).toList().reduce((a, b) => a + b);
+        }
+        //TODO else{}
+      }
       total = total + min;
     });
+
+
     newCustomizations?.forEach((customization) {
       double min = double.maxFinite;
+      List<double> option_prices = [];
       customization.options?.forEach((option){
         option.forEach((k,v) {
           if(k == "option_price"){
-            double temp = double.parse(v);
-            if(temp < min) min = temp;
+            option_prices.add(v);
           }
         });
       });
-      if(min == double.maxFinite) min = 0;
+      option_prices.sort();
+      if(option_prices.length == 0) min = 0;
+      else{
+        if(customization.lessMore == 1 || customization.lessMore == 0){
+          min = option_prices.take(customization.thatNumber).toList().reduce((a, b) => a + b);
+        }
+        //TODO else{}
+      }
       total = total + min;
     });
+
+
+
     String minimum = total.toInt().toString() + '+';
     return minimum;
   }
