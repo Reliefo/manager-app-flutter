@@ -4,6 +4,7 @@ import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:manager_app/fetchData/fetchOrderData.dart';
 import 'package:manager_app/person/personView.dart';
 import 'package:provider/provider.dart';
+import 'package:manager_app/constants.dart';
 
 import 'Home/home.dart';
 import 'data.dart';
@@ -62,6 +63,12 @@ class TabContainerBottom extends StatelessWidget {
           initialIndex: 1,
           length: 3,
           child: Scaffold(
+            appBar: isNative
+                ? null
+                : AppBar(
+                    title: const Text('LiQR Solutions'),
+                    backgroundColor: kThemeColor,
+                  ),
             drawer: Drawer(
               child: DrawerMenu(
                 sockets: sockets,

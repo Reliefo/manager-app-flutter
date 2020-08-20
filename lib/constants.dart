@@ -4,6 +4,8 @@ const kThemeColor = Color(0xffFFB023);
 
 const kLightThemeColor = Color(0xffF5DEB5);
 
+const isNative = 1 == 1;
+
 //Color kLightThemeColor = Colors.amber[100];
 //w400 Normal / regular / plain
 //w500 Medium

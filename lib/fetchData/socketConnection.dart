@@ -8,6 +8,7 @@ import 'package:manager_app/tabs.dart';
 import 'package:manager_app/url.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:manager_app/constants.dart';
 
 import 'session.dart';
 
@@ -241,7 +242,7 @@ class _SocketConnectionState extends State<SocketConnection> {
   initWebSocket() async {
     // Dart client
     IO.Socket socket = IO.io("https://liqr.cc/reliefo", <String, dynamic>{
-      'transports': ['websocket'],
+      'transports': isNative ? ['websocket'] : ['polling'],
 //      'transports': ['polling'],
       'extraHeaders': {'Authorization': 'Bearer ' + widget.jwt} // optional
     });
@@ -638,7 +639,6 @@ class _SocketConnectionState extends State<SocketConnection> {
       }
 
       if (decode["type"] == "edit_food_item") {
-
         print(decode);
 
         restaurant.foodMenu?.forEach((category) {

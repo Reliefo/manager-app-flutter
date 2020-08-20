@@ -10,6 +10,7 @@ import 'package:manager_app/data.dart';
 import 'package:native_pdf_renderer/native_pdf_renderer.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:manager_app/constants.dart';
 
 class SalesDetails extends StatefulWidget {
   final List<RestaurantOrderHistory> salesHistory;
@@ -26,8 +27,6 @@ class _SalesDetailsState extends State<SalesDetails> {
   List<PdfPageImage> pageImages;
 
   bool _isLoading = true;
-  bool _isNative = true;
-//  bool _isNative = false;
   int _selectedIndex;
   int _selectedPage;
   RestaurantOrderHistory selectedOrder;
@@ -71,7 +70,7 @@ class _SalesDetailsState extends State<SalesDetails> {
 //      pageImages.add(pageImage);
 //      await page.close();
 //    }
-    if (_isNative) {
+    if (isNative) {
       doc = await PDFDocument.fromURL(selectedOrder.pdf);
     }
 
@@ -191,7 +190,7 @@ class _SalesDetailsState extends State<SalesDetails> {
                         ? Center(
                             child: CircularProgressIndicator(),
                           )
-                        : _isNative
+                        : isNative
                             ? PDFViewer(
                                 showPicker: false,
                                 document: doc,
