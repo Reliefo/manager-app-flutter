@@ -1057,6 +1057,7 @@ class FoodItem {
   int quantity;
   String status;
   List<String> customization;
+  List<Customization> customizationList;
 
   FoodItem(
       {this.foodId,
@@ -1066,7 +1067,8 @@ class FoodItem {
       this.instructions,
       this.quantity,
       this.status,
-      this.customization});
+      this.customization,
+      this.customizationList});
 
   FoodItem.fromJson(Map<String, dynamic> json) {
     if (json['food_id'] != null) {
@@ -1099,21 +1101,45 @@ class FoodItem {
 
     if (json['customization'] != null) {
       customization = new List<String>();
+      //customizationList = new List<Customization>();
       json['customization']?.forEach((custom) {
+        //custom?.forEach((c){
+//          print(c);
+  //      });
         if (custom['customization_type'] == 'choices') {
+          customization.add(custom['name'] + '[');
           custom['list_of_options']?.forEach((choice) {
             customization.add(choice);
+            customization.add(", ");
           });
+          customization.removeLast();
+          customization.add(']');
         }
         if (custom['customization_type'] == 'options') {
-//          print("hey");
+          customization.add(custom['name'] + '[');
+          custom['list_of_options']?.forEach((choice) {
+            customization.add(choice['option_name']);
+            customization.add(":");
+            customization.add(choice['option_price'].toString());
+            customization.add(", ");
+          });
+          customization.removeLast();
+          customization.add(']');
         }
         if (custom['customization_type'] == 'add_ons') {
+          customization.add(custom['name'] + '[');
           custom['list_of_options']?.forEach((addOn) {
             customization.add(addOn['name']);
+            customization.add(":");
+            customization.add(addOn['price'].toString());
+            customization.add(", ");
           });
+          customization.removeLast();
+          customization.add(']');
         }
+        customization.add(", ");
       });
+      if(customization.length > 0) customization.removeLast();
     }
   }
 

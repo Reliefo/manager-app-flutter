@@ -7,11 +7,7 @@ import 'package:manager_app/fetchData/configureRestaurantData.dart';
 import 'package:manager_app/fetchData/fetchOrderData.dart';
 import 'package:provider/provider.dart';
 
-class SingleTable extends StatelessWidget {
-  final List<AssistanceRequest> tableAssistanceReq = [];
-  final List<TableOrder> tableOrders = [];
-  final List<TableOrder> tableCompletedOrders = [];
-
+class SingleTable extends StatefulWidget {
   final Tables table;
   final bill;
   SingleTable({
@@ -19,10 +15,23 @@ class SingleTable extends StatelessWidget {
     this.bill,
   });
 
+  @override
+  _SingleTableState createState() => _SingleTableState();
+}
+
+class _SingleTableState extends State<SingleTable> {
+  final List<AssistanceRequest> tableAssistanceReq = [];
+
+  final List<TableOrder> tableOrders = [];
+
+  final List<TableOrder> tableCompletedOrders = [];
+
+  final _qtyEditController = TextEditingController();
+
   getTableAssistanceReq(assistanceList) {
     if (assistanceList != null) {
       assistanceList.forEach((request) {
-        if (request.table == table.name) {
+        if (request.table == widget.table.name) {
           tableAssistanceReq.add(request);
         }
       });
@@ -31,19 +40,19 @@ class SingleTable extends StatelessWidget {
 
   getTableOrders(orderData) {
     orderData.queueOrders.forEach((orders) {
-      if (orders.table == table.name) {
+      if (orders.table == widget.table.name) {
         tableOrders.add(orders);
       }
     });
 
     orderData.cookingOrders.forEach((orders) {
-      if (orders.table == table.name) {
+      if (orders.table == widget.table.name) {
         tableOrders.add(orders);
       }
     });
 
     orderData.completedOrders.forEach((orders) {
-      if (orders.table == table.name) {
+      if (orders.table == widget.table.name) {
         tableCompletedOrders.add(orders);
       }
     });
@@ -51,7 +60,7 @@ class SingleTable extends StatelessWidget {
 
   requestBilling(context) {
     if (tableOrders.length == 0) {
-      bill({"table_id": table.oid});
+      widget.bill({"table_id": widget.table.oid});
     } else if (tableOrders.length != 0) {
       showDialog(
         context: context,
@@ -64,7 +73,7 @@ class SingleTable extends StatelessWidget {
               FlatButton(
                 child: new Text("Force Bill"),
                 onPressed: () {
-                  bill({"table_id": table.oid});
+                  widget.bill({"table_id": widget.table.oid});
                   Navigator.of(context).pop();
                 },
               ),
@@ -121,7 +130,7 @@ class SingleTable extends StatelessWidget {
                     Expanded(
                       child: Center(
                         child: Text(
-                          'TABLE : ${table.name}' ?? " ",
+                          'TABLE : ${widget.table.name}' ?? " ",
                           style: homePageS1,
                         ),
                       ),
@@ -182,13 +191,14 @@ class SingleTable extends StatelessWidget {
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
-                                    flex: 2,
+                                    flex: 3,
                                     child: Text(
                                       'ITEM',
                                       style: homePageS1,
                                     ),
                                   ),
                                   Expanded(
+                                    flex: 2,
                                     child: Center(
                                       child: Text(
                                         'QTY',
@@ -197,6 +207,7 @@ class SingleTable extends StatelessWidget {
                                     ),
                                   ),
                                   Expanded(
+                                    flex: 2,
                                     child: Center(
                                       child: Text(
                                         'PRICE',
@@ -205,6 +216,7 @@ class SingleTable extends StatelessWidget {
                                     ),
                                   ),
                                   Expanded(
+                                    flex: 2,
                                     child: Center(
                                       child: Text(
                                         'ETA',
@@ -213,6 +225,7 @@ class SingleTable extends StatelessWidget {
                                     ),
                                   ),
                                   Expanded(
+                                    flex: 2,
                                     child: Center(
                                       child: Text(
                                         'STATUS',
@@ -220,6 +233,14 @@ class SingleTable extends StatelessWidget {
                                       ),
                                     ),
                                   ),
+                                  Expanded(
+                                    flex:1,
+                                    child:SizedBox()
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child:SizedBox()
+                                  )
                                 ],
                               ),
                             ),
@@ -262,18 +283,22 @@ class SingleTable extends StatelessWidget {
                                                         children: <
                                                             Widget>[
                                                           Expanded(
-                                                            flex: 2,
+                                                            flex: 3,
                                                             child: Text(
-                                                              tableOrders[index]
+                                                              (tableOrders[index]
                                                                   .orders[index2]
                                                                   .foodList[index3]
-                                                                  .name ??
+                                                                  .name+"\n"+tableOrders[index]
+                                                                  .orders[index2]
+                                                                  .foodList[index3]
+                                                                  .customization.join("")) ??
                                                                   " ",
                                                               style:
                                                               homePageS2,
                                                             ),
                                                           ),
                                                           Expanded(
+                                                            flex:2,
                                                             child: Center(
                                                               child: Text(
                                                                 '${tableOrders[index].orders[index2].foodList[index3].quantity}' ??
@@ -284,6 +309,7 @@ class SingleTable extends StatelessWidget {
                                                             ),
                                                           ),
                                                           Expanded(
+                                                            flex:2,
                                                             child: Center(
                                                               child: Text(
                                                                 tableOrders[index]
@@ -297,6 +323,7 @@ class SingleTable extends StatelessWidget {
                                                             ),
                                                           ),
                                                           Expanded(
+                                                            flex:2,
                                                             child: Center(
                                                               child: Text(
                                                                 '${formatDate(
@@ -314,6 +341,7 @@ class SingleTable extends StatelessWidget {
                                                             ),
                                                           ),
                                                           Expanded(
+                                                            flex:2,
                                                             child: Center(
                                                               child: Text(
                                                                 tableOrders[index]
@@ -324,6 +352,30 @@ class SingleTable extends StatelessWidget {
                                                                 style:
                                                                 homePageS2,
                                                               ),
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                            flex:1,
+                                                            child: IconButton(
+                                                              icon: Icon(Icons.edit),
+                                                              onPressed: () {
+                                                                editItemOnBill(restaurantData,
+                                                                    tableOrders[index].orders[index2].foodList[index3],
+                                                                    context
+                                                                );
+                                                              },
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                            flex:1,
+                                                            child:IconButton(
+                                                              icon: Icon(Icons.cancel),
+                                                              onPressed: () {
+                                                                //TODO clarify
+                                                                setState(() {
+                                                                  tableOrders[index].orders[index2].foodList.removeAt(index3);
+                                                                });
+                                                              },
                                                             ),
                                                           ),
                                                         ],
@@ -369,18 +421,21 @@ class SingleTable extends StatelessWidget {
                                                         children: <
                                                             Widget>[
                                                           Expanded(
-                                                            flex: 2,
+                                                            flex: 3,
                                                             child: Text(
-                                                              tableCompletedOrders[index]
-                                                                  .orders[index2]
-                                                                  .foodList[index3]
-                                                                  .name ??
-                                                                  " ",
+                                                                    (tableCompletedOrders[index]
+                                                                      .orders[index2]
+                                                                      .foodList[index3]
+                                                                      .name+"\n"+tableCompletedOrders[index]
+                                                                      .orders[index2]
+                                                                      .foodList[index3]
+                                                                      .customization.join("")) ?? " ",
                                                               style:
                                                               homePageS2,
                                                             ),
                                                           ),
                                                           Expanded(
+                                                            flex:2,
                                                             child: Center(
                                                               child: Text(
                                                                 '${tableCompletedOrders[index].orders[index2].foodList[index3].quantity}' ??
@@ -391,6 +446,7 @@ class SingleTable extends StatelessWidget {
                                                             ),
                                                           ),
                                                           Expanded(
+                                                            flex:2,
                                                             child: Center(
                                                               child: Text(
                                                                 tableCompletedOrders[index]
@@ -404,6 +460,7 @@ class SingleTable extends StatelessWidget {
                                                             ),
                                                           ),
                                                           Expanded(
+                                                            flex:2,
                                                             child: Center(
                                                               child: Text(
                                                                 '${formatDate(
@@ -421,6 +478,7 @@ class SingleTable extends StatelessWidget {
                                                             ),
                                                           ),
                                                           Expanded(
+                                                            flex:2,
                                                             child: Center(
                                                               child: Text(
                                                                 tableCompletedOrders[index]
@@ -431,6 +489,30 @@ class SingleTable extends StatelessWidget {
                                                                 style:
                                                                 homePageS2,
                                                               ),
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                            flex:1,
+                                                            child: IconButton(
+                                                              icon: Icon(Icons.edit),
+                                                              onPressed: () {
+                                                                editItemOnBill(restaurantData,
+                                                                    tableOrders[index].orders[index2].foodList[index3],
+                                                                    context
+                                                                );
+                                                              },
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                            flex:1,
+                                                            child:IconButton(
+                                                              icon: Icon(Icons.cancel),
+                                                              onPressed: () {
+                                                                //TODO clarify
+                                                                setState(() {
+                                                                  tableOrders[index].orders[index2].foodList.removeAt(index3);
+                                                                });
+                                                              },
                                                             ),
                                                           ),
                                                         ],
@@ -485,9 +567,9 @@ class SingleTable extends StatelessWidget {
                             child: ListView.builder(
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: false,
-                                itemCount: table.users.length,
+                                itemCount: widget.table.users.length,
                                 itemBuilder: (context, index) {
-                                  return Text(table.users[index].name);
+                                  return Text(widget.table.users[index].name);
                                 }
                                 ),
                           ),
@@ -527,5 +609,117 @@ class SingleTable extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget editItemOnBill(restaurantData, foodItem, context) {
+    //Need to refactor to format it to display
+    print(foodItem.customization.join(""));
+    _qtyEditController.text = foodItem.quantity.toString();
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius:
+              BorderRadius.circular(20),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize
+                  .min, // To make the card compact
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment:
+                  MainAxisAlignment
+                      .spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      "Quantity : ",
+                      textAlign:
+                      TextAlign.center,
+                      style: kTitleStyle,
+                    ),
+                    SizedBox(width: 20),
+                    Container(
+                      width: 200,
+                      child: TextField(
+                        controller:
+                        _qtyEditController,
+                        keyboardType:
+                        TextInputType
+                            .text,
+                        textCapitalization:
+                        TextCapitalization
+                            .sentences,
+                        autofocus: true,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 24.0),
+                Row(
+                  mainAxisAlignment:
+                  MainAxisAlignment
+                      .spaceAround,
+                  children: <Widget>[
+                    FlatButton(
+                      child: Text(
+                        "Cancel",
+                        style: TextStyle(
+                            fontFamily:
+                            "Poppins",
+                            color:
+                            Colors.red),
+                      ),
+                      onPressed: () {
+                        Navigator.of(
+                            context)
+                            .pop(); // To close the dialog
+                      },
+                    ),
+                    FlatButton(
+                      child: Text(
+                        "Done",
+                        style: TextStyle(
+                            fontFamily:
+                            "Poppins",
+                            color: Colors
+                                .green),
+                      ),
+                      onPressed: () {
+                        if (_qtyEditController
+                            .text
+                            .isNotEmpty) {
+                          /*
+                          restaurantData
+                              .sendConfiguredDataToBackend(
+                            {
+                              "category_id":
+                              "${restaurantData.restaurant.barMenu[index].oid}",
+                              "editing_fields":
+                              {
+                                "name":
+                                _categoryEditController
+                                    .text,
+                                "description":
+                                _descriptionEditController
+                                    .text
+                              }
+                            },
+                            "edit_bar_category",
+                          );
+                        */
+                        }
+                        Navigator.of(
+                            context)
+                            .pop(); // To close the dialog
+                      },
+                    ),
+                  ],
+                )
+              ],
+            ),
+          );
+        });
   }
 }

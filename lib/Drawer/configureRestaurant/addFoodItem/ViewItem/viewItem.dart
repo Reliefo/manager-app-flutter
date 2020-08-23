@@ -169,7 +169,6 @@ class _ViewItemState extends State<ViewItem> {
         if(customization.lessMore == 1 || customization.lessMore == 0){
           min = option_prices.take(customization.thatNumber).toList().reduce((a, b) => a + b);
         }
-        //TODO else{}
       }
       total = total + min;
     });
@@ -191,7 +190,6 @@ class _ViewItemState extends State<ViewItem> {
         if(customization.lessMore == 1 || customization.lessMore == 0){
           min = option_prices.take(customization.thatNumber).toList().reduce((a, b) => a + b);
         }
-        //TODO else{}
       }
       total = total + min;
     });
