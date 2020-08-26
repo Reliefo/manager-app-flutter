@@ -5,7 +5,12 @@ import 'package:provider/provider.dart';
 
 import 'singleTable.dart';
 
-class TableView extends StatelessWidget {
+class TableView extends StatefulWidget {
+  @override
+  _TableViewState createState() => _TableViewState();
+}
+
+class _TableViewState extends State<TableView> {
   Color getColour(index, restaurantData) {
     if (restaurantData.restaurant.tables[index].users.isNotEmpty) {
       if (restaurantData.restaurant.tables[index].cookingCount >
