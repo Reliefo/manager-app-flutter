@@ -271,6 +271,7 @@ class _SocketConnectionState extends State<SocketConnection> {
 
     socket.on("user_scan", (data) => fetchScanUpdates(data));
     socket.on("billing", (data) => fetchBilled(data));
+    socket.on("bill_editing",(data) => billEdited(data));
 
     sockets["liqr"] = socket;
   }
@@ -288,6 +289,10 @@ class _SocketConnectionState extends State<SocketConnection> {
   }
 
 //////////////////////////////////restaurant///////////////////////////
+  billEdited(data){
+    print("socket.on bill_editing");
+    print(data);
+  }
   fetchRestaurant(data) {
     print("restaurant_object socket.on");
     setState(() {

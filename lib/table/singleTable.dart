@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:manager_app/Home/assistanceReqBuilder.dart';
@@ -40,9 +42,12 @@ class _SingleTableState extends State<SingleTable> {
   }
 
   getTableOrders(orderData) {
+    tableOrders.clear();
+    tableCompletedOrders.clear();
     orderData.queueOrders.forEach((orders) {
       if (orders.table == widget.table.name) {
         tableOrders.add(orders);
+
       }
     });
 
@@ -98,7 +103,6 @@ class _SingleTableState extends State<SingleTable> {
     getTableAssistanceReq(restaurantData.restaurant.assistanceRequests);
     getTableOrders(orderData);
 
-//    print(orderData.cookingOrders[1].table);
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -280,19 +284,22 @@ class _SingleTableState extends State<SingleTable> {
                                                                 Expanded(
                                                                   flex: 3,
                                                                   child: Column(
-                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
                                                                       children: <
                                                                           Widget>[
                                                                         Text(
                                                                           (tableOrders[index].orders[index2].foodList[index3].name) ??
                                                                               " ",
-                                                                          style: homePageS2,
+                                                                          style:
+                                                                              homePageS2,
                                                                         ),
                                                                         Text(
                                                                           (tableOrders[index].orders[index2].foodList[index3].customization.join("")) ??
                                                                               " ",
                                                                           style:
-                                                                            kSubTitleStyle,
+                                                                              kSubTitleStyle,
                                                                         ),
                                                                       ]),
                                                                 ),
@@ -367,7 +374,8 @@ class _SingleTableState extends State<SingleTable> {
                                                                           tableOrders[index]
                                                                               .orders[index2]
                                                                               .foodList[index3],
-                                                                          context);
+                                                                          context,
+                                                                      index, index2, index3, false);
                                                                     },
                                                                   ),
                                                                 ),
@@ -379,7 +387,15 @@ class _SingleTableState extends State<SingleTable> {
                                                                         .cancel),
                                                                     onPressed:
                                                                         () {
-                                                                      //TODO clarify
+                                                                      var encoded =
+                                                                        jsonEncode({
+                                                                          "table_id": tableOrders[index].tableId,
+                                                                          "table_order_id": tableOrders[index].oId,
+                                                                        "order_id":tableOrders[index].orders[index2].oId,
+                                                                        "food_id":tableOrders[index].orders[index2].foodList[index3].foodId,
+                                                                        "request_type": 'delete',
+                                                                        });
+                                                                      restaurantData.sendDataThroughSocket('edit_the_bill', encoded);
                                                                       setState(
                                                                           () {
                                                                         tableOrders[index]
@@ -435,7 +451,9 @@ class _SingleTableState extends State<SingleTable> {
                                                                 Expanded(
                                                                   flex: 3,
                                                                   child: Column(
-                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
                                                                       children: <
                                                                           Widget>[
                                                                         Text(
@@ -443,7 +461,8 @@ class _SingleTableState extends State<SingleTable> {
                                                                               " ",
                                                                           style:
                                                                               homePageS2,
-                                                                          textAlign: TextAlign.left,
+                                                                          textAlign:
+                                                                              TextAlign.left,
                                                                         ),
                                                                         Text(
                                                                           (tableCompletedOrders[index].orders[index2].foodList[index3].customization.join("")) ??
@@ -524,7 +543,8 @@ class _SingleTableState extends State<SingleTable> {
                                                                           tableOrders[index]
                                                                               .orders[index2]
                                                                               .foodList[index3],
-                                                                          context);
+                                                                          context,
+                                                                      index, index2, index3, true);
                                                                     },
                                                                   ),
                                                                 ),
@@ -536,14 +556,22 @@ class _SingleTableState extends State<SingleTable> {
                                                                         .cancel),
                                                                     onPressed:
                                                                         () {
-                                                                      //TODO clarify
-                                                                      setState(
-                                                                          () {
-                                                                        tableOrders[index]
-                                                                            .orders[index2]
-                                                                            .foodList
-                                                                            .removeAt(index3);
-                                                                      });
+                                                                          var encoded =
+                                                                          jsonEncode({
+                                                                            "table_id": tableCompletedOrders[index].tableId,
+                                                                            "table_order_id": tableCompletedOrders[index].oId,
+                                                                            "order_id":tableCompletedOrders[index].orders[index2].oId,
+                                                                            "food_id":tableCompletedOrders[index].orders[index2].foodList[index3].foodId,
+                                                                            "request_type": 'delete',
+                                                                          });
+                                                                          restaurantData.sendDataThroughSocket('edit_the_bill', encoded);
+                                                                          setState(
+                                                                                  () {
+                                                                                    tableCompletedOrders[index]
+                                                                                    .orders[index2]
+                                                                                    .foodList
+                                                                                    .removeAt(index3);
+                                                                              });
                                                                     },
                                                                   ),
                                                                 ),
@@ -640,7 +668,7 @@ class _SingleTableState extends State<SingleTable> {
     );
   }
 
-  Widget editItemOnBill(restaurantData, foodItem, context) {
+  Widget editItemOnBill(restaurantData, foodItem, context, index, index2, index3, completed) {
     //Need to refactor to format it to display
     //print(foodItem.customization.join(""));
     _qtyEditController.text = foodItem.quantity.toString();
@@ -697,26 +725,39 @@ class _SingleTableState extends State<SingleTable> {
                       ),
                       onPressed: () {
                         if (_qtyEditController.text.isNotEmpty) {
-                          /*
-                          restaurantData
-                              .sendConfiguredDataToBackend(
-                            {
-                              "category_id":
-                              "${restaurantData.restaurant.barMenu[index].oid}",
-                              "editing_fields":
-                              {
-                                "name":
-                                _categoryEditController
-                                    .text,
-                                "description":
-                                _descriptionEditController
-                                    .text
-                              }
-                            },
-                            "edit_bar_category",
-                          );
-                        */
+                          if(completed){
+                            var encoded =
+                            jsonEncode({
+                              "table_id": tableCompletedOrders[index].tableId,
+                              "table_order_id": tableCompletedOrders[index].oId,
+                              "order_id":tableCompletedOrders[index].orders[index2].oId,
+                              "food_id":tableCompletedOrders[index].orders[index2].foodList[index3].foodId,
+                              "request_type": 'edit_quantity',
+                              "quantity":_qtyEditController.text
+                            });
+                            restaurantData.sendDataThroughSocket('edit_the_bill', encoded);
+
+                            setState(() {
+                              tableCompletedOrders[index].orders[index2].foodList[index3].quantity = int.parse(_qtyEditController.text);
+                            });
+                          }
+                          else{
+                            var encoded =
+                            jsonEncode({
+                              "table_id": tableOrders[index].tableId,
+                              "table_order_id": tableOrders[index].oId,
+                              "order_id":tableOrders[index].orders[index2].oId,
+                              "food_id":tableOrders[index].orders[index2].foodList[index3].foodId,
+                              "request_type": 'edit_quantity',
+                              "quantity":_qtyEditController.text
+                            });
+                            restaurantData.sendDataThroughSocket('edit_the_bill', encoded);
+                            setState(() {
+                              tableOrders[index].orders[index2].foodList[index3].quantity = int.parse(_qtyEditController.text);
+                            });
+                          }
                         }
+
                         Navigator.of(context).pop(); // To close the dialog
                       },
                     ),
