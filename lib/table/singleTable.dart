@@ -91,77 +91,109 @@ class SingleTable extends StatelessWidget {
 //    print(orderData.cookingOrders[1].table);
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: kThemeColor,
+          title: Text(
+//            'Table View',
+            '${table.name}' ?? " ",
+          ),
+          actions: <Widget>[
+//            restaurantData.restaurant.foodMenu != null &&
+//                    restaurantData.restaurant.foodMenu.isNotEmpty
+//                ?
+            FlatButton(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.receipt),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text(
+                      "Bill & Clear",
+                      style: homePageS1,
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                ],
+              ),
+              onPressed: () {
+                requestBilling(context);
+              },
+              color: Colors.red[500],
+            )
+//                : Container(width: 0, height: 0),
+          ],
+        ),
         body: Container(
           child: Column(
             children: <Widget>[
-              Container(
-                color: kThemeColor,
-                height: 60,
-                width: double.maxFinite,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.account_box,
-                              size: 30,
-                            ),
-                            Text(
-                              '02',
-                              style: homePageS1,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          'TABLE : ${table.name}' ?? " ",
-                          style: homePageS1,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              height: double.maxFinite,
-                              color: Colors.red[500],
-                              child: GestureDetector(
-                                onTap: () {
-                                  requestBilling(context);
-                                },
-                                child: Row(
-                                  children: <Widget>[
-                                    Icon(Icons.receipt),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8.0),
-                                      child: Text(
-                                        "Bill & Clear",
-                                        style: homePageS1,
-                                        textAlign: TextAlign.right,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+//              Container(
+//                color: kThemeColor,
+//                height: 60,
+//                width: double.maxFinite,
+//                child: Row(
+//                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                  children: <Widget>[
+//                    Expanded(
+//                      child: Container(
+//                        padding: EdgeInsets.symmetric(horizontal: 20),
+//                        child: Row(
+//                          children: <Widget>[
+//                            Icon(
+//                              Icons.account_box,
+//                              size: 30,
+//                            ),
+//                            Text(
+//                              '02',
+//                              style: homePageS1,
+//                            ),
+//                          ],
+//                        ),
+//                      ),
+//                    ),
+//                    Expanded(
+//                      child: Center(
+//                        child: Text(
+//                          'TABLE : ${table.name}' ?? " ",
+//                          style: homePageS1,
+//                        ),
+//                      ),
+//                    ),
+//                    Expanded(
+//                      child: Container(
+//                        child: Row(
+//                          mainAxisAlignment: MainAxisAlignment.end,
+//                          children: <Widget>[
+//                            Container(
+//                              padding: EdgeInsets.symmetric(horizontal: 20),
+//                              height: double.maxFinite,
+//                              color: Colors.red[500],
+//                              child: GestureDetector(
+//                                onTap: () {
+//                                  requestBilling(context);
+//                                },
+//                                child: Row(
+//                                  children: <Widget>[
+//                                    Icon(Icons.receipt),
+//                                    Padding(
+//                                      padding: const EdgeInsets.symmetric(
+//                                          horizontal: 8.0),
+//                                      child: Text(
+//                                        "Bill & Clear",
+//                                        style: homePageS1,
+//                                        textAlign: TextAlign.right,
+//                                      ),
+//                                    ),
+//                                  ],
+//                                ),
+//                              ),
+//                            ),
+//                          ],
+//                        ),
+//                      ),
+//                    ),
+//                  ],
+//                ),
+//              ),
               Flexible(
                 child: Row(
                   children: <Widget>[
@@ -226,251 +258,251 @@ class SingleTable extends StatelessWidget {
                             //to check if there is any orders for this table or not
                             tableOrders != null
                                 ? Expanded(
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: <Widget>[
-                                    ListView.builder(
-                                        primary: false,
-                                        shrinkWrap: true,
-                                        itemCount: tableOrders.length,
-                                        itemBuilder: (context, index) {
-                                          return ListView.builder(
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        children: <Widget>[
+                                          ListView.builder(
+                                              primary: false,
+                                              shrinkWrap: true,
+                                              itemCount: tableOrders.length,
+                                              itemBuilder: (context, index) {
+                                                return ListView.builder(
+                                                    primary: false,
+                                                    shrinkWrap: true,
+                                                    itemCount:
+                                                        tableOrders[index]
+                                                            .orders
+                                                            .length,
+                                                    itemBuilder:
+                                                        (context, index2) {
+                                                      return ListView.builder(
+                                                        itemCount:
+                                                            tableOrders[index]
+                                                                .orders[index2]
+                                                                .foodList
+                                                                .length,
+                                                        primary: false,
+                                                        shrinkWrap: true,
+                                                        itemBuilder:
+                                                            (context, index3) {
+                                                          return Container(
+                                                            margin: EdgeInsets
+                                                                .symmetric(
+                                                                    vertical:
+                                                                        12),
+                                                            child: Row(
+                                                              children: <
+                                                                  Widget>[
+                                                                Expanded(
+                                                                  flex: 2,
+                                                                  child: Text(
+                                                                    tableOrders[index]
+                                                                            .orders[index2]
+                                                                            .foodList[index3]
+                                                                            .name ??
+                                                                        " ",
+                                                                    style:
+                                                                        homePageS2,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child: Center(
+                                                                    child: Text(
+                                                                      '${tableOrders[index].orders[index2].foodList[index3].quantity}' ??
+                                                                          " ",
+                                                                      style:
+                                                                          homePageS2,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child: Center(
+                                                                    child: Text(
+                                                                      tableOrders[index]
+                                                                              .orders[index2]
+                                                                              .foodList[index3]
+                                                                              .price ??
+                                                                          " ",
+                                                                      style:
+                                                                          homePageS2,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child: Center(
+                                                                    child: Text(
+                                                                      '${formatDate(
+                                                                            (tableOrders[index].timeStamp),
+                                                                            [
+                                                                              HH,
+                                                                              ':',
+                                                                              nn
+                                                                            ],
+                                                                          )}' ??
+                                                                          " ",
+                                                                      style:
+                                                                          homePageS2,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child: Center(
+                                                                    child: Text(
+                                                                      tableOrders[index]
+                                                                              .orders[index2]
+                                                                              .foodList[index3]
+                                                                              .status ??
+                                                                          " ",
+                                                                      style:
+                                                                          homePageS2,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        },
+                                                      );
+                                                    });
+                                              }),
+                                          ListView.builder(
                                               primary: false,
                                               shrinkWrap: true,
                                               itemCount:
-                                              tableOrders[index]
-                                                  .orders
-                                                  .length,
-                                              itemBuilder:
-                                                  (context, index2) {
+                                                  tableCompletedOrders.length,
+                                              itemBuilder: (context, index) {
                                                 return ListView.builder(
-                                                  itemCount:
-                                                  tableOrders[index]
-                                                      .orders[index2]
-                                                      .foodList
-                                                      .length,
-                                                  primary: false,
-                                                  shrinkWrap: true,
-                                                  itemBuilder:
-                                                      (context, index3) {
-                                                    return Container(
-                                                      margin: EdgeInsets
-                                                          .symmetric(
-                                                          vertical:
-                                                          12),
-                                                      child: Row(
-                                                        children: <
-                                                            Widget>[
-                                                          Expanded(
-                                                            flex: 2,
-                                                            child: Text(
-                                                              tableOrders[index]
-                                                                  .orders[index2]
-                                                                  .foodList[index3]
-                                                                  .name ??
-                                                                  " ",
-                                                              style:
-                                                              homePageS2,
+                                                    primary: false,
+                                                    shrinkWrap: true,
+                                                    itemCount:
+                                                        tableCompletedOrders[
+                                                                index]
+                                                            .orders
+                                                            .length,
+                                                    itemBuilder:
+                                                        (context, index2) {
+                                                      return ListView.builder(
+                                                        itemCount:
+                                                            tableCompletedOrders[
+                                                                    index]
+                                                                .orders[index2]
+                                                                .foodList
+                                                                .length,
+                                                        primary: false,
+                                                        shrinkWrap: true,
+                                                        itemBuilder:
+                                                            (context, index3) {
+                                                          return Container(
+                                                            margin: EdgeInsets
+                                                                .symmetric(
+                                                                    vertical:
+                                                                        12),
+                                                            child: Row(
+                                                              children: <
+                                                                  Widget>[
+                                                                Expanded(
+                                                                  flex: 2,
+                                                                  child: Text(
+                                                                    tableCompletedOrders[index]
+                                                                            .orders[index2]
+                                                                            .foodList[index3]
+                                                                            .name ??
+                                                                        " ",
+                                                                    style:
+                                                                        homePageS2,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child: Center(
+                                                                    child: Text(
+                                                                      '${tableCompletedOrders[index].orders[index2].foodList[index3].quantity}' ??
+                                                                          " ",
+                                                                      style:
+                                                                          homePageS2,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child: Center(
+                                                                    child: Text(
+                                                                      tableCompletedOrders[index]
+                                                                              .orders[index2]
+                                                                              .foodList[index3]
+                                                                              .price ??
+                                                                          " ",
+                                                                      style:
+                                                                          homePageS2,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child: Center(
+                                                                    child: Text(
+                                                                      '${formatDate(
+                                                                            (tableCompletedOrders[index].timeStamp),
+                                                                            [
+                                                                              HH,
+                                                                              ':',
+                                                                              nn
+                                                                            ],
+                                                                          )}' ??
+                                                                          " ",
+                                                                      style:
+                                                                          homePageS2,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child: Center(
+                                                                    child: Text(
+                                                                      tableCompletedOrders[index]
+                                                                              .orders[index2]
+                                                                              .foodList[index3]
+                                                                              .status ??
+                                                                          " ",
+                                                                      style:
+                                                                          homePageS2,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Center(
-                                                              child: Text(
-                                                                '${tableOrders[index].orders[index2].foodList[index3].quantity}' ??
-                                                                    " ",
-                                                                style:
-                                                                homePageS2,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Center(
-                                                              child: Text(
-                                                                tableOrders[index]
-                                                                    .orders[index2]
-                                                                    .foodList[index3]
-                                                                    .price ??
-                                                                    " ",
-                                                                style:
-                                                                homePageS2,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Center(
-                                                              child: Text(
-                                                                '${formatDate(
-                                                                  (tableOrders[index].timeStamp),
-                                                                  [
-                                                                    HH,
-                                                                    ':',
-                                                                    nn
-                                                                  ],
-                                                                )}' ??
-                                                                    " ",
-                                                                style:
-                                                                homePageS2,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Center(
-                                                              child: Text(
-                                                                tableOrders[index]
-                                                                    .orders[index2]
-                                                                    .foodList[index3]
-                                                                    .status ??
-                                                                    " ",
-                                                                style:
-                                                                homePageS2,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    );
-                                                  },
-                                                );
-                                              });
-                                        }),
-                                    ListView.builder(
-                                        primary: false,
-                                        shrinkWrap: true,
-                                        itemCount:
-                                        tableCompletedOrders.length,
-                                        itemBuilder: (context, index) {
-                                          return ListView.builder(
-                                              primary: false,
-                                              shrinkWrap: true,
-                                              itemCount:
-                                              tableCompletedOrders[
-                                              index]
-                                                  .orders
-                                                  .length,
-                                              itemBuilder:
-                                                  (context, index2) {
-                                                return ListView.builder(
-                                                  itemCount:
-                                                  tableCompletedOrders[
-                                                  index]
-                                                      .orders[index2]
-                                                      .foodList
-                                                      .length,
-                                                  primary: false,
-                                                  shrinkWrap: true,
-                                                  itemBuilder:
-                                                      (context, index3) {
-                                                    return Container(
-                                                      margin: EdgeInsets
-                                                          .symmetric(
-                                                          vertical:
-                                                          12),
-                                                      child: Row(
-                                                        children: <
-                                                            Widget>[
-                                                          Expanded(
-                                                            flex: 2,
-                                                            child: Text(
-                                                              tableCompletedOrders[index]
-                                                                  .orders[index2]
-                                                                  .foodList[index3]
-                                                                  .name ??
-                                                                  " ",
-                                                              style:
-                                                              homePageS2,
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Center(
-                                                              child: Text(
-                                                                '${tableCompletedOrders[index].orders[index2].foodList[index3].quantity}' ??
-                                                                    " ",
-                                                                style:
-                                                                homePageS2,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Center(
-                                                              child: Text(
-                                                                tableCompletedOrders[index]
-                                                                    .orders[index2]
-                                                                    .foodList[index3]
-                                                                    .price ??
-                                                                    " ",
-                                                                style:
-                                                                homePageS2,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Center(
-                                                              child: Text(
-                                                                '${formatDate(
-                                                                  (tableCompletedOrders[index].timeStamp),
-                                                                  [
-                                                                    HH,
-                                                                    ':',
-                                                                    nn
-                                                                  ],
-                                                                )}' ??
-                                                                    " ",
-                                                                style:
-                                                                homePageS2,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Center(
-                                                              child: Text(
-                                                                tableCompletedOrders[index]
-                                                                    .orders[index2]
-                                                                    .foodList[index3]
-                                                                    .status ??
-                                                                    " ",
-                                                                style:
-                                                                homePageS2,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    );
-                                                  },
-                                                );
-                                              });
-                                        }),
-                                  ],
-                                ),
-                              ),
-                            )
-                            //if there is no orders for this table
+                                                          );
+                                                        },
+                                                      );
+                                                    });
+                                              }),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                //if there is no orders for this table
                                 : Expanded(
-                              child: Container(
-                                width: double.maxFinite,
-                                child: Column(
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Padding(
-                                        padding:
-                                        const EdgeInsets.all(20.0),
-                                        child: Image.asset(
-                                          'assets/icons/plate.png',
-                                        ),
+                                    child: Container(
+                                      width: double.maxFinite,
+                                      child: Column(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(20.0),
+                                              child: Image.asset(
+                                                'assets/icons/plate.png',
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Center(
+                                              child: Text(
+                                                'No Orders Yet',
+                                                style: homePageS4,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    Expanded(
-                                      child: Center(
-                                        child: Text(
-                                          'No Orders Yet',
-                                          style: homePageS4,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                                  ),
                           ],
                         ),
                       ),
@@ -478,46 +510,43 @@ class SingleTable extends StatelessWidget {
                     VerticalDivider(),
                     Expanded(
                       flex: 3,
-                      child: Column(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 2,
-                            child: ListView.builder(
-                                scrollDirection: Axis.vertical,
-                                shrinkWrap: false,
-                                itemCount: table.users.length,
-                                itemBuilder: (context, index) {
-                                  return Text(table.users[index].name);
-                                }
+                      child: Column(children: <Widget>[
+                        Expanded(
+                          flex: 2,
+                          child: ListView.builder(
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: false,
+                              itemCount: table.users.length,
+                              itemBuilder: (context, index) {
+                                return Text(table.users[index].name);
+                              }),
+                        ),
+                        Divider(),
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                            padding: EdgeInsets.all(8),
+                            child: Column(
+                              children: <Widget>[
+                                Container(
+                                  child: Text(
+                                    'Assistance',
+                                    style: homePageS1,
+                                  ),
                                 ),
-                          ),
-                          Divider(),
-                          Expanded(
-                            flex: 3,
-                            child: Container(
-                                padding: EdgeInsets.all(8),
-                                child: Column(
-                                  children: <Widget>[
-                                    Container(
-                                      child: Text(
-                                        'Assistance',
-                                        style: homePageS1,
-                                      ),
-                                    ),
-                                    tableAssistanceReq.length > 0
-                                        ? Expanded(
-                                      child: AssistanceRequestBuilder(
-                                        requestList: tableAssistanceReq,
-                                      ),
-                                    )
+                                tableAssistanceReq.length > 0
+                                    ? Expanded(
+                                        child: AssistanceRequestBuilder(
+                                          requestList: tableAssistanceReq,
+                                        ),
+                                      )
                                     //if there is no assistance request for this table
-                                        : Text('no assistance requests'),
-                                  ],
-                                ),
-                              ),
+                                    : Text('no assistance requests'),
+                              ],
+                            ),
                           ),
-                      ]
-                      ),
+                        ),
+                      ]),
                     ),
                   ],
                 ),

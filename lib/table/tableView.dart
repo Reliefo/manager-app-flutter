@@ -139,10 +139,12 @@ class TableView extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => SingleTable(
-                            table: restaurantData.restaurant.tables[index],
-                            bill: restaurantData.billTheTable,
-                          )),
+                          MaterialPageRoute(
+                              builder: (context) => SingleTable(
+                                    table:
+                                        restaurantData.restaurant.tables[index],
+                                    bill: restaurantData.billTheTable,
+                                  )),
                         );
                         /*
                         showModalBottomSheet(

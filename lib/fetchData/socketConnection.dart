@@ -243,6 +243,7 @@ class _SocketConnectionState extends State<SocketConnection> {
     // Dart client
     IO.Socket socket = IO.io("https://liqr.cc/reliefo", <String, dynamic>{
       'transports': isNative ? ['websocket'] : ['polling'],
+//      'autoConnect': false,
 //      'transports': ['polling'],
       'extraHeaders': {'Authorization': 'Bearer ' + widget.jwt} // optional
     });
@@ -290,7 +291,6 @@ class _SocketConnectionState extends State<SocketConnection> {
 
 //////////////////////////////////restaurant///////////////////////////
   fetchRestaurant(data) {
-    print("restaurant_object socket.on");
     setState(() {
       if (data is Map) {
         data = json.encode(data);
